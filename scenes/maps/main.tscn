@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://bpl2v87ojracb"]
+
+[ext_resource type="Script" uid="uid://b0wpygt50xcnl" path="res://scripts/maps/hex_grid.gd" id="1_hexgrid"]
+[ext_resource type="Script" uid="uid://pibm8g1osx2d" path="res://scripts/maps/map_camera.gd" id="2_camera"]
+[ext_resource type="Script" uid="uid://bcomoupull6ri" path="res://scripts/ui/debug_display.gd" id="3_debug"]
+
+[sub_resource type="Environment" id="Environment_1"]
+background_mode = 3
+background_color = Color(0.15, 0.18, 0.22, 1)
+
+[node name="Main" type="Node2D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1")
+
+[node name="HexGrid" type="Node2D" parent="." groups=["hex_grid"]]
+script = ExtResource("1_hexgrid")
+
+[node name="MapCamera" type="Camera2D" parent="." groups=["map_camera"]]
+position = Vector2(800, 600)
+script = ExtResource("2_camera")
+
+[node name="DebugDisplay" type="CanvasLayer" parent="."]
+script = ExtResource("3_debug")

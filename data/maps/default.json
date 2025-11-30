@@ -1,0 +1,82 @@
+{
+	"map_name": "default",
+	"description": "Default 30x30 hex map for testing and development",
+	"map_size": {
+		"width": 30,
+		"height": 30
+	},
+	"hex_size": 64,
+	"default_terrain": "grass",
+	"terrain_types": {
+		"grass": {
+			"color": "#4a7c59",
+			"display_name": "Grassland",
+			"movement_cost": 1.0,
+			"passable": true,
+			"description": "Open grassland, easy to traverse"
+		},
+		"water": {
+			"color": "#4a7c9d",
+			"display_name": "Shallow Water",
+			"movement_cost": 2.0,
+			"passable": true,
+			"description": "Shallow water that can be waded through"
+		},
+		"deep_water": {
+			"color": "#2a5c7d",
+			"display_name": "Deep Water",
+			"movement_cost": -1,
+			"passable": false,
+			"description": "Deep water, impassable without a boat"
+		},
+		"mountain": {
+			"color": "#6b5b4f",
+			"display_name": "Mountain",
+			"movement_cost": 3.0,
+			"passable": true,
+			"description": "Rocky mountain terrain, slow to cross"
+		},
+		"mountain_peak": {
+			"color": "#8b7b6f",
+			"display_name": "Mountain Peak",
+			"movement_cost": -1,
+			"passable": false,
+			"description": "Impassable mountain peak"
+		},
+		"desert": {
+			"color": "#d4a76a",
+			"display_name": "Desert",
+			"movement_cost": 1.5,
+			"passable": true,
+			"description": "Sandy desert terrain"
+		},
+		"forest": {
+			"color": "#2d5a3d",
+			"display_name": "Forest",
+			"movement_cost": 1.5,
+			"passable": true,
+			"description": "Dense forest, provides cover"
+		},
+		"snow": {
+			"color": "#e8e8e8",
+			"display_name": "Snow",
+			"movement_cost": 2.0,
+			"passable": true,
+			"description": "Snow-covered terrain, cold and slow"
+		},
+		"swamp": {
+			"color": "#5a6b4a",
+			"display_name": "Swamp",
+			"movement_cost": 2.5,
+			"passable": true,
+			"description": "Murky swampland, difficult terrain"
+		},
+		"road": {
+			"color": "#8b7355",
+			"display_name": "Road",
+			"movement_cost": 0.5,
+			"passable": true,
+			"description": "Well-maintained road, fast travel"
+		}
+	}
+}

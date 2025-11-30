@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a7c59"/>
+      <stop offset="100%" style="stop-color:#2d5a3d"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="128" height="128" fill="#1a1a2e"/>
+  <!-- Hex shape -->
+  <polygon points="64,8 112,36 112,92 64,120 16,92 16,36" fill="url(#hexGrad)" stroke="#6b8e7a" stroke-width="3"/>
+  <!-- Inner details -->
+  <polygon points="64,24 96,44 96,84 64,104 32,84 32,44" fill="none" stroke="#8ab89a" stroke-width="2"/>
+  <circle cx="64" cy="64" r="12" fill="#c4d4c8"/>
+</svg>

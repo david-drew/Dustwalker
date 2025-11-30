@@ -1,0 +1,36 @@
+{
+	"map_name": "test_small",
+	"description": "Small 10x10 hex map for quick testing",
+	"map_size": {
+		"width": 10,
+		"height": 10
+	},
+	"hex_size": 64,
+	"default_terrain": "grass",
+	"terrain_types": {
+		"grass": {
+			"color": "#4a7c59",
+			"display_name": "Grassland",
+			"movement_cost": 1.0,
+			"passable": true
+		},
+		"water": {
+			"color": "#4a7c9d",
+			"display_name": "Water",
+			"movement_cost": 2.0,
+			"passable": true
+		},
+		"mountain": {
+			"color": "#6b5b4f",
+			"display_name": "Mountain",
+			"movement_cost": 3.0,
+			"passable": true
+		},
+		"forest": {
+			"color": "#2d5a3d",
+			"display_name": "Forest",
+			"movement_cost": 1.5,
+			"passable": true
+		}
+	}
+}
