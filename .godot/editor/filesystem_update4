@@ -1,2 +1,2 @@
 res://scenes/maps/main.tscn
-res://scripts/maps/hex_utils.gd
+res://scripts/autoloads/event_bus.gd

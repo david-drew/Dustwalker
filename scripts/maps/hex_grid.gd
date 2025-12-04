@@ -21,6 +21,15 @@ signal hex_clicked(coords: Vector2i)
 ## Path to the map configuration JSON file.
 @export var config_file: String = "default"
 
+## Path to the terrain generation configuration JSON file.
+@export var terrain_config_file: String = "terrain_config"
+
+## Whether to use procedural terrain generation on startup.
+@export var use_procedural_generation: bool = true
+
+## Seed for procedural generation (0 = random).
+@export var generation_seed: int = 0
+
 ## Override map dimensions (0 = use config file value).
 @export var override_width: int = 0
 @export var override_height: int = 0
@@ -61,6 +70,15 @@ var debug_labels_visible: bool = false
 
 var _terrain_types: Dictionary = {}
 var _cells_container: Node2D
+var _terrain_generator: TerrainGenerator = null
+var _river_generator: RiverGenerator = null
+var _location_placer: LocationPlacer = null
+var _map_serializer: MapSerializer = null
+var _map_validator: MapValidator = null
+var _locations_config: Dictionary = {}
+
+## The seed used for the current map (for display/regeneration).
+var current_generation_seed: int = 0
 
 # =============================================================================
 # INITIALIZATION
@@ -72,7 +90,43 @@ func _ready() -> void:
 	add_child(_cells_container)
 	
 	_load_config()
+	_init_generators()
 	generate_grid()
+	
+	# Apply procedural generation if enabled
+	if use_procedural_generation:
+		generate_complete_map(generation_seed)
+
+
+func _init_generators() -> void:
+	var loader = get_node_or_null("/root/DataLoader")
+	
+	# Initialize terrain generator
+	_terrain_generator = TerrainGenerator.new()
+	if loader:
+		_terrain_generator.load_config_with_loader(loader, terrain_config_file)
+	else:
+		_terrain_generator.load_config(terrain_config_file)
+	
+	# Load locations config
+	if loader:
+		_locations_config = loader.load_map_config("locations_config")
+	
+	# Initialize river generator
+	_river_generator = RiverGenerator.new()
+	_river_generator.load_config(_locations_config)
+	
+	# Initialize location placer
+	_location_placer = LocationPlacer.new()
+	_location_placer.load_config(_locations_config)
+	_location_placer.set_river_generator(_river_generator)
+	
+	# Initialize map serializer
+	_map_serializer = MapSerializer.new()
+	
+	# Initialize map validator
+	_map_validator = MapValidator.new()
+	_map_validator.load_config(_locations_config)
 
 
 func _load_config() -> void:
@@ -343,6 +397,290 @@ func set_debug_labels_visible(visible: bool) -> void:
 ## @return Rect2 - Bounding rectangle of the map.
 func get_map_bounds() -> Rect2:
 	return HexUtils.get_map_pixel_bounds(map_width, map_height, hex_size)
+
+# =============================================================================
+# COMPLETE MAP GENERATION
+# =============================================================================
+
+## Generates a complete map with terrain, rivers, and locations.
+## Will retry up to max_attempts times if validation fails.
+## @param seed_value: int - Seed for generation (0 = random).
+## @param max_attempts: int - Maximum retry attempts.
+## @return bool - True if generation succeeded.
+func generate_complete_map(seed_value: int = 0, max_attempts: int = 3) -> bool:
+	var attempt := 0
+	var current_seed := seed_value
+	
+	while attempt < max_attempts:
+		attempt += 1
+		
+		if attempt > 1:
+			print("HexGrid: Retrying generation (attempt %d/%d)" % [attempt, max_attempts])
+			# Modify seed for retry
+			if current_seed != 0:
+				current_seed = seed_value + attempt * 10000
+			else:
+				current_seed = 0  # Will generate new random
+		
+		# Generate terrain
+		generate_procedural_terrain(current_seed)
+		
+		# Generate rivers
+		generate_rivers()
+		
+		# Place locations
+		place_locations()
+		
+		# Validate the map
+		var result := validate_map()
+		
+		if result.valid:
+			print("HexGrid: Complete map generation successful (seed: %d)" % current_generation_seed)
+			return true
+		else:
+			print("HexGrid: Map validation failed with %d errors" % result.errors.size())
+			for error in result.errors:
+				print("  - %s" % error)
+	
+	print("HexGrid: Map generation failed after %d attempts" % max_attempts)
+	return false
+
+# =============================================================================
+# PROCEDURAL TERRAIN GENERATION
+# =============================================================================
+
+## Generates procedural terrain for the entire map.
+## @param seed_value: int - Seed for generation (0 = random).
+func generate_procedural_terrain(seed_value: int = 0) -> void:
+	if _terrain_generator == null:
+		_init_generators()
+	
+	# Reset all cell data before regenerating
+	for cell in cells.values():
+		cell.reset_terrain_color()
+		cell.has_river = false
+		cell.river_flow_direction = Vector2i.ZERO
+		cell.location = null
+	
+	_terrain_generator.generate_terrain(self, seed_value)
+	current_generation_seed = _terrain_generator.get_seed()
+	
+	print("HexGrid: Generated procedural terrain with seed %d" % current_generation_seed)
+
+
+## Regenerates the map with a new random seed.
+func regenerate_with_new_seed() -> void:
+	generate_complete_map(0)
+
+
+## Regenerates the map with the same seed (reproduces identical terrain).
+func regenerate_with_same_seed() -> void:
+	generate_complete_map(current_generation_seed)
+
+
+## Sets the terrain generator's verbose mode for debugging.
+## @param verbose: bool - Whether to emit per-hex signals.
+func set_generation_verbose(verbose: bool) -> void:
+	if _terrain_generator:
+		_terrain_generator.verbose_signals = verbose
+
+
+## Gets the terrain generator instance (for advanced usage).
+## @return TerrainGenerator - The terrain generator.
+func get_terrain_generator() -> TerrainGenerator:
+	if _terrain_generator == null:
+		_init_generators()
+	return _terrain_generator
+
+# =============================================================================
+# RIVER GENERATION
+# =============================================================================
+
+## Generates rivers on the map.
+## @return int - Number of rivers generated.
+func generate_rivers() -> int:
+	if _river_generator == null:
+		_init_generators()
+	
+	return _river_generator.generate_rivers(self, current_generation_seed)
+
+
+## Gets the river generator instance.
+func get_river_generator() -> RiverGenerator:
+	return _river_generator
+
+
+## Gets all river data.
+func get_rivers() -> Array[Dictionary]:
+	if _river_generator:
+		return _river_generator.get_all_rivers()
+	return []
+
+# =============================================================================
+# LOCATION PLACEMENT
+# =============================================================================
+
+## Places all locations on the map.
+## @return bool - True if placement was successful.
+func place_locations() -> bool:
+	if _location_placer == null:
+		_init_generators()
+	
+	return _location_placer.place_all_locations(self, current_generation_seed)
+
+
+## Gets the location placer instance.
+func get_location_placer() -> LocationPlacer:
+	return _location_placer
+
+
+## Gets all locations.
+func get_all_locations() -> Dictionary:
+	if _location_placer:
+		return _location_placer.get_all_locations()
+	return {}
+
+
+## Gets locations of a specific type.
+func get_locations_by_type(location_type: String) -> Array:
+	if _location_placer:
+		return _location_placer.get_locations_by_type(location_type)
+	return []
+
+# =============================================================================
+# MAP VALIDATION
+# =============================================================================
+
+## Validates the current map state.
+## @return MapValidator.ValidationResult - Validation results.
+func validate_map() -> MapValidator.ValidationResult:
+	if _map_validator == null:
+		_init_generators()
+	
+	return _map_validator.validate_map(self, _river_generator, _location_placer)
+
+
+## Generates a validation report string.
+func get_validation_report() -> String:
+	var result := validate_map()
+	return _map_validator.generate_report(result)
+
+# =============================================================================
+# SAVE/LOAD
+# =============================================================================
+
+## Saves the current map to a file.
+## @param filename: String - Optional filename (without .json extension).
+## @return String - Path to saved file, or empty string on failure.
+func save_map(filename: String = "") -> String:
+	if _map_serializer == null:
+		_init_generators()
+	
+	return _map_serializer.save_map(
+		self,
+		_river_generator,
+		_location_placer,
+		current_generation_seed,
+		filename
+	)
+
+
+## Loads a map from a file.
+## @param file_path: String - Path to the save file.
+## @return int - The loaded map's seed, or -1 on failure.
+func load_map(file_path: String) -> int:
+	if _map_serializer == null:
+		_init_generators()
+	
+	var loaded_seed := _map_serializer.load_map(
+		file_path,
+		self,
+		_river_generator,
+		_location_placer
+	)
+	
+	if loaded_seed >= 0:
+		current_generation_seed = loaded_seed
+	
+	return loaded_seed
+
+
+## Gets a list of available save files.
+func get_save_list() -> Array[Dictionary]:
+	if _map_serializer == null:
+		_init_generators()
+	
+	return _map_serializer.get_save_list()
+
+
+## Deletes a save file.
+func delete_save(filename: String) -> bool:
+	if _map_serializer == null:
+		return false
+	
+	return _map_serializer.delete_save(filename)
+
+# =============================================================================
+# STATISTICS
+# =============================================================================
+
+
+## Gets statistics about the current map's terrain distribution.
+## @return Dictionary - Terrain type counts.
+func get_terrain_statistics() -> Dictionary:
+	var stats: Dictionary = {}
+	for cell in cells.values():
+		var terrain:String = cell.terrain_type
+		stats[terrain] = stats.get(terrain, 0) + 1
+	return stats
+
+
+## Gets the average elevation of the map.
+## @return float - Average elevation (0.0 to 1.0).
+func get_average_elevation() -> float:
+	if cells.is_empty():
+		return 0.0
+	
+	var total := 0.0
+	for cell in cells.values():
+		total += cell.elevation
+	return total / cells.size()
+
+
+## Gets the average moisture of the map.
+## @return float - Average moisture (0.0 to 1.0).
+func get_average_moisture() -> float:
+	if cells.is_empty():
+		return 0.0
+	
+	var total := 0.0
+	for cell in cells.values():
+		total += cell.moisture
+	return total / cells.size()
+
+
+## Finds cells within an elevation range.
+## @param min_elev: float - Minimum elevation.
+## @param max_elev: float - Maximum elevation.
+## @return Array[HexCell] - Cells within the range.
+func get_cells_by_elevation(min_elev: float, max_elev: float) -> Array[HexCell]:
+	var result: Array[HexCell] = []
+	for cell in cells.values():
+		if cell.elevation >= min_elev and cell.elevation <= max_elev:
+			result.append(cell)
+	return result
+
+
+## Finds cells within a moisture range.
+## @param min_moist: float - Minimum moisture.
+## @param max_moist: float - Maximum moisture.
+## @return Array[HexCell] - Cells within the range.
+func get_cells_by_moisture(min_moist: float, max_moist: float) -> Array[HexCell]:
+	var result: Array[HexCell] = []
+	for cell in cells.values():
+		if cell.moisture >= min_moist and cell.moisture <= max_moist:
+			result.append(cell)
+	return result
 
 # =============================================================================
 # SIGNAL HANDLERS

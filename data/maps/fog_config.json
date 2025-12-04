@@ -1,0 +1,31 @@
+{
+	"vision": {
+		"base_range": 2,
+		"min_range": 1,
+		"max_range": 5,
+		"time_of_day_modifiers": {
+			"Late Night": -1,
+			"Dawn": 0,
+			"Morning": 0,
+			"Afternoon": 1,
+			"Evening": 0,
+			"Night": -1
+		},
+		"terrain_modifiers": {
+			"mountains": 1,
+			"highlands": 1,
+			"forest": 0,
+			"plains": 0
+		},
+		"spawn_bonus_radius": 1
+	},
+	"fog_colors": {
+		"unexplored": {"r": 0.0, "g": 0.0, "b": 0.0, "a": 0.95},
+		"explored": {"r": 0.0, "g": 0.0, "b": 0.0, "a": 0.38},
+		"visible": {"r": 0.0, "g": 0.0, "b": 0.0, "a": 0.0}
+	},
+	"fog_transition_duration": 0.25,
+	"reveal_during_movement": true,
+	"allow_pathfinding_unexplored": true,
+	"show_path_through_unexplored": true
+}

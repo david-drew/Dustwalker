@@ -1,0 +1,212 @@
+{
+	"location_types": {
+		"town": {
+			"display_name": "Town",
+			"sprite_path": "assets/images/maps/locations/town.png",
+			"color_fallback": "#8b4513",
+			"icon_char": "T",
+			"min_count": 3,
+			"max_count": 5,
+			"required_terrain": ["plains", "grassland", "forest"],
+			"elevation_range": [0.3, 0.6],
+			"requires_water_adjacent": true,
+			"min_distance_same_type": 8,
+			"min_distance_any_location": 2
+		},
+		"fort": {
+			"display_name": "Fort",
+			"sprite_path": "assets/images/maps/locations/fort.png",
+			"color_fallback": "#696969",
+			"icon_char": "F",
+			"min_count": 2,
+			"max_count": 4,
+			"required_terrain": ["hills", "highlands", "forest_hills", "badlands"],
+			"elevation_range": [0.55, 0.85],
+			"min_distance_same_type": 10,
+			"min_distance_from_towns": [5, 15],
+			"strategic_placement": true,
+			"min_distance_any_location": 3
+		},
+		"cave": {
+			"display_name": "Cave",
+			"sprite_path": "assets/images/maps/locations/cave.png",
+			"color_fallback": "#2f2f2f",
+			"icon_char": "C",
+			"min_count": 4,
+			"max_count": 8,
+			"required_terrain": ["mountains", "badlands", "highlands"],
+			"elevation_range": [0.6, 0.95],
+			"min_distance_same_type": 5,
+			"min_distance_any_location": 2
+		},
+		"trading_post": {
+			"display_name": "Trading Post",
+			"sprite_path": "assets/images/maps/locations/trading_post.png",
+			"color_fallback": "#daa520",
+			"icon_char": "$",
+			"min_count": 2,
+			"max_count": 4,
+			"required_terrain": ["plains", "grassland", "forest"],
+			"elevation_range": [0.3, 0.6],
+			"along_routes": true,
+			"prefer_rivers": true,
+			"min_distance_same_type": 6,
+			"min_distance_any_location": 2
+		},
+		"mission": {
+			"display_name": "Mission",
+			"sprite_path": "assets/images/maps/locations/mission.png",
+			"color_fallback": "#f5f5dc",
+			"icon_char": "+",
+			"min_count": 2,
+			"max_count": 4,
+			"required_terrain": ["plains", "grassland", "forest"],
+			"elevation_range": [0.3, 0.55],
+			"near_settlements": true,
+			"min_distance_from_towns": [3, 8],
+			"min_distance_same_type": 5,
+			"min_distance_any_location": 2
+		},
+		"caravan_camp": {
+			"display_name": "Caravan Camp",
+			"sprite_path": "assets/images/maps/locations/caravan.png",
+			"color_fallback": "#d2691e",
+			"icon_char": "~",
+			"min_count": 3,
+			"max_count": 6,
+			"required_terrain": ["desert", "plains", "badlands"],
+			"elevation_range": [0.3, 0.65],
+			"min_distance_same_type": 4,
+			"min_distance_any_location": 2
+		},
+		"roadhouse": {
+			"display_name": "Roadhouse",
+			"sprite_path": "assets/images/maps/locations/roadhouse.png",
+			"color_fallback": "#8b7355",
+			"icon_char": "R",
+			"min_count": 2,
+			"max_count": 4,
+			"required_terrain": ["plains", "grassland"],
+			"elevation_range": [0.3, 0.55],
+			"between_settlements": true,
+			"distance_from_towns": [6, 14],
+			"min_distance_same_type": 5,
+			"min_distance_any_location": 2
+		}
+	},
+	"river_config": {
+		"min_rivers": 2,
+		"max_rivers": 4,
+		"min_length": 5,
+		"source_elevation_min": 0.7,
+		"target_elevation_max": 0.3,
+		"max_attempts_per_river": 50
+	},
+	"name_lists": {
+		"town_names": [
+			"Dustwater",
+			"Crimson Creek",
+			"Miller's Crossing",
+			"Shepherd's Rest",
+			"Willowbrook",
+			"Dry Gulch",
+			"Silver Springs",
+			"Red Mesa",
+			"Cottonwood",
+			"Riverbend",
+			"Sunstone",
+			"Thornfield",
+			"Clearwater",
+			"Ironwood",
+			"Falcon's Perch",
+			"Whiteoak",
+			"Dusty Trail",
+			"Canyon View",
+			"Sage Hollow",
+			"Windmill Station"
+		],
+		"fort_prefixes": [
+			"Fort",
+			"Camp",
+			"Outpost"
+		],
+		"fort_names": [
+			"Steel",
+			"Valor",
+			"Summit",
+			"Eagle",
+			"Sentinel",
+			"Redoubt",
+			"Bastion",
+			"Vigilance",
+			"Courage",
+			"Thunder"
+		],
+		"fort_suffixes": [
+			"Watch",
+			"Guard",
+			"Point",
+			"Ridge"
+		],
+		"cave_names": [
+			"Shadow Cave",
+			"Echo Cavern",
+			"Serpent's Den",
+			"Crystal Grotto",
+			"Darkhollow",
+			"Whisper Cave",
+			"Lost Mine",
+			"Blackstone Cave",
+			"Wind Tunnel",
+			"Hidden Depths"
+		],
+		"trading_post_names": [
+			"Trader's Rest",
+			"Crossroads Market",
+			"Dusty Bargains",
+			"The Exchange",
+			"Wanderer's Goods",
+			"Frontier Trading Co.",
+			"River Market",
+			"Honest Deal",
+			"The Outfitter",
+			"Trail's End Trading"
+		],
+		"mission_names": [
+			"San Miguel",
+			"Santa Clara",
+			"San Antonio",
+			"Mission del Sol",
+			"Holy Cross",
+			"St. Francis",
+			"Sacred Heart",
+			"Our Lady of Peace",
+			"Mission San Jose",
+			"Chapel of Hope"
+		],
+		"caravan_names": [
+			"Desert Rose Camp",
+			"Traveler's Haven",
+			"Nomad's Rest",
+			"Dusty Wheels",
+			"Oasis Camp",
+			"Wayfarers' Circle",
+			"Caravan's End",
+			"Merchant's Camp",
+			"Sandy Stopover",
+			"Trail Camp"
+		],
+		"roadhouse_names": [
+			"The Dusty Boot",
+			"Wayside Inn",
+			"The Crossroads",
+			"Traveler's Respite",
+			"The Lone Star",
+			"Halfway House",
+			"The Weary Wanderer",
+			"Trail's Rest",
+			"The Welcome Mat",
+			"Coach Stop Inn"
+		]
+	}
+}

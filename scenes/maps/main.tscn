@@ -1,8 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpl2v87ojracb"]
+[gd_scene load_steps=19 format=3 uid="uid://bpl2v87ojracb"]
 
-[ext_resource type="Script" uid="uid://b0wpygt50xcnl" path="res://scripts/maps/hex_grid.gd" id="1_hexgrid"]
+[ext_resource type="Script" uid="uid://dqlp6hsjh1tbl" path="res://scripts/maps/hex_grid.gd" id="1_hexgrid"]
 [ext_resource type="Script" uid="uid://pibm8g1osx2d" path="res://scripts/maps/map_camera.gd" id="2_camera"]
-[ext_resource type="Script" uid="uid://bcomoupull6ri" path="res://scripts/ui/debug_display.gd" id="3_debug"]
+[ext_resource type="Script" uid="uid://bjmeaw34spmpf" path="res://scripts/ui/debug_display.gd" id="3_debug"]
+[ext_resource type="Script" uid="uid://bkthvy2j2ere2" path="res://scripts/ui/generation_panel.gd" id="4_genpanel"]
+[ext_resource type="Script" uid="uid://p5ige3knnupl" path="res://scripts/ui/turn_panel.gd" id="5_turnpanel"]
+[ext_resource type="Script" uid="uid://c2l8bk27xbqok" path="res://scripts/actors/player_spawner.gd" id="6_spawner"]
+[ext_resource type="Script" uid="uid://y3ghaey6no8s" path="res://scripts/actors/movement_controller.gd" id="7_movement"]
+[ext_resource type="Script" uid="uid://c2w0y5rm7upnw" path="res://scripts/game_manager.gd" id="8_gamemanager"]
+[ext_resource type="Script" uid="uid://bg0d6562fnbm1" path="res://scripts/maps/fog_of_war_manager.gd" id="9_fogmanager"]
+[ext_resource type="Script" uid="uid://cp01fjdng2ecm" path="res://scripts/combat/combat_manager.gd" id="9_imbm3"]
+[ext_resource type="Script" uid="uid://c21n0q7d3s6kw" path="res://scripts/systems/survival_manager.gd" id="10_survival"]
+[ext_resource type="Script" uid="uid://d22s4abtf64p5" path="res://scripts/systems/inventory_manager.gd" id="11_inventory"]
+[ext_resource type="Script" uid="uid://d1qn8tnh5gp6d" path="res://scripts/systems/encounter_manager.gd" id="12_encounter"]
+[ext_resource type="Script" uid="uid://ducfro45jij2j" path="res://scripts/ui/survival_panel.gd" id="13_survivalpanel"]
+[ext_resource type="Script" uid="uid://co83y3jajypa8" path="res://scripts/ui/inventory_panel.gd" id="14_inventorypanel"]
+[ext_resource type="Script" uid="uid://dq7ft5b3nagxw" path="res://scripts/ui/encounter_window.gd" id="15_encounterwindow"]
+[ext_resource type="Script" uid="uid://cc2doigw161k7" path="res://scripts/ui/game_over_screen.gd" id="16_gameover"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 3
@@ -16,9 +30,81 @@ environment = SubResource("Environment_1")
 [node name="HexGrid" type="Node2D" parent="." groups=["hex_grid"]]
 script = ExtResource("1_hexgrid")
 
+[node name="MovementController" type="Node" parent="." groups=["movement_controller"]]
+script = ExtResource("7_movement")
+
+[node name="PlayerSpawner" type="Node" parent="." groups=["player_spawner"]]
+script = ExtResource("6_spawner")
+
+[node name="FogOfWarManager" type="Node" parent="." groups=["fog_manager"]]
+script = ExtResource("9_fogmanager")
+
+[node name="SurvivalManager" type="Node" parent="." groups=["survival_manager"]]
+script = ExtResource("10_survival")
+
+[node name="InventoryManager" type="Node" parent="." groups=["inventory_manager"]]
+script = ExtResource("11_inventory")
+
+[node name="EncounterManager" type="Node" parent="." groups=["encounter_manager"]]
+script = ExtResource("12_encounter")
+
+[node name="GameManager" type="Node" parent="." groups=["game_manager"]]
+script = ExtResource("8_gamemanager")
+
+[node name="CombatManager" type="Node" parent="." groups=["combat_manager"]]
+script = ExtResource("9_imbm3")
+
 [node name="MapCamera" type="Camera2D" parent="." groups=["map_camera"]]
 position = Vector2(800, 600)
 script = ExtResource("2_camera")
 
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="TurnPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("5_turnpanel")
+
+[node name="SurvivalPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("13_survivalpanel")
+
+[node name="InventoryPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("14_inventorypanel")
+
+[node name="GenerationPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_genpanel")
+
+[node name="EncounterWindow" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("15_encounterwindow")
+
+[node name="GameOverScreen" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("16_gameover")
+
 [node name="DebugDisplay" type="CanvasLayer" parent="."]
+layer = 11
 script = ExtResource("3_debug")

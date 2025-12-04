@@ -92,7 +92,7 @@ func _create_ui() -> void:
 	_vbox.add_child(separator)
 	
 	# Help text
-	_help_label = _create_label("F3: Toggle Debug | F4: Hex Coords")
+	_help_label = _create_label("F3: Debug | F4: Coords | G: Generate")
 	_help_label.add_theme_font_size_override("font_size", 10)
 	_help_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
 	
@@ -254,11 +254,32 @@ func _update_selection_label() -> void:
 			offset.x, offset.y
 		]
 		
-		# Get terrain info
+		# Get terrain info including elevation, moisture, river, location, and movement cost
 		if _hex_grid:
 			var cell := _hex_grid.get_cell(_selected_coords)
 			if cell:
-				_terrain_label.text = "Terrain: %s" % cell.terrain_type
+				var info_lines: Array[String] = []
+				info_lines.append("Terrain: %s" % cell.terrain_type)
+				info_lines.append("Elev: %.2f | Moist: %.2f" % [cell.elevation, cell.moisture])
+				
+				# Get movement cost
+				var move_cost := cell.get_movement_cost()
+				if move_cost < 0:
+					info_lines.append("Movement: Impassable")
+				elif move_cost == 1:
+					info_lines.append("Movement: 1 turn")
+				else:
+					info_lines.append("Movement: %d turns" % int(move_cost))
+				
+				if cell.has_river:
+					info_lines.append("River: Yes")
+				
+				if cell.location != null:
+					var loc: Dictionary = cell.location
+					info_lines.append("Location: %s" % loc.get("name", "Unknown"))
+					info_lines.append("  Type: %s" % loc.get("type", "unknown"))
+				
+				_terrain_label.text = "\n".join(info_lines)
 			else:
 				_terrain_label.text = "Terrain: --"
 

@@ -1,0 +1,29 @@
+{
+	"movement_costs": {
+		"plains": 1,
+		"grassland": 1,
+		"forest": 1,
+		"forest_hills": 1,
+		"desert": 1,
+		"hills": 1,
+		"badlands": 2,
+		"mountains": 2,
+		"highlands": 2,
+		"swamp": 2,
+		"water": -1,
+		"deep_water": -1,
+		"mountain_peak": -1
+	},
+	"impassable_terrain": ["water", "deep_water", "mountain_peak"],
+	"difficult_terrain": ["badlands", "mountains", "highlands", "swamp"],
+	"movement_animation_speed": 0.25,
+	"camera_follow_player": true,
+	"camera_follow_smoothing": 0.15,
+	"path_preview_color": "#4488ff80",
+	"path_preview_affordable_color": "#44ff8880",
+	"path_preview_unaffordable_color": "#ff444480",
+	"destination_color": "#ffff0080",
+	"default_player_name": "Wanderer",
+	"spawn_near_town": true,
+	"spawn_fallback_terrain": ["plains", "grassland", "forest"]
+}

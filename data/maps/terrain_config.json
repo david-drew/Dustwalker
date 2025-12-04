@@ -1,0 +1,178 @@
+{
+	"generation": {
+		"seed": 0,
+		"auto_seed": true,
+		"elevation": {
+			"scale": 0.045,
+			"octaves": 4,
+			"persistence": 0.5,
+			"lacunarity": 2.0,
+			"offset": {"x": 0.0, "y": 0.0}
+		},
+		"moisture": {
+			"scale": 0.06,
+			"octaves": 3,
+			"persistence": 0.5,
+			"lacunarity": 2.0,
+			"offset": {"x": 1000.0, "y": 1000.0}
+		},
+		"smoothing": {
+			"enabled": true,
+			"neighbor_threshold": 4,
+			"iterations": 1,
+			"protect_water": true,
+			"protect_mountains": true
+		}
+	},
+	"terrain_types": {
+		"deep_water": {
+			"color": "#1a4a6e",
+			"elevation_min": 0.0,
+			"elevation_max": 0.2,
+			"moisture_min": 0.0,
+			"moisture_max": 1.0,
+			"priority": 0,
+			"movement_cost": -1,
+			"passable": false,
+			"display_name": "Deep Water"
+		},
+		"water": {
+			"color": "#2b6f8f",
+			"elevation_min": 0.2,
+			"elevation_max": 0.3,
+			"moisture_min": 0.0,
+			"moisture_max": 1.0,
+			"priority": 1,
+			"movement_cost": 2.0,
+			"passable": true,
+			"display_name": "Shallow Water"
+		},
+		"swamp": {
+			"color": "#4a6b3f",
+			"elevation_min": 0.3,
+			"elevation_max": 0.38,
+			"moisture_min": 0.65,
+			"moisture_max": 1.0,
+			"priority": 2,
+			"movement_cost": 2.5,
+			"passable": true,
+			"display_name": "Swamp"
+		},
+		"desert": {
+			"color": "#d4a76a",
+			"elevation_min": 0.3,
+			"elevation_max": 0.6,
+			"moisture_min": 0.0,
+			"moisture_max": 0.25,
+			"priority": 3,
+			"movement_cost": 1.5,
+			"passable": true,
+			"display_name": "Desert"
+		},
+		"plains": {
+			"color": "#7bae5a",
+			"elevation_min": 0.3,
+			"elevation_max": 0.55,
+			"moisture_min": 0.25,
+			"moisture_max": 0.55,
+			"priority": 4,
+			"movement_cost": 1.0,
+			"passable": true,
+			"display_name": "Plains"
+		},
+		"grassland": {
+			"color": "#6b9e4a",
+			"elevation_min": 0.38,
+			"elevation_max": 0.55,
+			"moisture_min": 0.55,
+			"moisture_max": 0.65,
+			"priority": 5,
+			"movement_cost": 1.0,
+			"passable": true,
+			"display_name": "Grassland"
+		},
+		"forest": {
+			"color": "#2d5016",
+			"elevation_min": 0.38,
+			"elevation_max": 0.6,
+			"moisture_min": 0.65,
+			"moisture_max": 1.0,
+			"priority": 6,
+			"movement_cost": 1.5,
+			"passable": true,
+			"display_name": "Forest"
+		},
+		"badlands": {
+			"color": "#8b6f47",
+			"elevation_min": 0.55,
+			"elevation_max": 0.7,
+			"moisture_min": 0.0,
+			"moisture_max": 0.35,
+			"priority": 7,
+			"movement_cost": 2.0,
+			"passable": true,
+			"display_name": "Badlands"
+		},
+		"hills": {
+			"color": "#7a8a5a",
+			"elevation_min": 0.55,
+			"elevation_max": 0.7,
+			"moisture_min": 0.35,
+			"moisture_max": 0.6,
+			"priority": 8,
+			"movement_cost": 1.5,
+			"passable": true,
+			"display_name": "Hills"
+		},
+		"forest_hills": {
+			"color": "#4a7c3f",
+			"elevation_min": 0.6,
+			"elevation_max": 0.75,
+			"moisture_min": 0.5,
+			"moisture_max": 1.0,
+			"priority": 9,
+			"movement_cost": 2.0,
+			"passable": true,
+			"display_name": "Forested Hills"
+		},
+		"highlands": {
+			"color": "#6a6a5a",
+			"elevation_min": 0.7,
+			"elevation_max": 0.8,
+			"moisture_min": 0.0,
+			"moisture_max": 0.5,
+			"priority": 10,
+			"movement_cost": 2.5,
+			"passable": true,
+			"display_name": "Highlands"
+		},
+		"mountains": {
+			"color": "#5b5b4f",
+			"elevation_min": 0.8,
+			"elevation_max": 0.92,
+			"moisture_min": 0.0,
+			"moisture_max": 1.0,
+			"priority": 11,
+			"movement_cost": 3.0,
+			"passable": true,
+			"display_name": "Mountains"
+		},
+		"mountain_peak": {
+			"color": "#e8e8e8",
+			"elevation_min": 0.92,
+			"elevation_max": 1.0,
+			"moisture_min": 0.0,
+			"moisture_max": 1.0,
+			"priority": 12,
+			"movement_cost": -1,
+			"passable": false,
+			"display_name": "Mountain Peak"
+		}
+	},
+	"color_variation": {
+		"enabled": true,
+		"brightness_range": 0.12,
+		"saturation_range": 0.08,
+		"hue_range": 0.02
+	}
+}

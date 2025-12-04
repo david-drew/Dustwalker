@@ -8,33 +8,37 @@ A hex-based exploration RPG foundation built in Godot 4.5 using GDScript.
 hex_rpg/
 ├── assets/
 │   └── images/
-│       ├── actors/          # Character sprites (future)
-│       ├── maps/            # Terrain textures (optional)
-│       └── ui/              # UI elements (future)
+│       ├── actors/              # Character sprites (future)
+│       ├── maps/
+│       │   └── terrain/         # Terrain textures (optional)
+│       └── ui/                  # UI elements (future)
 ├── data/
-│   ├── actors/              # Actor JSON configs (future)
-│   ├── maps/                # Map configuration files
-│   │   ├── default.json     # Default 30x30 map config
-│   │   └── test_small.json  # Small 10x10 test map
-│   ├── regions/             # Region data (future)
-│   └── combat/              # Combat configs (future)
+│   ├── actors/                  # Actor JSON configs (future)
+│   ├── maps/
+│   │   ├── default.json         # Default 30x30 map config
+│   │   ├── terrain_config.json  # Terrain generation config
+│   │   └── test_small.json      # Small 10x10 test map
+│   ├── regions/                 # Region data (future)
+│   └── combat/                  # Combat configs (future)
 ├── scenes/
 │   └── maps/
-│       └── main.tscn        # Main game scene
+│       └── main.tscn            # Main game scene
 ├── scripts/
 │   ├── autoloads/
-│   │   ├── event_bus.gd     # Global signal bus
-│   │   └── data_loader.gd   # JSON data loading
+│   │   ├── event_bus.gd         # Global signal bus
+│   │   └── data_loader.gd       # JSON data loading
 │   ├── maps/
-│   │   ├── hex_utils.gd     # Coordinate math utilities
-│   │   ├── hex_cell.gd      # Individual hex representation
-│   │   ├── hex_grid.gd      # Grid management
-│   │   └── map_camera.gd    # Camera controls
+│   │   ├── hex_utils.gd         # Coordinate math utilities
+│   │   ├── hex_cell.gd          # Individual hex representation
+│   │   ├── hex_grid.gd          # Grid management
+│   │   ├── map_camera.gd        # Camera controls
+│   │   └── terrain_generator.gd # Procedural terrain generation
 │   └── ui/
-│       └── debug_display.gd # Debug overlay
-├── project.godot            # Godot project file
-├── icon.svg                 # Project icon
-└── README.md                # This file
+│       ├── debug_display.gd     # Debug overlay
+│       └── generation_panel.gd  # Terrain generation UI
+├── project.godot                # Godot project file
+├── icon.svg                     # Project icon
+└── README.md                    # This file
 ```
 
 ## Setup Instructions
@@ -57,7 +61,8 @@ You should see:
 ### 3. Run the Project
 
 Press F5 or click the Play button. You should see:
-- A 30x30 hex grid rendered with green (grass) hexes
+- A 30x30 hex grid with procedurally generated terrain
+- Multiple terrain types (water, plains, forest, mountains, etc.)
 - The camera centered on the map
 - Debug overlay in the top-left corner
 
@@ -68,57 +73,90 @@ Press F5 or click the Play button. You should see:
 | **Left Click** | Select a hex |
 | **Middle/Right Mouse + Drag** | Pan the camera |
 | **Mouse Wheel** | Zoom in/out |
+| **G** | Open terrain generation panel |
 | **F3** | Toggle debug display |
 | **F4** | Toggle hex coordinate labels |
+| **Escape** | Close generation panel |
 
 ## Features Implemented
 
-### ✅ Hex Grid Rendering
+### ✅ Week 1: Hex Grid Foundation
+
+#### Hex Grid Rendering
 - Flat-top hexagon orientation
 - Configurable grid size (default 30x30)
 - Colored Polygon2D rendering with fallback
-- Support for terrain texture sprites (place PNGs in `assets/images/maps/`)
+- Support for terrain texture sprites (place PNGs in `assets/images/maps/terrain/`)
 
-### ✅ Coordinate System
+#### Coordinate System
 - **Axial coordinates** (q, r) - Primary system
 - **Cube coordinates** (x, y, z) - For distance/algorithms
 - **Offset coordinates** (col, row) - For map bounds
 - **Pixel coordinates** - For rendering
 
-Key utilities in `HexUtils`:
-```gdscript
-# Convert between coordinate systems
-var pixel = HexUtils.axial_to_pixel(axial_coords, hex_size)
-var axial = HexUtils.pixel_to_axial(pixel_pos, hex_size)
-var offset = HexUtils.axial_to_offset(axial_coords)
-
-# Get neighbors and distance
-var neighbors = HexUtils.get_neighbors(axial_coords)
-var dist = HexUtils.distance(hex_a, hex_b)
-
-# Get hexes in range
-var area = HexUtils.get_hexes_in_range(center, radius)
-```
-
-### ✅ Camera System
+#### Camera System
 - Smooth zoom with mouse wheel
 - Click-and-drag panning
 - Configurable zoom limits (0.25x to 2.0x)
 - Map boundary constraints
-- Optional edge panning
 
-### ✅ Hex Selection
+#### Hex Selection
 - Click to select hexes
 - Visual highlight (yellow border)
 - Hover highlighting (white)
-- Signals emitted via EventBus
+
+### ✅ Week 2: Procedural Terrain Generation
+
+#### Elevation & Moisture Maps
+- FastNoiseLite (Simplex) noise for natural terrain
+- Configurable noise parameters (scale, octaves, persistence, lacunarity)
+- Separate elevation and moisture layers
+- Seed-based generation (same seed = identical map)
+
+#### Terrain Types
+The terrain system uses non-overlapping elevation/moisture ranges:
+
+| Terrain | Elevation | Moisture | Color |
+|---------|-----------|----------|-------|
+| Deep Water | 0.0-0.2 | Any | Dark Blue |
+| Shallow Water | 0.2-0.3 | Any | Blue |
+| Swamp | 0.3-0.38 | 0.65-1.0 | Murky Green |
+| Desert | 0.3-0.6 | 0.0-0.25 | Sandy Tan |
+| Plains | 0.3-0.55 | 0.25-0.55 | Light Green |
+| Grassland | 0.38-0.55 | 0.55-0.65 | Green |
+| Forest | 0.38-0.6 | 0.65-1.0 | Dark Green |
+| Badlands | 0.55-0.7 | 0.0-0.35 | Dusty Brown |
+| Hills | 0.55-0.7 | 0.35-0.6 | Olive |
+| Forest Hills | 0.6-0.75 | 0.5-1.0 | Medium Green |
+| Highlands | 0.7-0.8 | 0.0-0.5 | Gray |
+| Mountains | 0.8-0.92 | Any | Gray-Brown |
+| Mountain Peak | 0.92-1.0 | Any | Snow White |
+
+#### Color Variation
+Each hex gets subtle color variation based on its elevation/moisture values:
+- **Brightness**: Adjusted by elevation within terrain range
+- **Saturation**: Adjusted by moisture within terrain range  
+- **Hue**: Subtle shift for visual diversity
+
+#### Terrain Smoothing
+Post-processing removes isolated single-hex terrain patches:
+- Hexes surrounded by 4+ neighbors of a different terrain are smoothed
+- Water and mountains are protected from smoothing
+- Terrain transitions validated against elevation to maintain realism
+
+#### Generation UI
+Press **G** to open the generation panel:
+- Enter a specific seed or leave empty for random
+- "Generate with Seed" - Uses entered seed
+- "Generate Random" - New random seed
+- "Regenerate (Same Seed)" - Reproduce current map
+- Live terrain statistics display
 
 ### ✅ Debug Display
 - FPS counter
 - Camera position and zoom level
 - Hovered hex coordinates
-- Selected hex information
-- Terrain type display
+- Selected hex information (terrain, elevation, moisture)
 - Toggleable hex coordinate labels
 
 ## Architecture
@@ -168,6 +206,31 @@ hex_grid.set_terrain(coords, "water")
 # Queries
 var water_cells = hex_grid.get_cells_by_terrain("water")
 var neighbors = hex_grid.get_neighbors(coords)
+
+# Procedural Generation (Week 2)
+hex_grid.generate_procedural_terrain(12345)  # With specific seed
+hex_grid.regenerate_with_new_seed()          # Random seed
+hex_grid.regenerate_with_same_seed()         # Reproduce current map
+
+# Terrain statistics
+var stats = hex_grid.get_terrain_statistics()  # {terrain_name: count}
+var avg_elev = hex_grid.get_average_elevation()
+var high_cells = hex_grid.get_cells_by_elevation(0.7, 1.0)
+```
+
+### HexCell Properties (Week 2)
+
+```gdscript
+# Terrain data
+cell.terrain_type   # String: "forest", "water", etc.
+cell.elevation      # float: 0.0 to 1.0
+cell.moisture       # float: 0.0 to 1.0
+cell.terrain_color  # Color: with variation applied
+
+# Gameplay helpers
+cell.is_passable()       # bool
+cell.get_movement_cost() # float (-1 = impassable)
+cell.get_terrain_data()  # Dictionary with all terrain info
 ```
 
 ## Configuration
@@ -192,19 +255,77 @@ Edit `data/maps/default.json`:
 }
 ```
 
+### Terrain Generation Configuration (JSON)
+
+Edit `data/maps/terrain_config.json`:
+
+```json
+{
+  "generation": {
+    "seed": 0,
+    "auto_seed": true,
+    "elevation": {
+      "scale": 0.045,
+      "octaves": 4,
+      "persistence": 0.5,
+      "lacunarity": 2.0
+    },
+    "moisture": {
+      "scale": 0.06,
+      "octaves": 3,
+      "persistence": 0.5,
+      "lacunarity": 2.0
+    },
+    "smoothing": {
+      "enabled": true,
+      "neighbor_threshold": 4,
+      "iterations": 1,
+      "protect_water": true,
+      "protect_mountains": true
+    }
+  },
+  "terrain_types": {
+    "plains": {
+      "color": "#7bae5a",
+      "elevation_min": 0.3,
+      "elevation_max": 0.55,
+      "moisture_min": 0.25,
+      "moisture_max": 0.55,
+      "priority": 4,
+      "movement_cost": 1.0,
+      "passable": true
+    }
+  },
+  "color_variation": {
+    "enabled": true,
+    "brightness_range": 0.12,
+    "saturation_range": 0.08,
+    "hue_range": 0.02
+  }
+}
+```
+
+**Noise Parameters:**
+- `scale`: Smaller = larger terrain features (default: 0.045 for elevation)
+- `octaves`: More = more detail/roughness (default: 4)
+- `persistence`: How much each octave contributes (default: 0.5)
+- `lacunarity`: Frequency multiplier between octaves (default: 2.0)
+
 ### Using a Different Map
 
 In the scene, change the HexGrid's `config_file` property:
 ```gdscript
 # In main.tscn or via code:
 hex_grid.config_file = "test_small"
+hex_grid.terrain_config_file = "terrain_config"
+hex_grid.use_procedural_generation = true
 ```
 
 ### Adding Terrain Textures
 
 1. Create PNG images for each terrain type
-2. Name them `{terrain_type}.png` (e.g., `grass.png`, `water.png`)
-3. Place in `assets/images/maps/`
+2. Name them `{terrain_type}.png` (e.g., `plains.png`, `water.png`)
+3. Place in `assets/images/maps/terrain/`
 4. The HexCell will automatically use textures if found
 
 ## Extending the System

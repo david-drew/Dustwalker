@@ -1,0 +1,48 @@
+{
+	"survival": {
+		"hunger": {
+			"max": 10,
+			"starting": 10,
+			"decrease_interval_turns": 6,
+			"ration_restore_amount": 5
+		},
+		"thirst": {
+			"max": 10,
+			"starting": 10,
+			"decrease_interval_turns": 4,
+			"water_restore_amount": 5
+		},
+		"health": {
+			"max": 20,
+			"starting": 20
+		},
+		"stages": {
+			"hunger": {
+				"well_fed": {"min": 8, "max": 10, "penalty": 0},
+				"peckish": {"min": 5, "max": 7, "penalty": 0},
+				"hungry": {"min": 3, "max": 4, "penalty": 1},
+				"starving": {"min": 1, "max": 2, "penalty": 2, "damage_per_day": 1},
+				"dying": {"min": 0, "max": 0, "penalty": 3, "damage_per_turn": 2}
+			},
+			"thirst": {
+				"hydrated": {"min": 8, "max": 10, "penalty": 0},
+				"thirsty": {"min": 5, "max": 7, "penalty": 0},
+				"parched": {"min": 3, "max": 4, "penalty": 1},
+				"dehydrated": {"min": 1, "max": 2, "penalty": 2, "damage_per_turn": 1},
+				"dying": {"min": 0, "max": 0, "penalty": 3, "damage_per_turn": 3}
+			}
+		},
+		"warning_thresholds": {
+			"hunger_warning": 4,
+			"hunger_critical": 2,
+			"thirst_warning": 4,
+			"thirst_critical": 2,
+			"health_warning": 5,
+			"health_critical": 3
+		}
+	},
+	"starting_inventory": {
+		"rations": 5,
+		"water": 5
+	}
+}

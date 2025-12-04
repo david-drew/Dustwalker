@@ -1,0 +1,467 @@
+{
+    "encounter_rates": {
+        "base_by_terrain": {
+            "plains": 0.30,
+            "grassland": 0.30,
+            "forest": 0.45,
+            "forest_hills": 0.40,
+            "desert": 0.35,
+            "badlands": 0.40,
+            "mountains": 0.40,
+            "highlands": 0.35,
+            "swamp": 0.35,
+            "hills": 0.30,
+            "snow": 0.30
+        },
+        "time_of_day_modifiers": {
+            "Late Night": 0.15,
+            "Dawn": 0.05,
+            "Morning": 0.0,
+            "Afternoon": 0.0,
+            "Evening": 0.05,
+            "Night": 0.10
+        },
+        "location_modifiers": {
+            "town": -0.50,
+            "fort": -0.40,
+            "settlement": -0.30,
+            "trading_post": -0.20,
+            "cave": 0.10,
+            "ruins": 0.15,
+            "shrine": -0.10
+        }
+    },
+    "category_weights": {
+        "hostile": 0.60,
+        "neutral": 0.25,
+        "discovery": 0.10,
+        "environmental": 0.05
+    },
+    "rarity_weights": {
+        "common": 0.70,
+        "uncommon": 0.25,
+        "rare": 0.05
+    },
+    "encounters": [
+        {
+            "id": "bandits_basic",
+            "category": "hostile",
+            "title": "Bandit Ambush",
+            "description": "Three armed bandits step out from behind rocks, weapons drawn. 'Your money or your life!' the leader shouts.",
+            "terrain": ["plains", "badlands", "forest", "hills"],
+            "rarity": "common",
+            "combat_data": {
+                "enemies": [
+                    {"type": "bandit", "count": 3}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "You draw your weapon and prepare for battle.",
+                    "effects": {}
+                },
+                {
+                    "text": "Flee",
+                    "outcome": "You turn and run. The bandits don't pursue - they were likely bluffing.",
+                    "effects": {
+                        "turn_cost": 1
+                    }
+                },
+                {
+                    "text": "Negotiate",
+                    "outcome": "You offer them some rations. They accept and let you pass.",
+                    "effects": {
+                        "rations": -1
+                    },
+                    "requires": {
+                        "rations": 1
+                    }
+                }
+            ]
+        },
+        {
+            "id": "bandits_duo",
+            "category": "hostile",
+            "title": "Highway Robbery",
+            "description": "Two rough-looking men block the path ahead. One holds a pistol, the other a knife. 'Hand over your valuables, stranger.'",
+            "terrain": ["plains", "grassland", "hills", "highlands"],
+            "rarity": "common",
+            "combat_data": {
+                "enemies": [
+                    {"type": "bandit", "count": 2}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "You reach for your weapon.",
+                    "effects": {}
+                },
+                {
+                    "text": "Flee",
+                    "outcome": "You bolt before they can react. Cowardly, but effective.",
+                    "effects": {
+                        "turn_cost": 1
+                    }
+                },
+                {
+                    "text": "Give them water",
+                    "outcome": "You toss them your water canteen. They seem satisfied and let you go.",
+                    "effects": {
+                        "water": -2
+                    },
+                    "requires": {
+                        "water": 2
+                    }
+                }
+            ]
+        },
+        {
+            "id": "outlaw_camp",
+            "category": "hostile",
+            "title": "Outlaw Camp",
+            "description": "You stumble upon a small camp. Two men with rifles spot you immediately. 'Well, well... looks like we got ourselves a visitor.'",
+            "terrain": ["badlands", "desert", "mountains", "highlands"],
+            "rarity": "uncommon",
+            "combat_data": {
+                "enemies": [
+                    {"type": "outlaw", "count": 2}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "No point in running from riflemen. You ready your weapon.",
+                    "effects": {}
+                },
+                {
+                    "text": "Surrender valuables",
+                    "outcome": "You hand over your rations and water. They let you leave with your life.",
+                    "effects": {
+                        "rations": -2,
+                        "water": -2
+                    },
+                    "requires": {
+                        "rations": 2,
+                        "water": 2
+                    }
+                }
+            ]
+        },
+        {
+            "id": "lone_bandit",
+            "category": "hostile",
+            "title": "Desperate Thief",
+            "description": "A gaunt, desperate-looking man blocks your path. His hands shake as he points a rusted pistol at you. 'I... I need your food. Please.'",
+            "terrain": ["plains", "grassland", "forest", "desert"],
+            "rarity": "common",
+            "combat_data": {
+                "enemies": [
+                    {"type": "bandit", "count": 1}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "You decide not to take chances with armed strangers.",
+                    "effects": {}
+                },
+                {
+                    "text": "Give food",
+                    "outcome": "You hand over some rations. The man's eyes well with tears. 'Thank you... bless you.' He disappears into the wilderness.",
+                    "effects": {
+                        "rations": -1
+                    },
+                    "requires": {
+                        "rations": 1
+                    }
+                },
+                {
+                    "text": "Intimidate",
+                    "outcome": "You step forward menacingly. The man's nerve breaks and he runs.",
+                    "effects": {}
+                }
+            ]
+        },
+        {
+            "id": "outlaw_ambush",
+            "category": "hostile",
+            "title": "Rifle Ambush",
+            "description": "A shot rings out, kicking up dirt near your feet. 'Don't move!' Two figures with rifles emerge from cover ahead.",
+            "terrain": ["mountains", "highlands", "badlands", "hills"],
+            "rarity": "uncommon",
+            "combat_data": {
+                "enemies": [
+                    {"type": "outlaw", "count": 2}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "You dive for cover and return fire.",
+                    "effects": {}
+                },
+                {
+                    "text": "Surrender",
+                    "outcome": "You raise your hands. They take your supplies but leave you alive.",
+                    "effects": {
+                        "rations": -2,
+                        "water": -1
+                    },
+                    "requires": {
+                        "rations": 2
+                    }
+                }
+            ]
+        },
+        {
+            "id": "wolves_pack",
+            "category": "hostile",
+            "title": "Wolf Pack",
+            "description": "A pack of hungry wolves emerges from the undergrowth, circling you with bared fangs. Their eyes gleam with predatory intent.",
+            "terrain": ["forest", "forest_hills", "mountains", "highlands"],
+            "rarity": "common",
+            "choices": [
+                {
+                    "text": "Stand Your Ground",
+                    "outcome": "You make yourself appear large and shout. After a tense standoff, the wolves retreat, but not before one nips at your leg.",
+                    "effects": {
+                        "health": -3
+                    }
+                },
+                {
+                    "text": "Throw Food",
+                    "outcome": "You toss some rations to distract them. The wolves fight over the food while you slip away.",
+                    "effects": {
+                        "rations": -2
+                    },
+                    "requires": {
+                        "rations": 2
+                    }
+                },
+                {
+                    "text": "Back Away Slowly",
+                    "outcome": "You carefully retreat, maintaining eye contact. The wolves watch but don't pursue.",
+                    "effects": {
+                        "turn_cost": 1
+                    }
+                }
+            ]
+        },
+        {
+            "id": "traveler_friendly",
+            "category": "neutral",
+            "title": "Fellow Traveler",
+            "description": "A weathered traveler approaches, raising a hand in greeting. 'Howdy, stranger. Been a while since I've seen another soul out here.'",
+            "terrain": ["plains", "grassland", "desert", "badlands"],
+            "rarity": "common",
+            "choices": [
+                {
+                    "text": "Trade stories",
+                    "outcome": "You share tales of your journeys. The traveler mentions a water source nearby, saving you valuable time.",
+                    "effects": {
+                        "turn_cost": -1
+                    }
+                },
+                {
+                    "text": "Share a meal",
+                    "outcome": "You share some of your rations. In return, the traveler gives you useful directions and some water.",
+                    "effects": {
+                        "rations": -1,
+                        "water": 1
+                    },
+                    "requires": {
+                        "rations": 1
+                    }
+                },
+                {
+                    "text": "Keep moving",
+                    "outcome": "You nod politely but continue on your way. The traveler tips their hat.",
+                    "effects": {}
+                }
+            ]
+        },
+        {
+            "id": "abandoned_camp",
+            "category": "discovery",
+            "title": "Abandoned Campsite",
+            "description": "You find the remains of a recent campsite. The fire pit is cold, but there are supplies scattered about.",
+            "terrain": ["plains", "forest", "hills", "badlands"],
+            "rarity": "common",
+            "choices": [
+                {
+                    "text": "Search thoroughly",
+                    "outcome": "You spend time searching the camp and find some useful supplies hidden under a rock.",
+                    "effects": {
+                        "rations": 2,
+                        "turn_cost": 1
+                    }
+                },
+                {
+                    "text": "Quick search",
+                    "outcome": "A quick look reveals a small cache of water.",
+                    "effects": {
+                        "water": 1
+                    }
+                },
+                {
+                    "text": "Leave it",
+                    "outcome": "Something feels wrong. You decide to move on.",
+                    "effects": {}
+                }
+            ]
+        },
+        {
+            "id": "dust_storm",
+            "category": "environmental",
+            "title": "Dust Storm",
+            "description": "A massive dust storm rolls across the horizon, heading straight for you. The sky turns an ominous brown.",
+            "terrain": ["desert", "badlands", "plains"],
+            "rarity": "uncommon",
+            "choices": [
+                {
+                    "text": "Find shelter",
+                    "outcome": "You hunker down behind some rocks. The storm passes, but you've lost precious time.",
+                    "effects": {
+                        "turn_cost": 2
+                    }
+                },
+                {
+                    "text": "Push through",
+                    "outcome": "You wrap your face and push forward. The sand stings and you become disoriented.",
+                    "effects": {
+                        "health": -2,
+                        "thirst": 10
+                    }
+                },
+                {
+                    "text": "Wait it out",
+                    "outcome": "You find a depression in the ground and wait. It takes a while, but you emerge unscathed.",
+                    "effects": {
+                        "turn_cost": 3
+                    }
+                }
+            ]
+        },
+        {
+            "id": "hidden_spring",
+            "category": "discovery",
+            "title": "Hidden Spring",
+            "description": "You hear the unmistakable sound of running water. Following it, you discover a small spring bubbling from the rocks.",
+            "terrain": ["mountains", "highlands", "hills", "forest_hills"],
+            "rarity": "uncommon",
+            "choices": [
+                {
+                    "text": "Drink and fill containers",
+                    "outcome": "The water is cool and refreshing. You drink your fill and top off your supplies.",
+                    "effects": {
+                        "water": 3,
+                        "thirst": -20
+                    }
+                },
+                {
+                    "text": "Rest here",
+                    "outcome": "You spend some time resting by the spring, recovering your strength.",
+                    "effects": {
+                        "water": 2,
+                        "health": 2,
+                        "turn_cost": 1
+                    }
+                }
+            ]
+        },
+        {
+            "id": "merchant_wagon",
+            "category": "neutral",
+            "title": "Traveling Merchant",
+            "description": "A covered wagon approaches, driven by a jovial-looking merchant. 'Ho there, traveler! Care to see my wares?'",
+            "terrain": ["plains", "grassland", "hills"],
+            "rarity": "uncommon",
+            "choices": [
+                {
+                    "text": "Buy supplies",
+                    "outcome": "You purchase some much-needed rations and water. The merchant's prices are fair.",
+                    "effects": {
+                        "rations": 2,
+                        "water": 2
+                    }
+                },
+                {
+                    "text": "Chat",
+                    "outcome": "You chat with the merchant about the road ahead. He shares useful information about the terrain.",
+                    "effects": {}
+                },
+                {
+                    "text": "Move along",
+                    "outcome": "You decline politely and continue on your way.",
+                    "effects": {}
+                }
+            ]
+        },
+        {
+            "id": "bandit_gang",
+            "category": "hostile",
+            "title": "Bandit Gang",
+            "description": "Four bandits emerge from the rocks, surrounding you. Their leader grins. 'Wrong place, wrong time, friend.'",
+            "terrain": ["badlands", "mountains", "hills"],
+            "rarity": "rare",
+            "combat_data": {
+                "enemies": [
+                    {"type": "bandit", "count": 4}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "Against these odds, you'll need to fight smart.",
+                    "effects": {}
+                },
+                {
+                    "text": "Surrender everything",
+                    "outcome": "You hand over all your supplies. They leave you with nothing but your life.",
+                    "effects": {
+                        "rations": -3,
+                        "water": -3
+                    },
+                    "requires": {
+                        "rations": 3,
+                        "water": 3
+                    }
+                }
+            ]
+        },
+        {
+            "id": "outlaw_patrol",
+            "category": "hostile",
+            "title": "Outlaw Patrol",
+            "description": "Three men on horseback spot you from a ridge. They're armed with rifles and don't look friendly. One shouts, 'That one's got supplies!'",
+            "terrain": ["plains", "badlands", "desert", "highlands"],
+            "rarity": "rare",
+            "combat_data": {
+                "enemies": [
+                    {"type": "outlaw", "count": 3}
+                ]
+            },
+            "choices": [
+                {
+                    "text": "Fight",
+                    "outcome": "Running isn't an option against mounted riflemen. You prepare to defend yourself.",
+                    "effects": {}
+                },
+                {
+                    "text": "Offer supplies",
+                    "outcome": "You quickly offer up your supplies. They take what they want and ride off.",
+                    "effects": {
+                        "rations": -2,
+                        "water": -2
+                    },
+                    "requires": {
+                        "rations": 2,
+                        "water": 2
+                    }
+                }
+            ]
+        }
+    ]
+}

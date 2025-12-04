@@ -1,0 +1,103 @@
+{
+	"weapons": {
+		"pistol": {
+			"id": "pistol",
+			"name": "Revolver",
+			"damage_min": 2,
+			"damage_max": 3,
+			"range": 4,
+			"ap_cost": 1,
+			"ammo_capacity": 6,
+			"ammo_type": "pistol_rounds"
+		},
+		"rifle": {
+			"id": "rifle",
+			"name": "Rifle",
+			"damage_min": 3,
+			"damage_max": 5,
+			"range": 8,
+			"ap_cost": 2,
+			"ammo_capacity": 8,
+			"ammo_type": "rifle_rounds"
+		}
+	},
+	"combat_settings": {
+		"base_hit_chance": 0.50,
+		"aim_hit_bonus_per_point": 0.05,
+		"range_penalty_per_hex": 0.02,
+		"max_range_penalty": 0.30,
+		"cover_defense_bonus": {
+			"none": 0.0,
+			"light": -0.20,
+			"heavy": -0.40
+		},
+		"base_ap": 4,
+		"movement_ap_cost": {
+			"open": 1,
+			"rough": 2,
+			"impassable": -1
+		}
+	},
+	"terrain_templates": {
+		"plains": {
+			"name": "Open Plains",
+			"base_terrain": "open",
+			"cover_density": 0.15,
+			"cover_types": {
+				"light": 0.70,
+				"heavy": 0.30
+			},
+			"obstacle_density": 0.05
+		},
+		"forest": {
+			"name": "Dense Forest",
+			"base_terrain": "open",
+			"cover_density": 0.40,
+			"cover_types": {
+				"light": 0.80,
+				"heavy": 0.20
+			},
+			"obstacle_density": 0.10
+		},
+		"desert": {
+			"name": "Desert Wastes",
+			"base_terrain": "open",
+			"cover_density": 0.10,
+			"cover_types": {
+				"light": 0.50,
+				"heavy": 0.50
+			},
+			"obstacle_density": 0.03
+		},
+		"badlands": {
+			"name": "Rocky Badlands",
+			"base_terrain": "rough",
+			"cover_density": 0.35,
+			"cover_types": {
+				"light": 0.40,
+				"heavy": 0.60
+			},
+			"obstacle_density": 0.08
+		},
+		"mountains": {
+			"name": "Mountain Pass",
+			"base_terrain": "rough",
+			"cover_density": 0.45,
+			"cover_types": {
+				"light": 0.30,
+				"heavy": 0.70
+			},
+			"obstacle_density": 0.15
+		},
+		"swamp": {
+			"name": "Murky Swamp",
+			"base_terrain": "rough",
+			"cover_density": 0.25,
+			"cover_types": {
+				"light": 0.90,
+				"heavy": 0.10
+			},
+			"obstacle_density": 0.12
+		}
+	}
+}
