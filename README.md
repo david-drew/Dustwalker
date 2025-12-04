@@ -1,4 +1,4 @@
-# Hex RPG - Week 1-2 Implementation
+# Dustwalker
 
 A hex-based exploration RPG foundation built in Godot 4.5 using GDScript.
 
