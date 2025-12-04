@@ -1,2 +1,10 @@
 res://scenes/maps/main.tscn
-res://scripts/autoloads/event_bus.gd
+res://scripts/autoloads/time_manager.gd
+res://scripts/actors/player.gd
+res://scripts/actors/player_stats.gd
+res://scripts/systems/survival_manager.gd
+res://scripts/game_manager.gd
+res://data/survival/survival_config.json
+res://scripts/ui/game_over_screen.gd
+res://scripts/ui/combat_defeat_screen.gd
+res://scripts/ui/combat_victory_screen.gd

@@ -1,48 +1,244 @@
 {
-	"survival": {
-		"hunger": {
-			"max": 10,
-			"starting": 10,
-			"decrease_interval_turns": 6,
-			"ration_restore_amount": 5
-		},
-		"thirst": {
-			"max": 10,
-			"starting": 10,
-			"decrease_interval_turns": 4,
-			"water_restore_amount": 5
-		},
-		"health": {
-			"max": 20,
-			"starting": 20
-		},
-		"stages": {
-			"hunger": {
-				"well_fed": {"min": 8, "max": 10, "penalty": 0},
-				"peckish": {"min": 5, "max": 7, "penalty": 0},
-				"hungry": {"min": 3, "max": 4, "penalty": 1},
-				"starving": {"min": 1, "max": 2, "penalty": 2, "damage_per_day": 1},
-				"dying": {"min": 0, "max": 0, "penalty": 3, "damage_per_turn": 2}
+	"temperature": {
+		"zones": [
+			{
+				"name": "extreme_cold",
+				"max_temp": 20,
+				"hp_per_turn": 1,
+				"requires_save": true,
+				"save_difficulty": 12,
+				"water_multiplier": 1.0,
+				"fatigue_per_turn": 5,
+				"description": "Dangerously cold - risk of frostbite"
 			},
-			"thirst": {
-				"hydrated": {"min": 8, "max": 10, "penalty": 0},
-				"thirsty": {"min": 5, "max": 7, "penalty": 0},
-				"parched": {"min": 3, "max": 4, "penalty": 1},
-				"dehydrated": {"min": 1, "max": 2, "penalty": 2, "damage_per_turn": 1},
-				"dying": {"min": 0, "max": 0, "penalty": 3, "damage_per_turn": 3}
+			{
+				"name": "cold",
+				"min_temp": 20,
+				"max_temp": 40,
+				"hp_per_turn": 0,
+				"requires_save": false,
+				"save_difficulty": 0,
+				"water_multiplier": 1.0,
+				"fatigue_per_turn": 2,
+				"description": "Cold - requires warm clothing"
+			},
+			{
+				"name": "comfortable",
+				"min_temp": 40,
+				"max_temp": 80,
+				"hp_per_turn": 0,
+				"requires_save": false,
+				"save_difficulty": 0,
+				"water_multiplier": 1.0,
+				"fatigue_per_turn": 0,
+				"description": "Comfortable temperature"
+			},
+			{
+				"name": "hot",
+				"min_temp": 80,
+				"max_temp": 100,
+				"hp_per_turn": 0,
+				"requires_save": false,
+				"save_difficulty": 0,
+				"water_multiplier": 1.5,
+				"fatigue_per_turn": 2,
+				"description": "Hot - increased water consumption"
+			},
+			{
+				"name": "extreme_heat",
+				"min_temp": 100,
+				"hp_per_turn": 1,
+				"requires_save": true,
+				"save_difficulty": 12,
+				"water_multiplier": 2.0,
+				"fatigue_per_turn": 5,
+				"description": "Dangerously hot - risk of heat exhaustion"
 			}
+		],
+		"terrain_modifiers": {
+			"plains": { "day": 0, "night": -10 },
+			"desert": { "day": 20, "night": -15 },
+			"mountains": { "day": -15, "night": -25 },
+			"forest": { "day": -5, "night": -5 },
+			"swamp": { "day": 5, "night": 0 },
+			"badlands": { "day": 10, "night": -5 },
+			"scrubland": { "day": 5, "night": -8 }
 		},
-		"warning_thresholds": {
-			"hunger_warning": 4,
-			"hunger_critical": 2,
-			"thirst_warning": 4,
-			"thirst_critical": 2,
-			"health_warning": 5,
-			"health_critical": 3
+		"clothing": {
+			"none": { "cold_protection": 0, "heat_protection": 0 },
+			"light_clothing": { "cold_protection": 0, "heat_protection": 10 },
+			"travel_clothes": { "cold_protection": 10, "heat_protection": 5 },
+			"warm_coat": { "cold_protection": 30, "heat_protection": -10 },
+			"winter_gear": { "cold_protection": 50, "heat_protection": -20 },
+			"desert_gear": { "cold_protection": 0, "heat_protection": 20 }
 		}
 	},
-	"starting_inventory": {
-		"rations": 5,
-		"water": 5
+	"fatigue": {
+		"levels": [
+			{
+				"name": "rested",
+				"min": 0,
+				"max": 20,
+				"modifiers": [],
+				"collapse_risk": 0.0,
+				"description": "Well rested"
+			},
+			{
+				"name": "tired",
+				"min": 21,
+				"max": 50,
+				"modifiers": [
+					{ "stat": "reflex", "type": "percentage", "value": -10 },
+					{ "stat": "aim", "type": "percentage", "value": -10 }
+				],
+				"collapse_risk": 0.0,
+				"description": "Feeling tired"
+			},
+			{
+				"name": "exhausted",
+				"min": 51,
+				"max": 80,
+				"modifiers": [
+					{ "stat": "grit", "type": "percentage", "value": -20 },
+					{ "stat": "reflex", "type": "percentage", "value": -20 },
+					{ "stat": "aim", "type": "percentage", "value": -20 },
+					{ "stat": "fortitude", "type": "percentage", "value": -20 }
+				],
+				"collapse_risk": 0.0,
+				"description": "Exhausted - struggling to function"
+			},
+			{
+				"name": "collapsing",
+				"min": 81,
+				"max": 100,
+				"modifiers": [
+					{ "stat": "all", "type": "percentage", "value": -40 }
+				],
+				"collapse_risk": 0.15,
+				"description": "On the verge of collapse"
+			}
+		],
+		"sources": {
+			"turn_base": 3,
+			"combat": 15,
+			"forced_march": 10,
+			"extreme_temperature": 5,
+			"poor_sleep": 15,
+			"strenuous_terrain": 5,
+			"swimming": 8,
+			"climbing": 8
+		},
+		"recovery": {
+			"rest_action": 20,
+			"good_sleep": 100,
+			"adequate_sleep": 50,
+			"poor_sleep": 25
+		},
+		"stimulants": {
+			"coffee": { "recovery": 30, "duration": 6, "crash_fatigue": 40 },
+			"strong_coffee": { "recovery": 40, "duration": 4, "crash_fatigue": 50 },
+			"stimulant_tonic": { "recovery": 50, "duration": 8, "crash_fatigue": 60 }
+		}
+	},
+	"sleep": {
+		"optimal_turns": 2,
+		"adequate_turns": 1,
+		"night_turns": [5, 6, 1],
+		"deprivation_stages": [
+			{
+				"name": "rested",
+				"nights_missed": 0,
+				"modifiers": [],
+				"hallucination_risk": 0.0,
+				"hp_loss_per_day": 0,
+				"description": "Well rested"
+			},
+			{
+				"name": "tired",
+				"nights_missed": 1,
+				"modifiers": [
+					{ "stat": "aim", "type": "percentage", "value": -10 },
+					{ "stat": "reflex", "type": "percentage", "value": -10 }
+				],
+				"hallucination_risk": 0.0,
+				"hp_loss_per_day": 0,
+				"description": "Tired from lack of sleep"
+			},
+			{
+				"name": "sleep_deprived",
+				"nights_missed": 2,
+				"modifiers": [
+					{ "stat": "aim", "type": "percentage", "value": -20 },
+					{ "stat": "reflex", "type": "percentage", "value": -20 },
+					{ "stat": "wit", "type": "percentage", "value": -20 }
+				],
+				"hallucination_risk": 0.1,
+				"hp_loss_per_day": 0,
+				"description": "Sleep deprived - may hallucinate"
+			},
+			{
+				"name": "severely_deprived",
+				"nights_missed": 3,
+				"modifiers": [
+					{ "stat": "all", "type": "percentage", "value": -30 }
+				],
+				"hallucination_risk": 0.25,
+				"hp_loss_per_day": 1,
+				"description": "Severely sleep deprived - hallucinations likely"
+			}
+		],
+		"quality_modifiers": {
+			"safe_location": 50,
+			"shelter": 25,
+			"bedroll": 25,
+			"campfire": 10,
+			"dangerous_area": -50,
+			"uncomfortable": -25,
+			"standing_watch": -50,
+			"bad_weather": -25,
+			"injured": -15
+		},
+		"recovery_by_quality": {
+			"excellent": { "min_quality": 150, "hp": 3, "fatigue_percent": 100, "clears_minor": true },
+			"good": { "min_quality": 100, "hp": 2, "fatigue_percent": 100, "clears_minor": true },
+			"adequate": { "min_quality": 50, "hp": 1, "fatigue_percent": 75, "clears_minor": false },
+			"poor": { "min_quality": 25, "hp": 0, "fatigue_percent": 50, "clears_minor": false },
+			"terrible": { "min_quality": 0, "hp": 0, "fatigue_percent": 25, "clears_minor": false }
+		}
+	},
+	"hallucinations": {
+		"types": [
+			{ "id": "visual_distortion", "weight": 20, "dangerous": false, "description": "Colors shift and shapes waver" },
+			{ "id": "false_encounter", "weight": 15, "dangerous": true, "description": "You see someone who isn't there" },
+			{ "id": "phantom_loot", "weight": 15, "dangerous": false, "description": "You find something valuable... or do you?" },
+			{ "id": "paranoia", "weight": 20, "dangerous": false, "description": "You feel watched" },
+			{ "id": "friendly_mirage", "weight": 10, "dangerous": true, "description": "An oasis shimmers in the distance" },
+			{ "id": "doppelganger", "weight": 10, "dangerous": false, "description": "You see yourself in the distance" },
+			{ "id": "whispers", "weight": 10, "dangerous": false, "description": "Voices murmur just out of hearing" }
+		],
+		"duration_turns": {
+			"min": 1,
+			"max": 3
+		}
+	},
+	"hunger": {
+		"stages": [
+			{ "name": "well_fed", "days_missed": 0, "modifiers": [], "hp_loss_per_day": 0 },
+			{ "name": "peckish", "days_missed": 1, "modifiers": [{ "stat": "grit", "type": "percentage", "value": -5 }], "hp_loss_per_day": 0 },
+			{ "name": "hungry", "days_missed": 2, "modifiers": [{ "stat": "grit", "type": "percentage", "value": -10 }, { "stat": "wit", "type": "percentage", "value": -5 }], "hp_loss_per_day": 0 },
+			{ "name": "starving", "days_missed": 3, "modifiers": [{ "stat": "all", "type": "percentage", "value": -20 }], "hp_loss_per_day": 1 },
+			{ "name": "near_death", "days_missed": 5, "modifiers": [{ "stat": "all", "type": "percentage", "value": -40 }], "hp_loss_per_day": 2 }
+		],
+		"death_days": 7
+	},
+	"thirst": {
+		"stages": [
+			{ "name": "hydrated", "periods_missed": 0, "modifiers": [], "hp_loss_per_period": 0 },
+			{ "name": "thirsty", "periods_missed": 1, "modifiers": [{ "stat": "reflex", "type": "percentage", "value": -10 }, { "stat": "fortitude", "type": "percentage", "value": -10 }], "hp_loss_per_period": 0 },
+			{ "name": "parched", "periods_missed": 2, "modifiers": [{ "stat": "grit", "type": "percentage", "value": -20 }, { "stat": "reflex", "type": "percentage", "value": -20 }, { "stat": "wit", "type": "percentage", "value": -10 }], "hp_loss_per_period": 0 },
+			{ "name": "severe_dehydration", "periods_missed": 3, "modifiers": [{ "stat": "all", "type": "percentage", "value": -40 }], "hp_loss_per_period": 2 }
+		],
+		"death_periods": 5,
+		"periods_per_day": 2
 	}
 }

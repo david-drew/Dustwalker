@@ -43,7 +43,8 @@ func _ready() -> void:
 
 func _create_ui() -> void:
 	# Full screen
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	#set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_preset(Control.PRESET_CENTER)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	# Semi-transparent overlay

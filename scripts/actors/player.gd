@@ -1,9 +1,14 @@
 # player.gd
 # Represents the player character on the hex map.
-# Handles position, movement animation, and state tracking.
+# Handles position, movement animation, state tracking, and stats.
 #
 # The player is visualized as a simple meeple/pawn shape.
 # Movement is animated smoothly between hexes.
+# PlayerStats child node manages the 8 core stats and modifiers.
+#
+# STRUCTURE:
+# Player (this script, Node2D)
+# └── PlayerStats (player_stats.gd)
 
 extends Node2D
 class_name Player
@@ -69,16 +74,15 @@ var _hex_grid: HexGrid = null
 var _hex_size: float = 64.0
 
 # =============================================================================
-# STUB DATA (for future systems)
+# CHILD REFERENCES
 # =============================================================================
 
-## Player statistics (stub for future).
-var stats: Dictionary = {
-	"health": 100,
-	"max_health": 100,
-	"stamina": 100,
-	"max_stamina": 100
-}
+## Reference to PlayerStats child node.
+var player_stats: Node = null
+
+# =============================================================================
+# STUB DATA (for future systems)
+# =============================================================================
 
 ## Player inventory (stub for future).
 var inventory: Array = []
@@ -105,8 +109,28 @@ var _tween: Tween
 # =============================================================================
 
 func _ready() -> void:
+	add_to_group("player")
 	_create_token()
+	_setup_player_stats()
 	z_index = 10  # Above terrain and locations
+
+
+func _setup_player_stats() -> void:
+	# Check if PlayerStats child already exists (added in editor)
+	player_stats = get_node_or_null("PlayerStats")
+	
+	if not player_stats:
+		# Try to create PlayerStats dynamically
+		var PlayerStatsClass = load("res://scripts/player/player_stats.gd")
+		if PlayerStatsClass:
+			player_stats = PlayerStatsClass.new()
+			player_stats.name = "PlayerStats"
+			add_child(player_stats)
+			print("Player: Created PlayerStats child node")
+		else:
+			push_warning("Player: Could not load player_stats.gd - stats will not be available")
+	else:
+		print("Player: Found existing PlayerStats child node")
 
 
 ## Initializes the player with grid reference and starting position.
@@ -191,6 +215,62 @@ func _rebuild_token() -> void:
 		var angle := float(i) / float(segments) * TAU
 		head_points.append(head_center + Vector2(cos(angle), sin(angle)) * head_radius)
 	_token_head.polygon = head_points
+
+# =============================================================================
+# STATS ACCESS (convenience methods)
+# =============================================================================
+
+## Get the PlayerStats node.
+func get_stats() -> Node:
+	return player_stats
+
+
+## Get an effective stat value by name.
+func get_stat(stat_name: String) -> int:
+	if player_stats and player_stats.has_method("get_effective_stat"):
+		return player_stats.get_effective_stat(stat_name)
+	return 0
+
+
+## Get a base stat value by name.
+func get_base_stat(stat_name: String) -> int:
+	if player_stats and player_stats.has_method("get_base_stat"):
+		return player_stats.get_base_stat(stat_name)
+	return 0
+
+
+## Perform a stat check (d10 + stat vs difficulty).
+func roll_check(stat_name: String, difficulty) -> Dictionary:
+	if player_stats and player_stats.has_method("roll_check"):
+		return player_stats.roll_check(stat_name, difficulty)
+	return {
+		"success": false,
+		"roll": 0,
+		"stat_name": stat_name,
+		"stat_value": 0,
+		"total": 0,
+		"difficulty": difficulty if difficulty is int else 12,
+		"margin": -(difficulty if difficulty is int else 12)
+	}
+
+
+## Get max HP (derived from Grit).
+func get_max_hp() -> int:
+	if player_stats and player_stats.has_method("get_max_hp"):
+		return player_stats.get_max_hp()
+	return 20  # Default fallback
+
+
+## Add a stat modifier.
+func add_stat_modifier(source: String, stat: String, type: String, value: int) -> void:
+	if player_stats and player_stats.has_method("add_modifier"):
+		player_stats.add_modifier(source, stat, type, value)
+
+
+## Remove a stat modifier by source.
+func remove_stat_modifier(source: String) -> void:
+	if player_stats and player_stats.has_method("remove_modifier"):
+		player_stats.remove_modifier(source)
 
 # =============================================================================
 # POSITION MANAGEMENT
@@ -380,13 +460,18 @@ func pulse() -> void:
 
 ## Converts player state to a dictionary for saving.
 func to_dict() -> Dictionary:
-	return {
+	var data := {
 		"name": player_name,
 		"current_hex": {"q": current_hex.x, "r": current_hex.y},
-		"stats": stats,
 		"inventory": inventory,
 		"status_effects": status_effects
 	}
+	
+	# Include PlayerStats if available
+	if player_stats and player_stats.has_method("to_dict"):
+		data["stats"] = player_stats.to_dict()
+	
+	return data
 
 
 ## Loads player state from a dictionary.
@@ -399,9 +484,12 @@ func from_dict(data: Dictionary, hex_grid: HexGrid) -> void:
 	var hex_data: Dictionary = data.get("current_hex", {"q": 0, "r": 0})
 	var loaded_hex := Vector2i(hex_data.get("q", 0), hex_data.get("r", 0))
 	
-	stats = data.get("stats", stats)
 	inventory = data.get("inventory", [])
 	status_effects = data.get("status_effects", [])
+	
+	# Load PlayerStats if available
+	if player_stats and player_stats.has_method("from_dict") and data.has("stats"):
+		player_stats.from_dict(data["stats"])
 	
 	_rebuild_token()
 	teleport_to_hex(loaded_hex)

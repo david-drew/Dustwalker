@@ -176,7 +176,7 @@ func _initialize_game() -> void:
 		fog_manager.initialize(hex_grid, null)  # Player ref added after spawn
 	
 	# Initialize survival and inventory systems
-	if survival_manager:
+	if survival_manager:		
 		survival_manager.initialize()
 	
 	if inventory_manager and survival_manager:

@@ -1,6 +1,6 @@
 # time_manager.gd
 # Global time management system for turn-based gameplay.
-# Tracks turns (1-6 per day), days, and total elapsed time.
+# Tracks turns (1-6 per day), days, seasons, and total elapsed time.
 # Add as autoload named "TimeManager" in Project Settings.
 #
 # TIME STRUCTURE:
@@ -11,6 +11,13 @@
 # - Turn 4: Noon-4pm (Afternoon)
 # - Turn 5: 4pm-8pm (Evening)
 # - Turn 6: 8pm-Midnight (Night)
+#
+# SEASON STRUCTURE:
+# - 360 days per year (4 seasons of 90 days each)
+# - Spring: Days 1-90
+# - Summer: Days 91-180
+# - Fall: Days 181-270
+# - Winter: Days 271-360
 
 extends Node
 
@@ -20,6 +27,8 @@ extends Node
 
 const TURNS_PER_DAY: int = 6
 const HOURS_PER_TURN: int = 4
+const DAYS_PER_SEASON: int = 90
+const DAYS_PER_YEAR: int = 360
 
 const TIME_NAMES: Dictionary = {
 	1: "Late Night",
@@ -37,6 +46,42 @@ const TIME_ICONS: Dictionary = {
 	4: "🌤️",  # Afternoon - sun with cloud
 	5: "🌇",  # Evening - sunset
 	6: "🌙"   # Night - moon
+}
+
+const SEASON_NAMES: Array[String] = ["Spring", "Summer", "Fall", "Winter"]
+
+const SEASON_ICONS: Dictionary = {
+	"Spring": "🌱",
+	"Summer": "☀️",
+	"Fall": "🍂",
+	"Winter": "❄️"
+}
+
+## Temperature modifier per time of day (applied to base season temperature)
+## Represents deviation from daily average in degrees Fahrenheit
+const TIME_TEMPERATURE_MODIFIERS: Dictionary = {
+	1: -15,  # Late Night - coldest
+	2: -10,  # Dawn - cold
+	3: 0,    # Morning - average
+	4: 10,   # Afternoon - warmest
+	5: 5,    # Evening - cooling
+	6: -5    # Night - cold
+}
+
+## Base temperatures by season (in Fahrenheit, represents daily average)
+const SEASON_BASE_TEMPERATURES: Dictionary = {
+	"Spring": 55,
+	"Summer": 80,
+	"Fall": 55,
+	"Winter": 30
+}
+
+## Temperature variance by season (random daily fluctuation)
+const SEASON_TEMPERATURE_VARIANCE: Dictionary = {
+	"Spring": 15,
+	"Summer": 20,
+	"Fall": 15,
+	"Winter": 20
 }
 
 # =============================================================================
@@ -58,6 +103,18 @@ signal day_started(day: int)
 ## Emitted when time of day changes (e.g., Morning to Afternoon).
 signal time_of_day_changed(old_name: String, new_name: String)
 
+## Emitted when season changes.
+signal season_changed(old_season: String, new_season: String)
+
+## Emitted when a new year starts.
+signal year_started(year: int)
+
+## Emitted when night begins (for sleep tracking).
+signal night_started(day: int)
+
+## Emitted when dawn begins (for sleep tracking).
+signal dawn_started(day: int)
+
 # =============================================================================
 # STATE
 # =============================================================================
@@ -76,17 +133,24 @@ var total_turns_elapsed: int = 0
 ## Whether time is currently paused (for cutscenes, menus, etc.).
 var time_paused: bool = false
 
+## Daily temperature variance (randomized each day).
+var _daily_temp_variance: float = 0.0
+
 ## Turn event hooks - arrays of callables to invoke at specific times.
 var _turn_start_hooks: Array[Callable] = []
 var _turn_end_hooks: Array[Callable] = []
 var _day_start_hooks: Array[Callable] = []
+var _season_change_hooks: Array[Callable] = []
 
 # =============================================================================
 # INITIALIZATION
 # =============================================================================
 
 func _ready() -> void:
-	print("TimeManager: Initialized (Day %d, Turn %d - %s)" % [current_day, current_turn, get_time_of_day()])
+	_randomize_daily_temperature()
+	print("TimeManager: Initialized (Day %d, Turn %d - %s, %s)" % [
+		current_day, current_turn, get_time_of_day(), get_season()
+	])
 
 
 ## Resets time to initial state (for new game).
@@ -95,7 +159,8 @@ func reset_time() -> void:
 	current_day = 1
 	total_turns_elapsed = 0
 	time_paused = false
-	print("TimeManager: Reset to Day 1, Turn 3 (Morning)")
+	_randomize_daily_temperature()
+	print("TimeManager: Reset to Day 1, Turn 3 (Morning, Spring)")
 
 # =============================================================================
 # TIME QUERIES
@@ -153,8 +218,95 @@ func get_time_data() -> Dictionary:
 		"time_icon": get_time_icon(),
 		"is_daytime": is_daytime(),
 		"hour": get_hour_of_day(),
-		"turns_remaining_today": get_turns_remaining_today()
+		"turns_remaining_today": get_turns_remaining_today(),
+		"season": get_season(),
+		"season_icon": get_season_icon(),
+		"year": get_year(),
+		"day_of_season": get_day_of_season(),
+		"season_progress": get_season_progress()
 	}
+
+# =============================================================================
+# SEASON QUERIES
+# =============================================================================
+
+## Gets the current season name.
+func get_season() -> String:
+	var day_of_year := get_day_of_year()
+	var season_index := (day_of_year - 1) / DAYS_PER_SEASON
+	return SEASON_NAMES[clampi(season_index, 0, 3)]
+
+
+## Gets the icon for the current season.
+func get_season_icon() -> String:
+	return SEASON_ICONS.get(get_season(), "📅")
+
+
+## Gets the current year (1-based).
+func get_year() -> int:
+	return ((current_day - 1) / DAYS_PER_YEAR) + 1
+
+
+## Gets the day within the current year (1-360).
+func get_day_of_year() -> int:
+	return ((current_day - 1) % DAYS_PER_YEAR) + 1
+
+
+## Gets the day within the current season (1-90).
+func get_day_of_season() -> int:
+	return ((get_day_of_year() - 1) % DAYS_PER_SEASON) + 1
+
+
+## Gets progress through the current season (0.0 to 1.0).
+func get_season_progress() -> float:
+	return float(get_day_of_season() - 1) / float(DAYS_PER_SEASON)
+
+
+## Checks if it's currently a specific season.
+func is_season(season_name: String) -> bool:
+	return get_season().to_lower() == season_name.to_lower()
+
+
+## Gets the season for a specific day.
+func get_season_for_day(day: int) -> String:
+	var day_of_year := ((day - 1) % DAYS_PER_YEAR) + 1
+	var season_index := (day_of_year - 1) / DAYS_PER_SEASON
+	return SEASON_NAMES[clampi(season_index, 0, 3)]
+
+# =============================================================================
+# TEMPERATURE QUERIES
+# =============================================================================
+
+## Gets the base temperature for the current time (before terrain modifiers).
+## Returns temperature in Fahrenheit.
+func get_base_temperature() -> float:
+	var season := get_season()
+	var base: float = SEASON_BASE_TEMPERATURES.get(season, 60)
+	var time_mod: float = TIME_TEMPERATURE_MODIFIERS.get(current_turn, 0)
+	return base + time_mod + _daily_temp_variance
+
+
+## Gets the temperature modifier for the current time of day.
+func get_time_temperature_modifier() -> float:
+	return TIME_TEMPERATURE_MODIFIERS.get(current_turn, 0)
+
+
+## Gets temperature data as a dictionary.
+func get_temperature_data() -> Dictionary:
+	var season := get_season()
+	return {
+		"base_temperature": get_base_temperature(),
+		"season_base": SEASON_BASE_TEMPERATURES.get(season, 60),
+		"time_modifier": get_time_temperature_modifier(),
+		"daily_variance": _daily_temp_variance,
+		"season": season
+	}
+
+
+func _randomize_daily_temperature() -> void:
+	var season := get_season()
+	var variance: float = SEASON_TEMPERATURE_VARIANCE.get(season, 15)
+	_daily_temp_variance = randf_range(-variance, variance)
 
 # =============================================================================
 # TIME ADVANCEMENT
@@ -175,6 +327,8 @@ func advance_turn(turns: int = 1) -> Dictionary:
 	var old_turn := current_turn
 	var old_day := current_day
 	var old_time_name := get_time_of_day()
+	var old_season := get_season()
+	var old_year := get_year()
 	var days_passed := 0
 	
 	# Emit turn end for current turn
@@ -190,6 +344,26 @@ func advance_turn(turns: int = 1) -> Dictionary:
 		current_day += 1
 		days_passed += 1
 		
+		# Randomize temperature for new day
+		_randomize_daily_temperature()
+		
+		# Check for season change
+		var new_season := get_season()
+		if old_season != new_season:
+			_invoke_hooks(_season_change_hooks)
+			season_changed.emit(old_season, new_season)
+			_emit_to_event_bus("season_changed", [old_season, new_season])
+			print("TimeManager: Season changed to %s" % new_season)
+			old_season = new_season
+		
+		# Check for year change
+		var new_year := get_year()
+		if old_year != new_year:
+			year_started.emit(new_year)
+			_emit_to_event_bus("year_started", [new_year])
+			print("TimeManager: Year %d begins" % new_year)
+			old_year = new_year
+		
 		# Emit day started
 		_invoke_hooks(_day_start_hooks)
 		day_started.emit(current_day)
@@ -204,6 +378,14 @@ func advance_turn(turns: int = 1) -> Dictionary:
 	if old_time_name != new_time_name:
 		time_of_day_changed.emit(old_time_name, new_time_name)
 		_emit_to_event_bus("time_of_day_changed", [old_time_name, new_time_name])
+		
+		# Check for night/dawn transitions
+		if new_time_name == "Night":
+			night_started.emit(current_day)
+			_emit_to_event_bus("night_started", [current_day])
+		elif new_time_name == "Dawn":
+			dawn_started.emit(current_day)
+			_emit_to_event_bus("dawn_started", [current_day])
 	
 	# Emit turn advanced
 	turn_advanced.emit(old_turn, current_turn, turns)
@@ -244,7 +426,10 @@ func set_time(turn: int, day: int, total_elapsed: int = -1) -> void:
 		# Calculate from day and turn
 		total_turns_elapsed = (current_day - 1) * TURNS_PER_DAY + current_turn - 1
 	
-	print("TimeManager: Set to Day %d, Turn %d (%s)" % [current_day, current_turn, get_time_of_day()])
+	_randomize_daily_temperature()
+	print("TimeManager: Set to Day %d, Turn %d (%s, %s)" % [
+		current_day, current_turn, get_time_of_day(), get_season()
+	])
 
 # =============================================================================
 # EVENT HOOKS
@@ -268,6 +453,12 @@ func register_day_start_hook(callback: Callable) -> void:
 		_day_start_hooks.append(callback)
 
 
+## Registers a callback to be called when season changes.
+func register_season_change_hook(callback: Callable) -> void:
+	if not callback in _season_change_hooks:
+		_season_change_hooks.append(callback)
+
+
 ## Unregisters a turn start hook.
 func unregister_turn_start_hook(callback: Callable) -> void:
 	_turn_start_hooks.erase(callback)
@@ -281,6 +472,11 @@ func unregister_turn_end_hook(callback: Callable) -> void:
 ## Unregisters a day start hook.
 func unregister_day_start_hook(callback: Callable) -> void:
 	_day_start_hooks.erase(callback)
+
+
+## Unregisters a season change hook.
+func unregister_season_change_hook(callback: Callable) -> void:
+	_season_change_hooks.erase(callback)
 
 
 func _invoke_hooks(hooks: Array[Callable]) -> void:
@@ -312,7 +508,8 @@ func to_dict() -> Dictionary:
 	return {
 		"current_turn": current_turn,
 		"current_day": current_day,
-		"total_turns_elapsed": total_turns_elapsed
+		"total_turns_elapsed": total_turns_elapsed,
+		"daily_temp_variance": _daily_temp_variance
 	}
 
 
@@ -323,6 +520,7 @@ func from_dict(data: Dictionary) -> void:
 		data.get("current_day", 1),
 		data.get("total_turns_elapsed", -1)
 	)
+	_daily_temp_variance = data.get("daily_temp_variance", 0.0)
 
 # =============================================================================
 # UTILITY

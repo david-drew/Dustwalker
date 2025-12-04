@@ -1,0 +1,31 @@
+# ~/.codex/config.toml
+
+model = "gpt-5-codex"    # or whatever you prefer
+
+# Make Codex read more project docs as instructions
+project_doc_max_bytes = 32768  # more than the 32 KiB default if you have big docs
+project_doc_fallback_filenames = [
+  "docs/Character_System.md",
+  "docs/Combat_Social.md",
+  "docs/Combat_Systems.md",
+  "docs/Concept_and_Game_Overview.md",
+  "docs/Encounter_Design.md",
+  "docs/Game_Loop.md",
+  "docs/Map_and_Exploration.md",
+  "docs/Mini-Game_Designs.md",
+  "docs/Procedural_Event_Generation.md",
+  "docs/Progression_System.md",
+  "docs/Quest_System.md",
+  "docs/Reputation_and_Factions.md",
+  "docs/Sample_Character_Builds.md",
+  "docs/Settings_and_Accessibility.md",
+  "docs/Survival_Systems.md",
+  "docs/Technical_Considerations_and_Appendices.md",
+  "docs/Time_Management.md",
+  "docs/UI_UX_Design.md",
+  "docs/World_Generation.md"
+]
+
+# (Optional) mark a project as trusted so Codex can freely read/write inside it.
+[projects."C:/Users/David/Documents/Godot4/Dustwalker"]
+trust_level = "trusted"
