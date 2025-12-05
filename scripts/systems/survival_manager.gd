@@ -190,7 +190,7 @@ func _connect_signals() -> void:
 			_time_manager.dawn_started.connect(_on_dawn_started)
 	else:
 		push_warning("SurvivalManager: TimeManager not found")
-	
+
 	# Try to find PlayerStats
 	await get_tree().process_frame  # Wait one frame for other nodes to initialize
 	_find_player_stats()
@@ -202,7 +202,7 @@ func _find_player_stats() -> void:
 		_player_stats = player.get_stats()
 	else:
 		_player_stats = get_tree().get_first_node_in_group("player_stats")
-	
+
 	if _player_stats:
 		_sync_max_hp()
 
@@ -223,7 +223,7 @@ func _on_turn_started(turn: int, day: int, time_name: String) -> void:
 	_process_stimulant()
 	_process_hallucination()
 	_process_sleep_deprivation_effects()
-	
+
 	# Check for thirst (every 3 turns = twice per day for 6 turns)
 	if turn == 1 or turn == 4:
 		_process_thirst_period()
@@ -233,7 +233,7 @@ func _on_day_started(day: int) -> void:
 	# Process daily effects
 	_process_hunger_daily()
 	_process_sleep_deprivation_daily_damage()
-	
+
 	# Reset daily flags
 	slept_this_night = false
 
@@ -282,39 +282,39 @@ func get_temperature_info() -> Dictionary:
 func _calculate_temperature() -> void:
 	if not _time_manager:
 		return
-	
+
 	# Get base temperature from TimeManager
 	var base_temp: float = 70.0
 	if _time_manager.has_method("get_base_temperature"):
 		base_temp = _time_manager.get_base_temperature()
-	
+
 	# Apply terrain modifier
 	var terrain_mods: Dictionary = config.get("temperature", {}).get("terrain_modifiers", {})
 	var terrain_mod: Dictionary = terrain_mods.get(current_terrain, {"day": 0, "night": 0})
-	
+
 	var is_night: bool = _time_manager.is_nighttime() if _time_manager.has_method("is_nighttime") else false
 	var terrain_adjustment: float = terrain_mod.get("night" if is_night else "day", 0)
-	
+
 	current_temperature = base_temp + terrain_adjustment
-	
+
 	# Calculate feels-like with clothing
 	var clothing_data: Dictionary = config.get("temperature", {}).get("clothing", {})
 	var clothing: Dictionary = clothing_data.get(current_clothing, {"cold_protection": 0, "heat_protection": 0})
-	
+
 	feels_like_temperature = current_temperature
 	if current_temperature < 60:  # Cold - apply cold protection
 		feels_like_temperature += clothing.get("cold_protection", 0)
 	elif current_temperature > 80:  # Hot - apply heat protection
 		feels_like_temperature -= clothing.get("heat_protection", 0)
-	
+
 	# Determine temperature zone
 	var old_zone := current_temperature_zone
 	current_temperature_zone = _get_temperature_zone(feels_like_temperature)
-	
+
 	if old_zone != current_temperature_zone:
 		temperature_changed.emit(feels_like_temperature, current_temperature_zone)
 		_emit_to_event_bus("temperature_changed", [feels_like_temperature, current_temperature_zone])
-		
+
 		# Warn about dangerous zones
 		if current_temperature_zone == "extreme_cold" or current_temperature_zone == "extreme_heat":
 			var zone_data := _get_zone_data(current_temperature_zone)
@@ -342,9 +342,9 @@ func _get_zone_data(zone_name: String) -> Dictionary:
 
 func _process_temperature() -> void:
 	_calculate_temperature()
-	
+
 	var zone_data := _get_zone_data(current_temperature_zone)
-	
+
 	# Track exposure
 	if current_temperature_zone == "extreme_cold":
 		cold_exposure_turns += 1
@@ -355,30 +355,30 @@ func _process_temperature() -> void:
 	else:
 		cold_exposure_turns = maxi(0, cold_exposure_turns - 1)
 		heat_exposure_turns = maxi(0, heat_exposure_turns - 1)
-	
+
 	# Apply damage if in extreme zone
 	var hp_damage: int = zone_data.get("hp_per_turn", 0)
 	if hp_damage > 0:
 		var requires_save: bool = zone_data.get("requires_save", false)
 		var save_dc: int = zone_data.get("save_difficulty", 12)
-		
+
 		if requires_save and _player_stats:
 			var result: Dictionary = _player_stats.roll_check("fortitude", save_dc)
 			if result.get("success", false):
 				hp_damage = 0
 				print("SurvivalManager: Fortitude save success - avoided temperature damage")
-		
+
 		if hp_damage > 0:
 			var damage_type := "cold" if current_temperature_zone == "extreme_cold" else "heat"
 			_take_damage(hp_damage, damage_type)
 			temperature_damage.emit(hp_damage, damage_type)
 			_emit_to_event_bus("temperature_damage", [hp_damage, damage_type])
-	
+
 	# Apply fatigue from temperature
 	var temp_fatigue: int = zone_data.get("fatigue_per_turn", 0)
 	if temp_fatigue > 0:
 		add_fatigue(temp_fatigue, "temperature")
-	
+
 	# Update water consumption multiplier
 	water_consumption_multiplier = zone_data.get("water_multiplier", 1.0)
 
@@ -390,14 +390,14 @@ func _process_temperature() -> void:
 func add_fatigue(amount: int, source: String) -> void:
 	var old_fatigue := fatigue
 	fatigue = clampi(fatigue + amount, 0, 100)
-	
+
 	if fatigue != old_fatigue:
 		var old_level := fatigue_level
 		_update_fatigue_level()
-		
+
 		fatigue_changed.emit(fatigue, fatigue_level)
 		_emit_to_event_bus("fatigue_changed", [fatigue, fatigue_level])
-		
+
 		print("SurvivalManager: Fatigue %+d from %s (now %d - %s)" % [amount, source, fatigue, fatigue_level])
 
 
@@ -428,28 +428,28 @@ func rest() -> int:
 func use_stimulant(stim_type: String) -> bool:
 	var stimulants: Dictionary = config.get("fatigue", {}).get("stimulants", {})
 	var stim_data: Dictionary = stimulants.get(stim_type, {})
-	
+
 	if stim_data.is_empty():
 		push_warning("SurvivalManager: Unknown stimulant '%s'" % stim_type)
 		return false
-	
+
 	# If already on stimulants, crash first
 	if stimulant_active:
 		_trigger_stimulant_crash()
-	
+
 	var recovery: int = stim_data.get("recovery", 30)
 	var duration: int = stim_data.get("duration", 6)
 	var crash: int = stim_data.get("crash_fatigue", 40)
-	
+
 	reduce_fatigue(recovery)
 	stimulant_active = true
 	stimulant_type = stim_type
 	stimulant_turns_remaining = duration
 	stimulant_crash_fatigue = crash
-	
+
 	stimulant_used.emit(stim_type, duration)
 	_emit_to_event_bus("stimulant_used", [stim_type, duration])
-	
+
 	print("SurvivalManager: Used %s - %d fatigue recovery, %d turns duration" % [stim_type, recovery, duration])
 	return true
 
@@ -459,7 +459,7 @@ func _process_fatigue_per_turn() -> void:
 	if not is_sleeping:
 		var base_gain: int = config.get("fatigue", {}).get("sources", {}).get("turn_base", 3)
 		add_fatigue(base_gain, "time")
-	
+
 	# Check for collapse
 	if fatigue_level == "collapsing":
 		var level_data := _get_fatigue_level_data(fatigue_level)
@@ -471,7 +471,7 @@ func _process_fatigue_per_turn() -> void:
 func _process_stimulant() -> void:
 	if not stimulant_active:
 		return
-	
+
 	stimulant_turns_remaining -= 1
 	if stimulant_turns_remaining <= 0:
 		_trigger_stimulant_crash()
@@ -480,13 +480,13 @@ func _process_stimulant() -> void:
 func _trigger_stimulant_crash() -> void:
 	if not stimulant_active:
 		return
-	
+
 	add_fatigue(stimulant_crash_fatigue, "stimulant_crash")
 	stimulant_crash.emit(stimulant_crash_fatigue)
 	_emit_to_event_bus("stimulant_crash", [stimulant_crash_fatigue])
-	
+
 	print("SurvivalManager: Stimulant crash - %d fatigue" % stimulant_crash_fatigue)
-	
+
 	stimulant_active = false
 	stimulant_type = ""
 	stimulant_turns_remaining = 0
@@ -497,7 +497,7 @@ func _trigger_collapse() -> void:
 	print("SurvivalManager: Collapsed from exhaustion!")
 	collapse_triggered.emit()
 	_emit_to_event_bus("collapse_triggered", [])
-	
+
 	# Force sleep/unconsciousness
 	# The game should handle this event appropriately
 
@@ -505,14 +505,14 @@ func _trigger_collapse() -> void:
 func _update_fatigue_level() -> void:
 	var old_level := fatigue_level
 	var levels: Array = config.get("fatigue", {}).get("levels", [])
-	
+
 	for level_data in levels:
 		var min_val: int = level_data.get("min", 0)
 		var max_val: int = level_data.get("max", 100)
 		if fatigue >= min_val and fatigue <= max_val:
 			fatigue_level = level_data.get("name", "rested")
 			break
-	
+
 	if old_level != fatigue_level:
 		_apply_fatigue_modifiers()
 		fatigue_level_changed.emit(old_level, fatigue_level)
@@ -530,14 +530,14 @@ func _get_fatigue_level_data(level_name: String) -> Dictionary:
 func _apply_fatigue_modifiers() -> void:
 	if not _player_stats:
 		return
-	
+
 	# Remove old fatigue modifiers
 	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_FATIGUE)
-	
+
 	# Apply new modifiers
 	var level_data := _get_fatigue_level_data(fatigue_level)
 	var modifiers: Array = level_data.get("modifiers", [])
-	
+
 	for i in range(modifiers.size()):
 		var mod: Dictionary = modifiers[i]
 		var source := "%s%s_%d" % [MODIFIER_PREFIX_FATIGUE, fatigue_level, i]
@@ -557,14 +557,14 @@ func start_sleep(turns: int, quality_factors: Dictionary = {}) -> void:
 	if is_sleeping:
 		push_warning("SurvivalManager: Already sleeping")
 		return
-	
+
 	is_sleeping = true
 	sleep_turns_remaining = turns
 	current_sleep_quality = _calculate_sleep_quality(quality_factors)
-	
+
 	sleep_started.emit(turns, current_sleep_quality)
 	_emit_to_event_bus("sleep_started", [turns, current_sleep_quality])
-	
+
 	print("SurvivalManager: Started sleeping for %d turns (quality: %.0f%%)" % [turns, current_sleep_quality])
 
 
@@ -572,18 +572,18 @@ func start_sleep(turns: int, quality_factors: Dictionary = {}) -> void:
 func interrupt_sleep(reason: String) -> void:
 	if not is_sleeping:
 		return
-	
+
 	is_sleeping = false
 	var turns_slept:int = (config.get("sleep", {}).get("optimal_turns", 2) - sleep_turns_remaining)
-	
+
 	# Partial benefits based on turns slept
 	var result := _process_sleep_completion(turns_slept, current_sleep_quality * 0.5)
 	result["interrupted"] = true
 	result["interruption_reason"] = reason
-	
+
 	sleep_interrupted.emit(reason)
 	_emit_to_event_bus("sleep_interrupted", [reason])
-	
+
 	print("SurvivalManager: Sleep interrupted - %s" % reason)
 
 
@@ -591,9 +591,9 @@ func interrupt_sleep(reason: String) -> void:
 func process_sleep_turn() -> void:
 	if not is_sleeping:
 		return
-	
+
 	sleep_turns_remaining -= 1
-	
+
 	if sleep_turns_remaining <= 0:
 		_complete_sleep()
 
@@ -601,15 +601,15 @@ func process_sleep_turn() -> void:
 func _complete_sleep() -> void:
 	is_sleeping = false
 	slept_this_night = true
-	
+
 	var turns_slept:int = config.get("sleep", {}).get("optimal_turns", 2)
 	var result := _process_sleep_completion(turns_slept, current_sleep_quality)
-	
+
 	sleep_completed.emit(result)
 	_emit_to_event_bus("sleep_completed", [result])
-	
+
 	print("SurvivalManager: Sleep completed - HP +%d, Fatigue -%d%%" % [
-		result.get("hp_recovered", 0), 
+		result.get("hp_recovered", 0),
 		result.get("fatigue_percent_recovered", 0)
 	])
 
@@ -617,28 +617,28 @@ func _complete_sleep() -> void:
 func _process_sleep_completion(turns: int, quality: float) -> Dictionary:
 	var optimal_turns: int = config.get("sleep", {}).get("optimal_turns", 2)
 	var effective_quality := quality * (float(turns) / float(optimal_turns))
-	
+
 	# Find recovery tier
 	var recovery_tiers: Dictionary = config.get("sleep", {}).get("recovery_by_quality", {})
 	var recovery_tier := "terrible"
 	var tier_data: Dictionary = {}
-	
+
 	for tier_name in ["excellent", "good", "adequate", "poor", "terrible"]:
 		var tier: Dictionary = recovery_tiers.get(tier_name, {})
 		if effective_quality >= tier.get("min_quality", 0):
 			recovery_tier = tier_name
 			tier_data = tier
 			break
-	
+
 	# Apply recovery
 	var hp_recovered: int = tier_data.get("hp", 0)
 	var fatigue_percent: int = tier_data.get("fatigue_percent", 0)
 	var clears_minor: bool = tier_data.get("clears_minor", false)
-	
+
 	# Heal HP
 	if hp_recovered > 0:
 		heal(hp_recovered)
-	
+
 	# Reduce fatigue
 	var fatigue_recovery: int = int(fatigue * fatigue_percent / 100.0)
 	if fatigue_percent >= 100:
@@ -646,7 +646,7 @@ func _process_sleep_completion(turns: int, quality: float) -> Dictionary:
 		_update_fatigue_level()
 	else:
 		reduce_fatigue(fatigue_recovery)
-	
+
 	# Reset sleep deprivation if good sleep
 	if effective_quality >= 100:
 		nights_without_sleep = 0
@@ -654,9 +654,9 @@ func _process_sleep_completion(turns: int, quality: float) -> Dictionary:
 	elif effective_quality >= 50:
 		nights_without_sleep = maxi(0, nights_without_sleep - 1)
 		_update_sleep_deprivation_stage()
-	
+
 	last_sleep_quality = effective_quality
-	
+
 	return {
 		"quality": effective_quality,
 		"tier": recovery_tier,
@@ -671,25 +671,25 @@ func _process_sleep_completion(turns: int, quality: float) -> Dictionary:
 func _calculate_sleep_quality(factors: Dictionary) -> float:
 	var base_quality := 100.0
 	var quality_mods: Dictionary = config.get("sleep", {}).get("quality_modifiers", {})
-	
+
 	for factor in factors:
 		if factors[factor] and quality_mods.has(factor):
 			base_quality += quality_mods[factor]
-	
+
 	return maxf(0.0, base_quality)
 
 
 func _update_sleep_deprivation_stage() -> void:
 	var old_stage := sleep_deprivation_stage
 	var stages: Array = config.get("sleep", {}).get("deprivation_stages", [])
-	
+
 	# Find appropriate stage (highest nights_missed that we meet or exceed)
 	sleep_deprivation_stage = "rested"
 	for stage_data in stages:
 		var nights_required: int = stage_data.get("nights_missed", 0)
 		if nights_without_sleep >= nights_required:
 			sleep_deprivation_stage = stage_data.get("name", "rested")
-	
+
 	if old_stage != sleep_deprivation_stage:
 		_apply_sleep_modifiers()
 		sleep_deprivation_changed.emit(sleep_deprivation_stage, nights_without_sleep)
@@ -708,14 +708,14 @@ func _get_sleep_stage_data(stage_name: String) -> Dictionary:
 func _apply_sleep_modifiers() -> void:
 	if not _player_stats:
 		return
-	
+
 	# Remove old sleep modifiers
 	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_SLEEP)
-	
+
 	# Apply new modifiers
 	var stage_data := _get_sleep_stage_data(sleep_deprivation_stage)
 	var modifiers: Array = stage_data.get("modifiers", [])
-	
+
 	for i in range(modifiers.size()):
 		var mod: Dictionary = modifiers[i]
 		var source := "%s%s_%d" % [MODIFIER_PREFIX_SLEEP, sleep_deprivation_stage, i]
@@ -730,7 +730,7 @@ func _apply_sleep_modifiers() -> void:
 func _process_sleep_deprivation_effects() -> void:
 	var stage_data := _get_sleep_stage_data(sleep_deprivation_stage)
 	var hallucination_risk: float = stage_data.get("hallucination_risk", 0.0)
-	
+
 	if hallucination_risk > 0 and not hallucinating:
 		if randf() < hallucination_risk:
 			_trigger_hallucination()
@@ -739,7 +739,7 @@ func _process_sleep_deprivation_effects() -> void:
 func _process_sleep_deprivation_daily_damage() -> void:
 	var stage_data := _get_sleep_stage_data(sleep_deprivation_stage)
 	var hp_loss: int = stage_data.get("hp_loss_per_day", 0)
-	
+
 	if hp_loss > 0:
 		_take_damage(hp_loss, "sleep_deprivation")
 
@@ -750,52 +750,52 @@ func _process_sleep_deprivation_daily_damage() -> void:
 func _trigger_hallucination() -> void:
 	if hallucinating:
 		return
-	
+
 	var hallucination_types: Array = config.get("hallucinations", {}).get("types", [])
 	if hallucination_types.is_empty():
 		return
-	
+
 	# Weighted random selection
 	var total_weight: int = 0
 	for h in hallucination_types:
 		total_weight += h.get("weight", 1)
-	
+
 	var roll: int = randi() % total_weight
 	var cumulative: int = 0
 	var selected: Dictionary = hallucination_types[0]
-	
+
 	for h in hallucination_types:
 		cumulative += h.get("weight", 1)
 		if roll < cumulative:
 			selected = h
 			break
-	
+
 	hallucinating = true
 	current_hallucination = selected.get("id", "visual_distortion")
-	
+
 	var duration_config: Dictionary = config.get("hallucinations", {}).get("duration_turns", {"min": 1, "max": 3})
 	hallucination_turns_remaining = randi_range(
 		duration_config.get("min", 1),
 		duration_config.get("max", 3)
 	)
-	
+
 	var data := {
 		"type": current_hallucination,
 		"description": selected.get("description", ""),
 		"dangerous": selected.get("dangerous", false),
 		"duration": hallucination_turns_remaining
 	}
-	
+
 	hallucination_started.emit(current_hallucination, data)
 	_emit_to_event_bus("hallucination_started", [current_hallucination, data])
-	
+
 	print("SurvivalManager: Hallucination started - %s (%d turns)" % [current_hallucination, hallucination_turns_remaining])
 
 
 func _process_hallucination() -> void:
 	if not hallucinating:
 		return
-	
+
 	hallucination_turns_remaining -= 1
 	if hallucination_turns_remaining <= 0:
 		_end_hallucination()
@@ -804,15 +804,15 @@ func _process_hallucination() -> void:
 func _end_hallucination() -> void:
 	if not hallucinating:
 		return
-	
+
 	var old_type := current_hallucination
 	hallucinating = false
 	current_hallucination = ""
 	hallucination_turns_remaining = 0
-	
+
 	hallucination_ended.emit(old_type)
 	_emit_to_event_bus("hallucination_ended", [old_type])
-	
+
 	print("SurvivalManager: Hallucination ended - %s" % old_type)
 
 
@@ -824,27 +824,37 @@ func end_hallucination() -> void:
 # HUNGER SYSTEM
 # =============================================================================
 
+## Whether the player can currently eat more food (i.e. is hungry).
+func can_eat() -> bool:
+	return days_without_food > 0
+
+
 ## Consume food.
 func eat(food_id: String, ration_value: float = 1.0) -> void:
 	days_without_food = maxi(0, days_without_food - int(ration_value))
 	_update_hunger_stage()
-	
+
 	consumed_food.emit(food_id, ration_value)
 	_emit_to_event_bus("consumed_food", [food_id, ration_value])
-	
+
 	print("SurvivalManager: Ate %s (%.1f rations)" % [food_id, ration_value])
+
+
+## Convenience wrapper for consuming a standard ration from inventory.
+func eat_ration() -> void:
+	eat("rations", 1.0)
 
 
 func _process_hunger_daily() -> void:
 	days_without_food += 1
 	_update_hunger_stage()
-	
+
 	# Check for starvation death
 	var death_days: int = config.get("hunger", {}).get("death_days", 7)
 	if days_without_food >= death_days:
 		_trigger_death("starvation")
 		return
-	
+
 	# Apply HP loss
 	var stage_data := _get_hunger_stage_data(hunger_stage)
 	var hp_loss: int = stage_data.get("hp_loss_per_day", 0)
@@ -856,15 +866,15 @@ func _update_hunger_stage() -> void:
 	var old_stage := hunger_stage
 	var old_hunger_value := hunger  # Get UI value before change
 	var stages: Array = config.get("hunger", {}).get("stages", [])
-	
+
 	hunger_stage = "well_fed"
 	for stage_data in stages:
 		var days_required: int = stage_data.get("days_missed", 0)
 		if days_without_food >= days_required:
 			hunger_stage = stage_data.get("name", "well_fed")
-	
+
 	var new_hunger_value := hunger  # Get UI value after change
-	
+
 	if old_stage != hunger_stage:
 		_apply_hunger_modifiers()
 		hunger_changed.emit(hunger_stage, days_without_food)
@@ -884,12 +894,12 @@ func _get_hunger_stage_data(stage_name: String) -> Dictionary:
 func _apply_hunger_modifiers() -> void:
 	if not _player_stats:
 		return
-	
+
 	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_HUNGER)
-	
+
 	var stage_data := _get_hunger_stage_data(hunger_stage)
 	var modifiers: Array = stage_data.get("modifiers", [])
-	
+
 	for i in range(modifiers.size()):
 		var mod: Dictionary = modifiers[i]
 		var source := "%s%s_%d" % [MODIFIER_PREFIX_HUNGER, hunger_stage, i]
@@ -904,15 +914,25 @@ func _apply_hunger_modifiers() -> void:
 # THIRST SYSTEM
 # =============================================================================
 
+## Whether the player can currently drink more water (i.e. is thirsty).
+func can_drink() -> bool:
+	return periods_without_water > 0
+
+
 ## Consume water.
 func drink(source: String, drinks: float = 1.0) -> void:
 	periods_without_water = maxi(0, periods_without_water - int(drinks))
 	_update_thirst_stage()
-	
+
 	consumed_water.emit(source, drinks)
 	_emit_to_event_bus("consumed_water", [source, drinks])
-	
+
 	print("SurvivalManager: Drank from %s (%.1f drinks)" % [source, drinks])
+
+
+## Convenience wrapper for drinking from the player's carried supply.
+func drink_water() -> void:
+	drink("inventory", 1.0)
 
 
 func _process_thirst_period() -> void:
@@ -920,13 +940,13 @@ func _process_thirst_period() -> void:
 	var consumption := int(ceil(water_consumption_multiplier))
 	periods_without_water += consumption
 	_update_thirst_stage()
-	
+
 	# Check for dehydration death
 	var death_periods: int = config.get("thirst", {}).get("death_periods", 5)
 	if periods_without_water >= death_periods:
 		_trigger_death("dehydration")
 		return
-	
+
 	# Apply HP loss
 	var stage_data := _get_thirst_stage_data(thirst_stage)
 	var hp_loss: int = stage_data.get("hp_loss_per_period", 0)
@@ -938,15 +958,15 @@ func _update_thirst_stage() -> void:
 	var old_stage := thirst_stage
 	var old_thirst_value := thirst  # Get UI value before change
 	var stages: Array = config.get("thirst", {}).get("stages", [])
-	
+
 	thirst_stage = "hydrated"
 	for stage_data in stages:
 		var periods_required: int = stage_data.get("periods_missed", 0)
 		if periods_without_water >= periods_required:
 			thirst_stage = stage_data.get("name", "hydrated")
-	
+
 	var new_thirst_value := thirst  # Get UI value after change
-	
+
 	if old_stage != thirst_stage:
 		_apply_thirst_modifiers()
 		thirst_changed.emit(thirst_stage, periods_without_water)
@@ -966,12 +986,12 @@ func _get_thirst_stage_data(stage_name: String) -> Dictionary:
 func _apply_thirst_modifiers() -> void:
 	if not _player_stats:
 		return
-	
+
 	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_THIRST)
-	
+
 	var stage_data := _get_thirst_stage_data(thirst_stage)
 	var modifiers: Array = stage_data.get("modifiers", [])
-	
+
 	for i in range(modifiers.size()):
 		var mod: Dictionary = modifiers[i]
 		var source := "%s%s_%d" % [MODIFIER_PREFIX_THIRST, thirst_stage, i]
@@ -990,14 +1010,14 @@ func _apply_thirst_modifiers() -> void:
 func _take_damage(amount: int, source: String) -> void:
 	var old_hp := current_hp
 	current_hp = maxi(0, current_hp - amount)
-	
+
 	survival_damage.emit(amount, source)
 	_emit_to_event_bus("survival_damage", [amount, source])
 	# Emit UI-compatible health signal (new_value, old_value, source)
 	_emit_to_event_bus("health_changed", [current_hp, old_hp, source])
-	
+
 	print("SurvivalManager: Took %d damage from %s (HP: %d/%d)" % [amount, source, current_hp, max_hp])
-	
+
 	if current_hp <= 0:
 		_trigger_death(source)
 
@@ -1007,7 +1027,7 @@ func heal(amount: int) -> void:
 	var old_hp := current_hp
 	current_hp = mini(max_hp, current_hp + amount)
 	var healed := current_hp - old_hp
-	
+
 	if healed > 0:
 		# Emit UI-compatible health signal
 		_emit_to_event_bus("health_changed", [current_hp, old_hp, "heal"])
@@ -1016,7 +1036,64 @@ func heal(amount: int) -> void:
 
 ## Set HP directly (for loading saves or external damage).
 func set_hp(hp: int) -> void:
+	var old_hp := current_hp
 	current_hp = clampi(hp, 0, max_hp)
+	if current_hp != old_hp:
+		_emit_to_event_bus("health_changed", [current_hp, old_hp, "set"])
+
+
+## Modify health by amount (positive = heal, negative = damage).
+## This is the primary method for external systems to change player health.
+## @param amount: Positive to heal, negative to damage.
+## @param source: Description of what caused the change (for logging/UI).
+func modify_health(amount: int, source: String = "unknown") -> void:
+	if amount > 0:
+		heal(amount)
+	elif amount < 0:
+		_take_damage(-amount, source)
+
+
+## Modify hunger level directly (for encounter effects).
+## @param amount: Positive reduces hunger (feeding), negative increases hunger.
+## This modifies days_without_food directly.
+func modify_hunger(amount: int) -> void:
+	var old_hunger := hunger  # UI value before
+	if amount > 0:
+		# Positive = reduce hunger (like eating)
+		days_without_food = maxi(0, days_without_food - amount)
+	else:
+		# Negative = increase hunger
+		days_without_food = maxi(0, days_without_food - amount)  # Subtracting negative = adding
+	_update_hunger_stage()
+	var new_hunger := hunger  # UI value after
+	if old_hunger != new_hunger:
+		_emit_to_event_bus("hunger_changed", [new_hunger, old_hunger])
+
+
+## Modify thirst level directly (for encounter effects).
+## @param amount: Positive reduces thirst (drinking), negative increases thirst.
+## This modifies periods_without_water directly.
+func modify_thirst(amount: int) -> void:
+	var old_thirst := thirst  # UI value before
+	if amount > 0:
+		# Positive = reduce thirst (like drinking)
+		periods_without_water = maxi(0, periods_without_water - amount)
+	else:
+		# Negative = increase thirst
+		periods_without_water = maxi(0, periods_without_water - amount)  # Subtracting negative = adding
+	_update_thirst_stage()
+	var new_thirst := thirst  # UI value after
+	if old_thirst != new_thirst:
+		_emit_to_event_bus("thirst_changed", [new_thirst, old_thirst])
+
+
+## Modify fatigue level directly (for encounter effects).
+## @param amount: Positive adds fatigue, negative reduces fatigue.
+func modify_fatigue(amount: int) -> void:
+	if amount > 0:
+		add_fatigue(amount, "encounter")
+	elif amount < 0:
+		reduce_fatigue(-amount)
 
 
 ## Get current HP info.
@@ -1073,7 +1150,7 @@ var max_health: int:
 ## Current health (alias for current_hp).
 var health: int:
 	get: return current_hp
-	set(value): 
+	set(value):
 		var old_hp := current_hp
 		current_hp = clampi(value, 0, max_hp)
 		if current_hp != old_hp:
@@ -1143,14 +1220,14 @@ func from_dict(data: Dictionary) -> void:
 	hallucination_turns_remaining = data.get("hallucination_turns_remaining", 0)
 	days_without_food = data.get("days_without_food", 0)
 	periods_without_water = data.get("periods_without_water", 0)
-	
+
 	# Update derived states
 	_update_fatigue_level()
 	_update_sleep_deprivation_stage()
 	_update_hunger_stage()
 	_update_thirst_stage()
 	_calculate_temperature()
-	
+
 	print("SurvivalManager: Loaded from save")
 
 # =============================================================================

@@ -232,31 +232,59 @@ func _create_combat_camera() -> void:
 
 
 func _create_combat_ui() -> void:
-	# Create UI canvas layer (above combat layer)
+	# Hide exploration UI during combat
+	_hide_exploration_ui()
+	
+	# Create UI canvas layer (above everything else)
 	var ui_layer := CanvasLayer.new()
 	ui_layer.name = "CombatUILayer"
-	ui_layer.layer = 10
+	ui_layer.layer = 100  # Very high to be above exploration UI
 	combat_layer.add_child(ui_layer)
 	
-	# Create HUD
+	# Create HUD - add to tree FIRST, then initialize
 	combat_hud = CombatHUD.new()
 	combat_hud.name = "CombatHUD"
-	combat_hud.initialize(self)
 	ui_layer.add_child(combat_hud)
+	combat_hud.initialize(self)  # Initialize AFTER adding to tree
 	
 	# Create victory screen
 	victory_screen = CombatVictoryScreen.new()
 	victory_screen.name = "VictoryScreen"
-	victory_screen.continue_pressed.connect(_on_victory_continue)
 	ui_layer.add_child(victory_screen)
+	victory_screen.continue_pressed.connect(_on_victory_continue)
 	
 	# Create defeat screen
 	defeat_screen = CombatDefeatScreen.new()
 	defeat_screen.name = "DefeatScreen"
+	ui_layer.add_child(defeat_screen)
 	defeat_screen.load_save_requested.connect(_on_defeat_load_save)
 	defeat_screen.restart_requested.connect(_on_defeat_restart)
 	defeat_screen.quit_requested.connect(_on_defeat_quit)
-	ui_layer.add_child(defeat_screen)
+
+
+func _hide_exploration_ui() -> void:
+	# Try to find and hide the main exploration UI
+	var ui_node = get_tree().root.get_node_or_null("Main/UI")
+	if ui_node:
+		ui_node.visible = false
+	
+	# Also try common UI parent names
+	for ui_name in ["UI", "UILayer", "ExplorationUI", "MainUI"]:
+		var node = get_tree().root.get_node_or_null("Main/" + ui_name)
+		if node:
+			node.visible = false
+
+
+func _show_exploration_ui() -> void:
+	# Restore exploration UI visibility
+	var ui_node = get_tree().root.get_node_or_null("Main/UI")
+	if ui_node:
+		ui_node.visible = true
+	
+	for ui_name in ["UI", "UILayer", "ExplorationUI", "MainUI"]:
+		var node = get_tree().root.get_node_or_null("Main/" + ui_name)
+		if node:
+			node.visible = true
 
 
 func _frame_camera() -> void:
@@ -755,7 +783,7 @@ func _end_combat(victory: bool) -> void:
 		
 		# Show victory screen
 		if victory_screen:
-			victory_screen.show_victory(combat_loot, enemies_defeated_count)
+			victory_screen.show_screen(combat_loot, enemies_defeated_count)
 	else:
 		_log("=== Defeat ===")
 		player_defeat.emit()
@@ -770,7 +798,7 @@ func _end_combat(victory: bool) -> void:
 				if enemy.is_alive:
 					killer_name = enemy.combatant_name
 					break
-			defeat_screen.show_defeat(killer_name, stats)
+			defeat_screen.show_screen(killer_name, stats)
 	
 	combat_ended.emit(victory, combat_loot)
 	_emit_to_event_bus("combat_ended", [victory, combat_loot])
@@ -900,6 +928,9 @@ func _on_enemy_hp_changed(_current_hp: int, _max_hp: int, _enemy: Combatant) -> 
 
 ## Clean up combat and return to exploration.
 func cleanup_combat() -> void:
+	# Restore exploration UI
+	_show_exploration_ui()
+	
 	if combat_layer:
 		combat_layer.queue_free()
 		combat_layer = null

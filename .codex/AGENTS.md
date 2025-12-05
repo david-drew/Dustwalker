@@ -4,35 +4,29 @@
 
 This repository is for the **Dustwalker** game.
 
-Key design docs (Markdown):
+Use these when making design-heavy changes:
 
-- `docs/Character_System.md`
-- `docs/Combat_Social.md`
-- `docs/Combat_Systems.md`
-- `docs/Concept_and_Game_Overview.md`
-- `docs/Encounter_Design.md`
-- `docs/Game_Loop.md`
-- `docs/Map_and_Exploration.md`
-- `docs/Mini-Game_Designs.md`
-- `docs/Procedural_Event_Generation.md`
-- `docs/Progression_System.md`
-- `docs/Quest_System.md`
-- `docs/Reputation_and_Factions.md`
-- `docs/Sample_Character_Builds.md`
-- `docs/Settings_and_Accessibility.md`
-- `docs/Survival_Systems.md`
-- `docs/Technical_Considerations_and_Appendices.md`
-- `docs/Time_Management.md`
-- `docs/UI_UX_Design.md`
-- `docs/World_Generation.md`
+- `Character_System.md` — attributes, advancement, build rules.
+- `Combat_Systems.md` and `Combat_Social.md` — combat loops, action economy, and non-lethal/social conflict.
+- `Quest_System.md` — quest structure, states, failure conditions.
+- `Reputation_and_Factions.md` — faction standing, reputation math and effects.
+- `World_Generation.md` and `Map_and_Exploration.md` — overworld generation, region types, hex-crawl rules.
+- `Procedural_Event_Generation.md` — event tables, weighting, triggers.
+- `Game_Loop.md` and `Time_Management.md` — core loop, turn/clock structure.
+- `Survival_Systems.md` — hunger/thirst, weather, exhaustion, etc.
+- `UI_UX_Design.md` and `Settings_and_Accessibility.md` — UI layout, flows, accessibility requirements.
+- `Mini-Game_Designs.md` — mini-games used by encounters and events.
+- `Progression_System.md` and `Sample_Character_Builds.md` — XP, unlocks, build examples.
+- `Encounter_Design.md` — encounter templates & balancing.
+- `Technical_Considerations_and_Appendices.md` — implementation notes, edge cases.
 
-### How to use these docs
+### How to use this folder
 
-Before making changes, especially to mission logic, vehicle behavior, or UI flows:
+- Before changing **mechanics**, read the relevant system doc(s).
+- Before changing **worldgen or map code**, read `World_Generation.md` and `Map_and_Exploration.md`.
+- Before changing **UI**, read `UI_UX_Design.md` and `Settings_and_Accessibility.md`.
 
-1. Skim the relevant doc(s).
-2. Follow any invariants, terminology, and state diagrams.
-3. If code diverges from the docs, propose doc updates instead of silently changing behavior.
+If code and docs disagree, prefer the docs and propose updates to code and/or docs.
 
 ### Coding preferences (project-specific)
 

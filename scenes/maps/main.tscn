@@ -30,28 +30,30 @@ environment = SubResource("Environment_1")
 [node name="HexGrid" type="Node2D" parent="." groups=["hex_grid"]]
 script = ExtResource("1_hexgrid")
 
-[node name="MovementController" type="Node" parent="." groups=["movement_controller"]]
+[node name="Systems" type="Node" parent="."]
+
+[node name="MovementController" type="Node" parent="Systems" groups=["movement_controller"]]
 script = ExtResource("7_movement")
 
-[node name="PlayerSpawner" type="Node" parent="." groups=["player_spawner"]]
+[node name="PlayerSpawner" type="Node" parent="Systems" groups=["player_spawner"]]
 script = ExtResource("6_spawner")
 
-[node name="FogOfWarManager" type="Node" parent="." groups=["fog_manager"]]
+[node name="FogOfWarManager" type="Node" parent="Systems" groups=["fog_manager"]]
 script = ExtResource("9_fogmanager")
 
-[node name="SurvivalManager" type="Node" parent="." groups=["survival_manager"]]
+[node name="SurvivalManager" type="Node" parent="Systems" groups=["survival_manager"]]
 script = ExtResource("10_survival")
 
-[node name="InventoryManager" type="Node" parent="." groups=["inventory_manager"]]
+[node name="InventoryManager" type="Node" parent="Systems" groups=["inventory_manager"]]
 script = ExtResource("11_inventory")
 
-[node name="EncounterManager" type="Node" parent="." groups=["encounter_manager"]]
+[node name="EncounterManager" type="Node" parent="Systems" groups=["encounter_manager"]]
 script = ExtResource("12_encounter")
 
-[node name="GameManager" type="Node" parent="." groups=["game_manager"]]
+[node name="GameManager" type="Node" parent="Systems" groups=["game_manager"]]
 script = ExtResource("8_gamemanager")
 
-[node name="CombatManager" type="Node" parent="." groups=["combat_manager"]]
+[node name="CombatManager" type="Node" parent="Systems" groups=["combat_manager"]]
 script = ExtResource("9_imbm3")
 
 [node name="MapCamera" type="Camera2D" parent="." groups=["map_camera"]]

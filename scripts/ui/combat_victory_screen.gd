@@ -1,6 +1,9 @@
 # combat_victory_screen.gd
 # Displays victory message and loot after winning tactical combat.
 # Shows gold gained, items collected, and a continue button.
+#
+# NOTE: This extends Control (not CanvasLayer) because it's added as a child
+# of combat_manager's ui_layer which is already a CanvasLayer at layer 100+.
 
 extends Control
 class_name CombatVictoryScreen
@@ -42,26 +45,28 @@ func _ready() -> void:
 
 
 func _create_ui() -> void:
-	# Full screen
-	#set_anchors_preset(Control.PRESET_FULL_RECT)
-	set_anchors_preset(Control.PRESET_CENTER)
-	mouse_filter = Control.MOUSE_FILTER_STOP
+	# Full screen - this Control blocks input from reaching combat below
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP  # Block clicks from going through
 	
-	# Semi-transparent overlay
+	# Semi-transparent overlay - MUST be IGNORE so clicks reach the buttons
 	_overlay = ColorRect.new()
 	_overlay.name = "Overlay"
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_overlay.color = Color(0.02, 0.05, 0.02, 0.85)
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE  # CRITICAL!
 	add_child(_overlay)
 	
-	# Center container
+	# Center container - also IGNORE
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
 	
-	# Main panel
+	# Main panel - STOP to contain clicks within panel
 	_panel = PanelContainer.new()
 	_panel.custom_minimum_size = Vector2(450, 350)
+	_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.08, 0.10, 0.08, 0.95)
@@ -75,74 +80,85 @@ func _create_ui() -> void:
 	_panel.add_theme_stylebox_override("panel", panel_style)
 	center.add_child(_panel)
 	
-	# Main layout
+	# Main layout - IGNORE
 	_vbox = VBoxContainer.new()
 	_vbox.add_theme_constant_override("separation", 20)
+	_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel.add_child(_vbox)
 	
-	# Title
+	# Title - IGNORE
 	_title_label = Label.new()
 	_title_label.text = "VICTORY"
 	_title_label.add_theme_font_size_override("font_size", 48)
 	_title_label.add_theme_color_override("font_color", Color(0.6, 0.8, 0.4))
 	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(_title_label)
 	
-	# Subtitle
+	# Subtitle - IGNORE
 	_subtitle_label = Label.new()
 	_subtitle_label.text = "All enemies defeated!"
 	_subtitle_label.add_theme_font_size_override("font_size", 20)
 	_subtitle_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.6))
 	_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_subtitle_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(_subtitle_label)
 	
 	# Separator
 	var sep := HSeparator.new()
 	_vbox.add_child(sep)
 	
-	# Loot header
+	# Loot header - IGNORE
 	var loot_header := Label.new()
 	loot_header.text = "Spoils of Battle"
 	loot_header.add_theme_font_size_override("font_size", 22)
 	loot_header.add_theme_color_override("font_color", Color(0.8, 0.7, 0.5))
 	loot_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	loot_header.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(loot_header)
 	
-	# Loot container
+	# Loot container - IGNORE
 	_loot_container = VBoxContainer.new()
 	_loot_container.add_theme_constant_override("separation", 8)
+	_loot_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(_loot_container)
 	
-	# Gold label
+	# Gold label - IGNORE
 	_gold_label = Label.new()
 	_gold_label.text = "Gold: 0"
 	_gold_label.add_theme_font_size_override("font_size", 24)
 	_gold_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.3))
 	_gold_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_gold_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_loot_container.add_child(_gold_label)
 	
-	# Items label
+	# Items label - IGNORE
 	_items_label = Label.new()
 	_items_label.text = ""
 	_items_label.add_theme_font_size_override("font_size", 18)
 	_items_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.6))
 	_items_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_items_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_items_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_loot_container.add_child(_items_label)
 	
-	# Spacer
+	# Spacer - IGNORE
 	var spacer := Control.new()
 	spacer.custom_minimum_size = Vector2(0, 20)
+	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(spacer)
 	
-	# Continue button
+	# Button center container - IGNORE
 	var btn_center := CenterContainer.new()
+	btn_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(btn_center)
 	
+	# Continue button - STOP to capture clicks
 	_continue_button = Button.new()
 	_continue_button.text = "Continue"
 	_continue_button.custom_minimum_size = Vector2(200, 50)
 	_continue_button.add_theme_font_size_override("font_size", 22)
+	_continue_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	var btn_style := StyleBoxFlat.new()
 	btn_style.bg_color = Color(0.3, 0.4, 0.25)
@@ -168,7 +184,7 @@ func _create_ui() -> void:
 ## Show the victory screen with loot data.
 ## @param loot: Dictionary with "gold" (int) and "items" (Array of {id, quantity}).
 ## @param enemies_defeated: Number of enemies defeated.
-func show_victory(loot: Dictionary, enemies_defeated: int = 0) -> void:
+func show_screen(loot: Dictionary, enemies_defeated: int = 0) -> void:
 	_loot_data = loot
 	
 	# Update subtitle
@@ -216,13 +232,13 @@ func show_victory(loot: Dictionary, enemies_defeated: int = 0) -> void:
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, 0.4)
 	
-	# Focus button
+	# Focus button after animation
 	await tween.finished
 	_continue_button.grab_focus()
 
 
 ## Hide the victory screen.
-func hide_victory() -> void:
+func hide_screen() -> void:
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, 0.2)
 	await tween.finished
@@ -233,7 +249,6 @@ func hide_victory() -> void:
 # =============================================================================
 
 func _get_item_display_name(item_id: String) -> String:
-	# Convert item ID to display name
 	match item_id:
 		"rations":
 			return "Rations"
@@ -248,7 +263,6 @@ func _get_item_display_name(item_id: String) -> String:
 		"rifle_rounds":
 			return "Rifle Rounds"
 		_:
-			# Capitalize and replace underscores
 			return item_id.capitalize().replace("_", " ")
 
 # =============================================================================
@@ -257,7 +271,7 @@ func _get_item_display_name(item_id: String) -> String:
 
 func _on_continue_pressed() -> void:
 	continue_pressed.emit()
-	hide_victory()
+	hide_screen()
 
 # =============================================================================
 # INPUT
@@ -267,11 +281,12 @@ func _input(event: InputEvent) -> void:
 	if not visible:
 		return
 	
-	# Block all input while visible
-	if event is InputEventKey or event is InputEventMouseButton:
-		get_viewport().set_input_as_handled()
-	
-	# Allow Enter/Space to continue
+	# Handle keyboard shortcuts - Enter/Space to continue
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
 			_on_continue_pressed()
+			get_viewport().set_input_as_handled()
+	
+	# NOTE: Do NOT block mouse events here - let them propagate to buttons
+	# The root Control with MOUSE_FILTER_STOP will prevent clicks from
+	# reaching the game world beneath

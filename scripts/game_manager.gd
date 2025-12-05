@@ -92,32 +92,32 @@ func _find_references() -> void:
 	# Find movement controller
 	movement_controller = get_tree().get_first_node_in_group("movement_controller") as MovementController
 	if movement_controller == null:
-		movement_controller = get_node_or_null("../MovementController") as MovementController
+		movement_controller = get_node_or_null("../../MovementController") as MovementController
 	
 	# Find player spawner
 	player_spawner = get_tree().get_first_node_in_group("player_spawner") as PlayerSpawner
 	if player_spawner == null:
-		player_spawner = get_node_or_null("../PlayerSpawner") as PlayerSpawner
+		player_spawner = get_node_or_null("../../PlayerSpawner") as PlayerSpawner
 	
 	# Find fog of war manager
 	fog_manager = get_tree().get_first_node_in_group("fog_manager") as FogOfWarManager
 	if fog_manager == null:
-		fog_manager = get_node_or_null("../FogOfWarManager") as FogOfWarManager
+		fog_manager = get_node_or_null("../../FogOfWarManager") as FogOfWarManager
 	
 	# Find survival manager
 	survival_manager = get_tree().get_first_node_in_group("survival_manager") as SurvivalManager
 	if survival_manager == null:
-		survival_manager = get_node_or_null("../SurvivalManager") as SurvivalManager
+		survival_manager = get_node_or_null("../../SurvivalManager") as SurvivalManager
 	
 	# Find inventory manager
 	inventory_manager = get_tree().get_first_node_in_group("inventory_manager") as InventoryManager
 	if inventory_manager == null:
-		inventory_manager = get_node_or_null("../InventoryManager") as InventoryManager
+		inventory_manager = get_node_or_null("../../InventoryManager") as InventoryManager
 	
 	# Find encounter manager
 	encounter_manager = get_tree().get_first_node_in_group("encounter_manager") as EncounterManager
 	if encounter_manager == null:
-		encounter_manager = get_node_or_null("../EncounterManager") as EncounterManager
+		encounter_manager = get_node_or_null("../../EncounterManager") as EncounterManager
 	
 	# Find camera
 	map_camera = get_tree().get_first_node_in_group("map_camera") as Camera2D
@@ -125,11 +125,11 @@ func _find_references() -> void:
 		map_camera = get_node_or_null("../MapCamera") as Camera2D
 	
 	# Find UI panels
-	turn_panel = get_node_or_null("../UI/TurnPanel") as TurnPanel
-	survival_panel = get_node_or_null("../UI/SurvivalPanel") as SurvivalPanel
-	inventory_panel = get_node_or_null("../UI/InventoryPanel") as InventoryPanel
-	encounter_window = get_node_or_null("../UI/EncounterWindow") as EncounterWindow
-	game_over_screen = get_node_or_null("../UI/GameOverScreen") as GameOverScreen
+	turn_panel = get_node_or_null("../../UI/TurnPanel") as TurnPanel
+	survival_panel = get_node_or_null("../../UI/SurvivalPanel") as SurvivalPanel
+	inventory_panel = get_node_or_null("../../UI/InventoryPanel") as InventoryPanel
+	encounter_window = get_node_or_null("../../UI/EncounterWindow") as EncounterWindow
+	game_over_screen = get_node_or_null("../../UI/GameOverScreen") as GameOverScreen
 
 
 func _connect_signals() -> void:
@@ -146,6 +146,11 @@ func _connect_signals() -> void:
 			event_bus.encounter_ui_opened.connect(_on_encounter_opened)
 		if event_bus.has_signal("encounter_ui_closed"):
 			event_bus.encounter_ui_closed.connect(_on_encounter_closed)
+		# Combat signals
+		if event_bus.has_signal("combat_started"):
+			event_bus.combat_started.connect(_on_combat_started)
+		if event_bus.has_signal("combat_ended"):
+			event_bus.combat_ended.connect(_on_combat_ended)
 	
 	# Connect game over screen
 	if game_over_screen:
@@ -176,8 +181,7 @@ func _initialize_game() -> void:
 		fog_manager.initialize(hex_grid, null)  # Player ref added after spawn
 	
 	# Initialize survival and inventory systems
-	if survival_manager:		
-		survival_manager.initialize()
+	#if survival_manager:		survival_manager.initialize()
 	
 	if inventory_manager and survival_manager:
 		inventory_manager.initialize(survival_manager)
@@ -225,6 +229,10 @@ func _initialize_game() -> void:
 
 func _on_hex_clicked(coords: Vector2i) -> void:
 	if not is_initialized or not player_ready:
+		return
+	
+	# Block during encounters or combat
+	if _encounter_active or _combat_active:
 		return
 	
 	if player and player.is_moving:
@@ -363,6 +371,19 @@ func _on_encounter_closed() -> void:
 	_encounter_active = false
 
 # =============================================================================
+# COMBAT HANDLING
+# =============================================================================
+
+var _combat_active: bool = false
+
+func _on_combat_started() -> void:
+	_combat_active = true
+
+
+func _on_combat_ended(_victory: bool, _loot: Dictionary) -> void:
+	_combat_active = false
+
+# =============================================================================
 # GAME OVER HANDLING
 # =============================================================================
 
@@ -403,8 +424,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not is_initialized:
 		return
 	
-	# Block input during encounters
-	if _encounter_active:
+	# Block input during encounters or combat
+	if _encounter_active or _combat_active:
 		return
 	
 	# Cancel movement preview on right-click or Escape
@@ -438,3 +459,13 @@ func is_game_ready() -> bool:
 ## Checks if an encounter is currently active.
 func is_encounter_active() -> bool:
 	return _encounter_active
+
+
+## Checks if tactical combat is currently active.
+func is_combat_active() -> bool:
+	return _combat_active
+
+
+## Checks if any blocking UI (encounter or combat) is active.
+func is_input_blocked() -> bool:
+	return _encounter_active or _combat_active

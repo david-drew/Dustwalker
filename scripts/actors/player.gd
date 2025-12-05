@@ -121,7 +121,7 @@ func _setup_player_stats() -> void:
 	
 	if not player_stats:
 		# Try to create PlayerStats dynamically
-		var PlayerStatsClass = load("res://scripts/player/player_stats.gd")
+		var PlayerStatsClass = load("res://scripts/actors/player_stats.gd")
 		if PlayerStatsClass:
 			player_stats = PlayerStatsClass.new()
 			player_stats.name = "PlayerStats"

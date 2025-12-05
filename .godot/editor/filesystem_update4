@@ -8,3 +8,6 @@ res://data/survival/survival_config.json
 res://scripts/ui/game_over_screen.gd
 res://scripts/ui/combat_defeat_screen.gd
 res://scripts/ui/combat_victory_screen.gd
+res://scripts/combat/combat_manager.gd
+res://scripts/autoloads/event_bus.gd
+res://scripts/combat/combat_ai.gd

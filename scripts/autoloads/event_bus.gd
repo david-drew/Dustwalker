@@ -41,6 +41,10 @@ signal camera_zoomed(new_zoom: float)
 ## @param map_size: Vector2i - The dimensions of the generated map.
 signal map_generated(map_size: Vector2i)
 
+## Emitted when map data is loaded from a file.
+## @param map_name: String - The name/identifier of the loaded map.
+signal map_loaded(map_name: String)
+
 # =============================================================================
 # TERRAIN GENERATION SIGNALS
 # =============================================================================
@@ -198,10 +202,10 @@ signal map_saved(file_path: String)
 ## @param reason: String - Reason for failure.
 signal map_save_failed(reason: String)
 
-## Emitted when a map is loaded successfully.
+## Emitted when a map is loaded successfully from a save file.
 ## @param file_path: String - Path to the loaded file.
 ## @param generation_seed: int - The seed of the loaded map.
-signal map_loaded(file_path: String, generation_seed: int)
+signal map_file_loaded(file_path: String, generation_seed: int)
 
 ## Emitted when a map load fails.
 ## @param reason: String - Reason for failure.
@@ -298,126 +302,19 @@ signal item_consumed(item_id: String, effect: String)
 signal cannot_consume_item(item_id: String, reason: String)
 
 # =============================================================================
-# COMBAT SIGNALS (Phase 1 Finale)
+# COMBAT SIGNALS
 # =============================================================================
 
-## Emitted when combat is initiated from an encounter.
-## @param encounter_id: String - The encounter that triggered combat.
-## @param terrain: String - Terrain type for tactical map.
-signal combat_initiated(encounter_id: String, terrain: String)
-
-## Emitted when combat scene/layer is ready.
+## Emitted when tactical combat starts.
 signal combat_started()
 
-## Emitted when combat ends.
-## @param victory: bool - True if player won.
-## @param loot: Dictionary - Loot gained (if victory).
+## Emitted when tactical combat ends.
+## @param victory: Whether the player won.
+## @param loot: Dictionary of loot gained.
 signal combat_ended(victory: bool, loot: Dictionary)
 
-## Emitted when player's combat turn starts.
-signal player_combat_turn_started()
-
-## Emitted when an enemy's combat turn starts.
-## @param enemy_name: String - Name of the enemy.
-signal enemy_combat_turn_started(enemy_name: String)
-
-## Emitted when a combatant moves.
-## @param combatant_name: String - Who moved.
-## @param from_hex: Vector2i - Starting position.
-## @param to_hex: Vector2i - Ending position.
-signal combatant_moved(combatant_name: String, from_hex: Vector2i, to_hex: Vector2i)
-
-## Emitted when a combatant attacks.
-## @param attacker: String - Attacker name.
-## @param target: String - Target name.
-## @param hit: bool - Whether attack hit.
-## @param damage: int - Damage dealt (0 if miss).
-signal combatant_attacked(attacker: String, target: String, hit: bool, damage: int)
-
-## Emitted when a combatant reloads their weapon.
-## @param combatant_name: String - Who reloaded.
-signal combatant_reloaded(combatant_name: String)
-
-## Emitted when a combatant takes damage.
-## @param combatant_name: String - Who was damaged.
-## @param damage: int - Amount of damage.
-## @param current_hp: int - HP after damage.
-## @param max_hp: int - Maximum HP.
-signal combatant_damaged(combatant_name: String, damage: int, current_hp: int, max_hp: int)
-
-## Emitted when a combatant dies.
-## @param combatant_name: String - Who died.
-## @param is_player: bool - True if player died.
-signal combatant_died(combatant_name: String, is_player: bool)
-
 ## Emitted when player wins combat.
-## @param loot: Dictionary - Loot gained.
 signal combat_victory(loot: Dictionary)
 
 ## Emitted when player loses combat.
 signal combat_defeat()
-
-## Emitted when a combat log message should be displayed.
-## @param message: String - The message to display.
-signal combat_log_message(message: String)
-
-## Emitted when player AP changes during combat.
-## @param current_ap: int - Current AP.
-## @param max_ap: int - Maximum AP.
-signal combat_ap_changed(current_ap: int, max_ap: int)
-
-## Emitted when player ammo changes during combat.
-## @param current_ammo: int - Current ammo.
-## @param max_ammo: int - Maximum ammo.
-signal combat_ammo_changed(current_ammo: int, max_ammo: int)
-
-## Emitted when player health changes during combat.
-## @param current_hp: int - Current HP.
-## @param max_hp: int - Maximum HP.
-signal combat_hp_changed(current_hp: int, max_hp: int)
-
-## Emitted when combat round changes.
-## @param round_number: int - The new round number.
-signal combat_round_started(round_number: int)
-
-## Emitted to request showing floating damage number.
-## @param position: Vector2 - World position for the number.
-## @param damage: int - Damage amount.
-## @param is_player_damage: bool - True if player took damage.
-signal show_floating_damage(position: Vector2, damage: int, is_player_damage: bool)
-
-## Emitted to request showing miss indicator.
-## @param position: Vector2 - World position for the indicator.
-signal show_miss_indicator(position: Vector2)
-
-# Time Signals
-signal time_period_changed(period: String)
-signal day_changed(day: int)
-signal season_changed(season: String)
-signal night_started(day: int)
-signal dawn_started(day: int)
-
-# Player Stat Signals
-signal player_stat_changed(stat: String, old_value: int, new_value: int)
-signal player_modifier_added(source: String, stat: String, value: int)
-signal player_modifier_removed(source: String)
-signal player_stat_check_rolled(stat: String, result: Dictionary)
-
-# Temperature Signals
-signal temperature_changed(temp: float, zone: String)
-signal temperature_warning(zone: String, message: String)
-signal temperature_damage(damage: int, type: String)
-
-# Fatigue Signals
-signal fatigue_changed(fatigue: int, level: String)
-signal fatigue_level_changed(old_level: String, new_level: String)
-signal stimulant_crash(fatigue_added: int)
-signal collapse_risk(chance: float)
-
-# Sleep Signals
-signal sleep_started(turns: int, quality: float)
-signal sleep_completed(result: Dictionary)
-signal sleep_interrupted(reason: String)
-signal sleep_deprivation_changed(stage: String, nights: int)
-signal hallucination_started(type: String)
-signal hallucination_ended()
