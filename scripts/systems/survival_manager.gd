@@ -416,8 +416,20 @@ func get_fatigue_info() -> Dictionary:
 	}
 
 
+## Check if player can rest (has fatigue to recover and not sleeping).
+func can_rest() -> bool:
+	if is_sleeping:
+		return false
+	if fatigue <= 0:
+		return false
+	return true
+
+
 ## Perform a rest action (1 turn, reduces fatigue).
+## @return int - Amount of fatigue recovered.
 func rest() -> int:
+	if not can_rest():
+		return 0
 	var recovery: int = config.get("fatigue", {}).get("recovery", {}).get("rest_action", 20)
 	reduce_fatigue(recovery)
 	print("SurvivalManager: Rested - recovered %d fatigue" % recovery)
@@ -846,6 +858,10 @@ func eat_ration() -> void:
 
 
 func _process_hunger_daily() -> void:
+	# Pause hunger while sleeping
+	if is_sleeping:
+		return
+	
 	days_without_food += 1
 	_update_hunger_stage()
 
@@ -936,6 +952,10 @@ func drink_water() -> void:
 
 
 func _process_thirst_period() -> void:
+	# Pause thirst while sleeping
+	if is_sleeping:
+		return
+	
 	# Apply water consumption multiplier (from temperature)
 	var consumption := int(ceil(water_consumption_multiplier))
 	periods_without_water += consumption

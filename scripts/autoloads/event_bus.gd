@@ -270,6 +270,12 @@ signal thirst_changed(new_value: int, old_value: int)
 ## Emitted when health changes.
 signal health_changed(new_value: int, old_value: int, source: String)
 
+## Emitted when fatigue changes.
+signal fatigue_changed(fatigue: int, level: String)
+
+## Emitted when fatigue level changes (e.g., rested -> tired).
+signal fatigue_level_changed(old_level: String, new_level: String)
+
 ## Emitted when survival warning should be shown.
 signal survival_warning(warning_type: String, level: int)
 
@@ -281,6 +287,21 @@ signal player_dehydrated(thirst_level: int)
 
 ## Emitted when player dies.
 signal player_died(cause: String)
+
+## Emitted when player dies from survival causes.
+signal survival_death(cause: String)
+
+## Emitted when player starts sleeping.
+signal sleep_started(turns: int, quality: float)
+
+## Emitted when sleep completes successfully.
+signal sleep_completed(result: Dictionary)
+
+## Emitted when sleep is interrupted.
+signal sleep_interrupted(reason: String)
+
+## Emitted to trigger a random encounter (e.g., during sleep).
+signal random_encounter_triggered()
 
 # =============================================================================
 # INVENTORY SIGNALS (Stage 5)

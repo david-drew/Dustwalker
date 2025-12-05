@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bpl2v87ojracb"]
+[gd_scene load_steps=20 format=3 uid="uid://bpl2v87ojracb"]
 
 [ext_resource type="Script" uid="uid://dqlp6hsjh1tbl" path="res://scripts/maps/hex_grid.gd" id="1_hexgrid"]
 [ext_resource type="Script" uid="uid://pibm8g1osx2d" path="res://scripts/maps/map_camera.gd" id="2_camera"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://co83y3jajypa8" path="res://scripts/ui/inventory_panel.gd" id="14_inventorypanel"]
 [ext_resource type="Script" uid="uid://dq7ft5b3nagxw" path="res://scripts/ui/encounter_window.gd" id="15_encounterwindow"]
 [ext_resource type="Script" uid="uid://cc2doigw161k7" path="res://scripts/ui/game_over_screen.gd" id="16_gameover"]
+[ext_resource type="Script" uid="uid://dliny77geftb2" path="res://scripts/ui/camp_panel.gd" id="17_b02sy"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 3
@@ -106,6 +107,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("16_gameover")
+
+[node name="CampPanel" type="Control" parent="UI"]
+custom_minimum_size = Vector2(500, 300)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("17_b02sy")
+metadata/_custom_type_script = "uid://dliny77geftb2"
 
 [node name="DebugDisplay" type="CanvasLayer" parent="."]
 layer = 11

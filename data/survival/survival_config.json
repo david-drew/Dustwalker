@@ -1,4 +1,9 @@
 {
+
+	"starting_inventory": {
+		"rations": 3,
+		"water": 3
+	},
 	"temperature": {
 		"zones": [
 			{
@@ -240,5 +245,6 @@
 		],
 		"death_periods": 5,
 		"periods_per_day": 2
-	}
+	},
+	
 }
