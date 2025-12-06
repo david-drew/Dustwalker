@@ -4,11 +4,12 @@
 #
 # The player is visualized as a simple meeple/pawn shape.
 # Movement is animated smoothly between hexes.
-# PlayerStats child node manages the 8 core stats and modifiers.
 #
 # STRUCTURE:
 # Player (this script, Node2D)
-# └── PlayerStats (player_stats.gd)
+# ├── PlayerStats (player_stats.gd)
+# ├── SkillManager (skill_manager.gd)
+# └── TalentManager (talent_manager.gd)
 
 extends Node2D
 class_name Player
@@ -78,7 +79,13 @@ var _hex_size: float = 64.0
 # =============================================================================
 
 ## Reference to PlayerStats child node.
-var player_stats: Node = null
+@onready var player_stats: Node = $PlayerStats
+
+## Reference to SkillManager child node.
+@onready var skill_manager: Node = $SkillManager
+
+## Reference to TalentManager child node.
+@onready var talent_manager: Node = $TalentManager
 
 # =============================================================================
 # STUB DATA (for future systems)
@@ -111,26 +118,42 @@ var _tween: Tween
 func _ready() -> void:
 	add_to_group("player")
 	_create_token()
-	_setup_player_stats()
+	_setup_child_systems()
 	z_index = 10  # Above terrain and locations
 
 
-func _setup_player_stats() -> void:
-	# Check if PlayerStats child already exists (added in editor)
-	player_stats = get_node_or_null("PlayerStats")
-	
+func _setup_child_systems() -> void:
+	# PlayerStats
 	if not player_stats:
-		# Try to create PlayerStats dynamically
-		var PlayerStatsClass = load("res://scripts/actors/player_stats.gd")
-		if PlayerStatsClass:
-			player_stats = PlayerStatsClass.new()
-			player_stats.name = "PlayerStats"
-			add_child(player_stats)
-			print("Player: Created PlayerStats child node")
-		else:
-			push_warning("Player: Could not load player_stats.gd - stats will not be available")
+		player_stats = _create_child_system("res://scripts/player/player_stats.gd", "PlayerStats")
+	if player_stats:
+		print("Player: PlayerStats ready")
+	
+	# SkillManager
+	if not skill_manager:
+		skill_manager = _create_child_system("res://scripts/player/skill_manager.gd", "SkillManager")
+	if skill_manager:
+		print("Player: SkillManager ready")
+	
+	# TalentManager
+	if not talent_manager:
+		talent_manager = _create_child_system("res://scripts/player/talent_manager.gd", "TalentManager")
+	if talent_manager:
+		print("Player: TalentManager ready")
+
+
+## Helper to dynamically create a child system if not present in scene.
+func _create_child_system(script_path: String, node_name: String) -> Node:
+	var script = load(script_path)
+	if script:
+		var instance = script.new()
+		instance.name = node_name
+		add_child(instance)
+		print("Player: Created %s dynamically" % node_name)
+		return instance
 	else:
-		print("Player: Found existing PlayerStats child node")
+		push_warning("Player: Could not load %s" % script_path)
+		return null
 
 
 ## Initializes the player with grid reference and starting position.
@@ -271,6 +294,72 @@ func add_stat_modifier(source: String, stat: String, type: String, value: int) -
 func remove_stat_modifier(source: String) -> void:
 	if player_stats and player_stats.has_method("remove_modifier"):
 		player_stats.remove_modifier(source)
+
+# =============================================================================
+# SKILLS ACCESS (convenience methods)
+# =============================================================================
+
+## Get the SkillManager node.
+func get_skill_manager() -> Node:
+	return skill_manager
+
+
+## Get a skill level by name.
+func get_skill_level(skill_name: String) -> int:
+	if skill_manager and skill_manager.has_method("get_skill_level"):
+		return skill_manager.get_skill_level(skill_name)
+	return 0
+
+
+## Grant XP to a skill.
+func grant_skill_xp(skill_name: String, action: String, difficulty: String = "moderate") -> int:
+	if skill_manager and skill_manager.has_method("grant_xp"):
+		return skill_manager.grant_xp(skill_name, action, difficulty)
+	return 0
+
+
+## Perform a skill check (d10 + linked_stat + skill_level vs difficulty).
+func roll_skill_check(skill_name: String, difficulty, grant_xp_on_success: bool = true) -> Dictionary:
+	if skill_manager and skill_manager.has_method("roll_skill_check"):
+		return skill_manager.roll_skill_check(skill_name, difficulty, grant_xp_on_success)
+	# Fallback to plain stat check if no skill manager
+	return roll_check("wit", difficulty)
+
+
+## Check if a skill has a pending level up (needs trainer).
+func has_pending_skill_level_up(skill_name: String) -> bool:
+	if skill_manager and skill_manager.has_method("has_pending_level_up"):
+		return skill_manager.has_pending_level_up(skill_name)
+	return false
+
+# =============================================================================
+# TALENTS ACCESS (convenience methods)
+# =============================================================================
+
+## Get the TalentManager node.
+func get_talent_manager() -> Node:
+	return talent_manager
+
+
+## Check if player has a specific talent.
+func has_talent(talent_id: String) -> bool:
+	if talent_manager and talent_manager.has_method("has_talent"):
+		return talent_manager.has_talent(talent_id)
+	return false
+
+
+## Get all acquired talents.
+func get_talents() -> Array[String]:
+	if talent_manager and talent_manager.has_method("get_all_talents"):
+		return talent_manager.get_all_talents()
+	return []
+
+
+## Activate a talent's special ability.
+func activate_talent(talent_id: String, context: Dictionary = {}) -> Dictionary:
+	if talent_manager and talent_manager.has_method("activate_talent"):
+		return talent_manager.activate_talent(talent_id, context)
+	return {"success": false, "reason": "no_talent_manager"}
 
 # =============================================================================
 # POSITION MANAGEMENT
@@ -471,6 +560,14 @@ func to_dict() -> Dictionary:
 	if player_stats and player_stats.has_method("to_dict"):
 		data["stats"] = player_stats.to_dict()
 	
+	# Include SkillManager if available
+	if skill_manager and skill_manager.has_method("to_dict"):
+		data["skills"] = skill_manager.to_dict()
+	
+	# Include TalentManager if available
+	if talent_manager and talent_manager.has_method("to_dict"):
+		data["talents"] = talent_manager.to_dict()
+	
 	return data
 
 
@@ -490,6 +587,14 @@ func from_dict(data: Dictionary, hex_grid: HexGrid) -> void:
 	# Load PlayerStats if available
 	if player_stats and player_stats.has_method("from_dict") and data.has("stats"):
 		player_stats.from_dict(data["stats"])
+	
+	# Load SkillManager if available
+	if skill_manager and skill_manager.has_method("from_dict") and data.has("skills"):
+		skill_manager.from_dict(data["skills"])
+	
+	# Load TalentManager if available
+	if talent_manager and talent_manager.has_method("from_dict") and data.has("talents"):
+		talent_manager.from_dict(data["talents"])
 	
 	_rebuild_token()
 	teleport_to_hex(loaded_hex)

@@ -3,6 +3,63 @@
 # Add this as an autoload named "EventBus" in Project Settings.
 extends Node
 
+
+# =============================================================================
+# GAME STATE SIGNALS
+# =============================================================================
+
+## Emitted when the game state changes.
+## @param old_state: String - Previous state name.
+## @param new_state: String - New state name.
+signal game_state_changed(old_state: String, new_state: String)
+
+## Emitted when a new game is started (after character creation).
+signal new_game_started()
+
+# =============================================================================
+# MENU NAVIGATION SIGNALS
+# =============================================================================
+
+## Emitted when New Game is requested from launch menu.
+signal new_game_requested()
+
+## Emitted when Load Game is requested.
+## @param save_path: String - Path to save file (empty for most recent).
+signal load_game_requested(save_path: String)
+
+## Emitted when Settings menu is requested.
+signal settings_requested()
+
+## Emitted when Quit is requested.
+signal quit_requested()
+
+## Emitted when returning to main menu is requested.
+signal back_to_menu_requested()
+
+# =============================================================================
+# CHARACTER CREATION SIGNALS
+# =============================================================================
+
+## Emitted when character creation is complete.
+## @param character_data: Dictionary - The created character's data.
+signal character_creation_complete(character_data: Dictionary)
+
+## Emitted when character creation is cancelled.
+signal character_creation_cancelled()
+
+# =============================================================================
+# SETTINGS SIGNALS
+# =============================================================================
+
+## Emitted when settings screen is closed.
+signal settings_closed()
+
+## Emitted when a setting is changed.
+## @param setting_name: String - Name of the setting.
+## @param value: Variant - New value.
+signal setting_changed(setting_name: String, value: Variant)
+
+
 # =============================================================================
 # HEX MAP SIGNALS
 # =============================================================================
@@ -98,6 +155,29 @@ signal day_started(day: int)
 ## @param old_name: String - Previous time name.
 ## @param new_name: String - New time name.
 signal time_of_day_changed(old_name: String, new_name: String)
+
+# =============================================================================
+# ENVIRONMENT SIGNALS
+# =============================================================================
+
+## Emitted when time period changes (dawn, day, dusk, night, late_night).
+## @param old_period: String - Previous period.
+## @param new_period: String - New period.
+signal time_period_changed(old_period: String, new_period: String)
+
+## Emitted when weather changes (visual overlay).
+## @param old_weather: String - Previous weather.
+## @param new_weather: String - New weather.
+signal weather_changed(old_weather: String, new_weather: String)
+
+## Emitted when a weather event starts.
+## @param weather_type: String - Type of weather.
+## @param duration: int - Expected duration in turns.
+signal weather_started(weather_type: String, duration: int)
+
+## Emitted when a weather event ends.
+## @param weather_type: String - Type of weather that ended.
+signal weather_ended(weather_type: String)
 
 # =============================================================================
 # PLAYER SIGNALS (Week 4A)
@@ -302,6 +382,31 @@ signal sleep_interrupted(reason: String)
 
 ## Emitted to trigger a random encounter (e.g., during sleep).
 signal random_encounter_triggered()
+
+# =============================================================================
+# DISEASE SIGNALS
+# =============================================================================
+
+## Emitted when player contracts a disease.
+signal disease_contracted(disease_id: String, source: String)
+
+## Emitted when disease stage changes.
+signal disease_stage_changed(disease_id: String, old_stage: String, new_stage: String)
+
+## Emitted when disease symptom manifests.
+signal disease_symptom(disease_id: String, symptom: String)
+
+## Emitted when disease is cured.
+signal disease_cured(disease_id: String, method: String)
+
+## Emitted when treatment is applied (success or failure).
+signal treatment_applied(disease_id: String, treatment: String, success: bool)
+
+## Emitted when immunity to a disease is gained.
+signal immunity_gained(disease_id: String, duration_days: int)
+
+## Emitted when immunity to a disease expires.
+signal immunity_expired(disease_id: String)
 
 # =============================================================================
 # INVENTORY SIGNALS (Stage 5)

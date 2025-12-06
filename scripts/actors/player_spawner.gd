@@ -32,8 +32,8 @@ var fallback_terrain: Array = ["plains", "grassland", "forest"]
 ## Reference to hex grid.
 var _hex_grid: HexGrid = null
 
-## The spawned player instance.
-var _player: Player = null
+## The player instance.
+@onready var _player:Player = preload("res://scenes/actors/player.tscn").instantiate()
 
 ## Reference to movement controller.
 var _movement_controller: MovementController = null
@@ -74,7 +74,8 @@ func spawn_player(hex_grid: HexGrid, movement_controller: MovementController) ->
 		return null
 	
 	# Create player instance
-	_player = Player.new()
+	#_player = Player.new()
+	
 	_player.name = "Player"
 	
 	# Load player name from config

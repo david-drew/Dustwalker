@@ -1,0 +1,641 @@
+{
+  "status": {
+    "fatigue_tired": {
+      "name": "Tired",
+      "description": "Mildly fatigued, slight penalties",
+      "type": "status",
+      "category": "fatigue",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["fatigue_rested", "fatigue_weary", "fatigue_exhausted", "fatigue_collapsing"]
+      },
+      "visuals": {
+        "icon": "😐",
+        "color": "#CCCC44",
+        "priority": 1
+      }
+    },
+    "fatigue_weary": {
+      "name": "Weary",
+      "description": "Significantly fatigued, moderate penalties",
+      "type": "status",
+      "category": "fatigue",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -2},
+        {"target": "stat", "name": "aim", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["fatigue_rested", "fatigue_tired", "fatigue_exhausted", "fatigue_collapsing"]
+      },
+      "visuals": {
+        "icon": "😩",
+        "color": "#CC9944",
+        "priority": 2
+      }
+    },
+    "fatigue_exhausted": {
+      "name": "Exhausted",
+      "description": "Severely fatigued, major penalties",
+      "type": "status",
+      "category": "fatigue",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -3},
+        {"target": "stat", "name": "aim", "type": "flat", "value": -2},
+        {"target": "stat", "name": "wit", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["fatigue_rested", "fatigue_tired", "fatigue_weary", "fatigue_collapsing"]
+      },
+      "visuals": {
+        "icon": "😫",
+        "color": "#CC6633",
+        "priority": 3
+      }
+    },
+    "fatigue_collapsing": {
+      "name": "Collapsing",
+      "description": "On the verge of collapse, severe penalties and HP damage",
+      "type": "status",
+      "category": "fatigue",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "all", "type": "flat", "value": -2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.25}
+      ],
+      "conditions": {
+        "blocks": ["fatigue_rested", "fatigue_tired", "fatigue_weary", "fatigue_exhausted"]
+      },
+      "visuals": {
+        "icon": "💀",
+        "color": "#CC3333",
+        "priority": 4
+      }
+    },
+    "hunger_hungry": {
+      "name": "Hungry",
+      "description": "Need food soon",
+      "type": "status",
+      "category": "hunger",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "grit", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["hunger_starving"]
+      },
+      "visuals": {
+        "icon": "🍽️",
+        "color": "#CC9944",
+        "priority": 2
+      }
+    },
+    "hunger_starving": {
+      "name": "Starving",
+      "description": "Desperate for food, taking damage",
+      "type": "status",
+      "category": "hunger",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "grit", "type": "flat", "value": -2},
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.5}
+      ],
+      "conditions": {
+        "blocks": ["hunger_hungry"]
+      },
+      "visuals": {
+        "icon": "💀",
+        "color": "#CC3333",
+        "priority": 4
+      }
+    },
+    "thirst_thirsty": {
+      "name": "Thirsty",
+      "description": "Need water soon",
+      "type": "status",
+      "category": "thirst",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["thirst_dehydrated"]
+      },
+      "visuals": {
+        "icon": "🏜️",
+        "color": "#CC9944",
+        "priority": 2
+      }
+    },
+    "thirst_dehydrated": {
+      "name": "Dehydrated",
+      "description": "Desperately need water, taking damage",
+      "type": "status",
+      "category": "thirst",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2},
+        {"target": "stat", "name": "wit", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 2, "chance": 0.5}
+      ],
+      "conditions": {
+        "blocks": ["thirst_thirsty"]
+      },
+      "visuals": {
+        "icon": "🔥",
+        "color": "#CC3333",
+        "priority": 4
+      }
+    },
+    "temp_warm": {
+      "name": "Warm",
+      "description": "Uncomfortably warm",
+      "type": "status",
+      "category": "temperature",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": 0.25}
+      ],
+      "conditions": {
+        "blocks": ["temp_hot", "temp_extreme_heat", "temp_cool", "temp_cold", "temp_extreme_cold"]
+      },
+      "visuals": {
+        "icon": "🌡️",
+        "color": "#CC9944",
+        "priority": 1
+      }
+    },
+    "temp_hot": {
+      "name": "Hot",
+      "description": "Dangerously hot",
+      "type": "status",
+      "category": "temperature",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": 0.5},
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["temp_warm", "temp_extreme_heat", "temp_cool", "temp_cold", "temp_extreme_cold"]
+      },
+      "visuals": {
+        "icon": "🥵",
+        "color": "#CC6633",
+        "priority": 2
+      }
+    },
+    "temp_extreme_heat": {
+      "name": "Extreme Heat",
+      "description": "Life-threatening heat",
+      "type": "status",
+      "category": "temperature",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": 1.0},
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.5}
+      ],
+      "conditions": {
+        "blocks": ["temp_warm", "temp_hot", "temp_cool", "temp_cold", "temp_extreme_cold"]
+      },
+      "visuals": {
+        "icon": "☀️",
+        "color": "#CC3333",
+        "priority": 4
+      }
+    },
+    "temp_cool": {
+      "name": "Cool",
+      "description": "Uncomfortably cool",
+      "type": "status",
+      "category": "temperature",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.1}
+      ],
+      "conditions": {
+        "blocks": ["temp_warm", "temp_hot", "temp_extreme_heat", "temp_cold", "temp_extreme_cold"]
+      },
+      "visuals": {
+        "icon": "❄️",
+        "color": "#6699CC",
+        "priority": 1
+      }
+    },
+    "temp_cold": {
+      "name": "Cold",
+      "description": "Dangerously cold",
+      "type": "status",
+      "category": "temperature",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.25},
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["temp_warm", "temp_hot", "temp_extreme_heat", "temp_cool", "temp_extreme_cold"]
+      },
+      "visuals": {
+        "icon": "🥶",
+        "color": "#4466CC",
+        "priority": 2
+      }
+    },
+    "temp_extreme_cold": {
+      "name": "Extreme Cold",
+      "description": "Life-threatening cold",
+      "type": "status",
+      "category": "temperature",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.5},
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.5}
+      ],
+      "conditions": {
+        "blocks": ["temp_warm", "temp_hot", "temp_extreme_heat", "temp_cool", "temp_cold"]
+      },
+      "visuals": {
+        "icon": "🧊",
+        "color": "#3333CC",
+        "priority": 4
+      }
+    },
+    "wounded": {
+      "name": "Wounded",
+      "description": "Injured and bleeding",
+      "type": "status",
+      "category": "health",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "stack", "max_stacks": 3},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.25}
+      ],
+      "visuals": {
+        "icon": "🩸",
+        "color": "#CC3333",
+        "priority": 3
+      }
+    },
+    "poisoned": {
+      "name": "Poisoned",
+      "description": "Suffering from poison",
+      "type": "status",
+      "category": "health",
+      "duration": {"type": "turns", "value": 6},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 2, "chance": 0.75}
+      ],
+      "visuals": {
+        "icon": "☠️",
+        "color": "#44CC44",
+        "priority": 3
+      }
+    },
+    "well_rested": {
+      "name": "Well Rested",
+      "description": "Fully rested and recovered",
+      "type": "status",
+      "category": "buff",
+      "duration": {"type": "turns", "value": 12},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": 1}
+      ],
+      "visuals": {
+        "icon": "💤",
+        "color": "#44CC44",
+        "priority": 0
+      }
+    }
+  },
+  "environmental": {
+    "weather_rain": {
+      "name": "Rain Exposure",
+      "description": "Exposed to rainfall",
+      "type": "environmental",
+      "category": "weather",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.25}
+      ],
+      "visuals": {
+        "icon": "🌧️",
+        "color": "#4466CC",
+        "priority": 2
+      }
+    },
+    "weather_dust_storm": {
+      "name": "Dust Storm",
+      "description": "Caught in a blinding dust storm",
+      "type": "environmental",
+      "category": "weather",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.5},
+        {"target": "stat", "name": "aim", "type": "flat", "value": -2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.25}
+      ],
+      "visuals": {
+        "icon": "🌪️",
+        "color": "#CC9944",
+        "priority": 3
+      }
+    },
+    "weather_fog": {
+      "name": "Fog",
+      "description": "Surrounded by thick fog",
+      "type": "environmental",
+      "category": "weather",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "stat", "name": "aim", "type": "flat", "value": -1},
+        {"target": "derived", "name": "vision_range", "type": "percentage", "value": -50}
+      ],
+      "visuals": {
+        "icon": "🌫️",
+        "color": "#999999",
+        "priority": 2
+      }
+    },
+    "weather_heat_wave": {
+      "name": "Heat Wave",
+      "description": "Suffering from extreme heat",
+      "type": "environmental",
+      "category": "weather",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": 0.5}
+      ],
+      "visuals": {
+        "icon": "🔥",
+        "color": "#CC4422",
+        "priority": 3
+      }
+    },
+    "weather_cold_snap": {
+      "name": "Cold Snap",
+      "description": "Suffering from extreme cold",
+      "type": "environmental",
+      "category": "weather",
+      "duration": {"type": "permanent"},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.25}
+      ],
+      "visuals": {
+        "icon": "❄️",
+        "color": "#4466CC",
+        "priority": 3
+      }
+    }
+  },
+  "buffs": {
+    "stimulant": {
+      "name": "Stimulant",
+      "description": "Temporarily more alert and focused",
+      "type": "buff",
+      "category": "consumable",
+      "duration": {"type": "turns", "value": 6},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": 2},
+        {"target": "stat", "name": "wit", "type": "flat", "value": 1}
+      ],
+      "conditions": {
+        "on_expire": "stimulant_crash"
+      },
+      "visuals": {
+        "icon": "💊",
+        "color": "#44CCCC",
+        "priority": 1
+      }
+    },
+    "stimulant_crash": {
+      "name": "Stimulant Crash",
+      "description": "Coming down from stimulants",
+      "type": "debuff",
+      "category": "consumable",
+      "duration": {"type": "turns", "value": 4},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -2},
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.5}
+      ],
+      "visuals": {
+        "icon": "😵",
+        "color": "#996699",
+        "priority": 2
+      }
+    },
+    "alcohol_buzz": {
+      "name": "Buzzed",
+      "description": "Feeling the effects of alcohol",
+      "type": "buff",
+      "category": "consumable",
+      "duration": {"type": "turns", "value": 8},
+      "stacking": {"mode": "stack", "max_stacks": 3},
+      "modifiers": [
+        {"target": "stat", "name": "charm", "type": "flat", "value": 1},
+        {"target": "stat", "name": "aim", "type": "flat", "value": -1}
+      ],
+      "visuals": {
+        "icon": "🍺",
+        "color": "#CCAA44",
+        "priority": 1
+      }
+    },
+    "painkiller": {
+      "name": "Painkiller",
+      "description": "Pain is dulled, reduced penalties from wounds",
+      "type": "buff",
+      "category": "consumable",
+      "duration": {"type": "turns", "value": 12},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "grit", "type": "flat", "value": 1}
+      ],
+      "triggers": [
+        {"event": "take_damage", "action": "reduce_damage", "value": 1, "chance": 0.5}
+      ],
+      "visuals": {
+        "icon": "💉",
+        "color": "#CC6699",
+        "priority": 1
+      }
+    },
+    "herbal_remedy": {
+      "name": "Herbal Remedy",
+      "description": "Natural healing boost",
+      "type": "buff",
+      "category": "consumable",
+      "duration": {"type": "turns", "value": 6},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": 2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "heal", "value": 1, "chance": 0.5}
+      ],
+      "visuals": {
+        "icon": "🌿",
+        "color": "#44AA44",
+        "priority": 1
+      }
+    }
+  },
+  "diseases": {
+    "swamp_fever_mild": {
+      "name": "Swamp Fever (Mild)",
+      "description": "Early stage swamp fever",
+      "type": "disease",
+      "category": "disease",
+      "duration": {"type": "turns", "value": 24},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["swamp_fever_moderate", "swamp_fever_severe"],
+        "progresses_to": "swamp_fever_moderate",
+        "progress_chance": 0.15
+      },
+      "visuals": {
+        "icon": "🤒",
+        "color": "#AAAA44",
+        "priority": 2
+      }
+    },
+    "swamp_fever_moderate": {
+      "name": "Swamp Fever (Moderate)",
+      "description": "Worsening swamp fever",
+      "type": "disease",
+      "category": "disease",
+      "duration": {"type": "turns", "value": 24},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2},
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.25}
+      ],
+      "conditions": {
+        "blocks": ["swamp_fever_mild", "swamp_fever_severe"],
+        "progresses_to": "swamp_fever_severe",
+        "progress_chance": 0.1
+      },
+      "visuals": {
+        "icon": "🤢",
+        "color": "#CC9944",
+        "priority": 3
+      }
+    },
+    "swamp_fever_severe": {
+      "name": "Swamp Fever (Severe)",
+      "description": "Life-threatening swamp fever",
+      "type": "disease",
+      "category": "disease",
+      "duration": {"type": "turns", "value": 24},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -3},
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -2},
+        {"target": "stat", "name": "wit", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 2, "chance": 0.5}
+      ],
+      "conditions": {
+        "blocks": ["swamp_fever_mild", "swamp_fever_moderate"]
+      },
+      "visuals": {
+        "icon": "🤮",
+        "color": "#CC3333",
+        "priority": 4
+      }
+    },
+    "cholera_mild": {
+      "name": "Cholera (Mild)",
+      "description": "Early stage cholera",
+      "type": "disease",
+      "category": "disease",
+      "duration": {"type": "turns", "value": 18},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": 0.5}
+      ],
+      "conditions": {
+        "progresses_to": "cholera_severe",
+        "progress_chance": 0.2
+      },
+      "visuals": {
+        "icon": "🤒",
+        "color": "#4488AA",
+        "priority": 2
+      }
+    },
+    "cholera_severe": {
+      "name": "Cholera (Severe)",
+      "description": "Severe dehydrating illness",
+      "type": "disease",
+      "category": "disease",
+      "duration": {"type": "turns", "value": 18},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": 1.5},
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 2, "chance": 0.5}
+      ],
+      "visuals": {
+        "icon": "🤮",
+        "color": "#226688",
+        "priority": 4
+      }
+    }
+  }
+}

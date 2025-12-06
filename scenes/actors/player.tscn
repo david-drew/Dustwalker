@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://b500l4bpy1axf"]
+
+[ext_resource type="Script" uid="uid://cx5y4dcbqm6dw" path="res://scripts/actors/player.gd" id="1_7wueq"]
+[ext_resource type="Script" uid="uid://cu2v3r572aws4" path="res://scripts/actors/player_stats.gd" id="2_oomub"]
+[ext_resource type="Script" uid="uid://dkoca23y8xy4f" path="res://scripts/actors/skill_manager.gd" id="3_8y416"]
+[ext_resource type="Script" uid="uid://bklwlfkl6ll47" path="res://scripts/actors/talent_manager.gd" id="4_7860b"]
+
+[node name="Player" type="Node2D"]
+script = ExtResource("1_7wueq")
+metadata/_custom_type_script = "uid://cx5y4dcbqm6dw"
+
+[node name="PlayerStats" type="Node" parent="."]
+script = ExtResource("2_oomub")
+metadata/_custom_type_script = "uid://cu2v3r572aws4"
+
+[node name="SkillManager" type="Node" parent="."]
+script = ExtResource("3_8y416")
+metadata/_custom_type_script = "uid://dkoca23y8xy4f"
+
+[node name="TalentManager" type="Node" parent="."]
+script = ExtResource("4_7860b")
+metadata/_custom_type_script = "uid://bklwlfkl6ll47"

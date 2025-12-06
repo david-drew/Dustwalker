@@ -241,6 +241,14 @@ func calculate_path_cost(path: Array[Vector2i]) -> int:
 			return -1  # Path goes through impassable terrain
 		total_cost += cost
 	
+	# Apply weather travel modifier (bad weather slows movement)
+	var weather_manager = get_tree().get_first_node_in_group("weather_manager")
+	if weather_manager and weather_manager.has_method("get_travel_modifier"):
+		var modifier: float = weather_manager.get_travel_modifier()
+		if modifier != 1.0:
+			# Inverse modifier: 0.6 travel modifier = 1/0.6 = 1.67x cost
+			total_cost = int(ceil(float(total_cost) / modifier))
+	
 	return total_cost
 
 

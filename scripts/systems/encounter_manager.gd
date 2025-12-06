@@ -261,6 +261,11 @@ func get_encounter_chance(terrain: String, location) -> float:
 		var loc_type: String = location.get("type", "")
 		base += location_modifiers.get(loc_type, 0.0)
 	
+	# Weather modifier (multiply by weather encounter rate)
+	var weather_manager = get_tree().get_first_node_in_group("weather_manager")
+	if weather_manager and weather_manager.has_method("get_encounter_modifier"):
+		base *= weather_manager.get_encounter_modifier()
+	
 	# Clamp to valid range
 	return clampf(base, 0.0, 1.0)
 

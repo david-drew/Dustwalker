@@ -1,0 +1,242 @@
+{
+	"diseases": {
+		"swamp_fever": {
+			"id": "swamp_fever",
+			"name": "Swamp Fever",
+			"description": "A debilitating illness contracted from swamp water or insect bites.",
+			"contraction_sources": ["swamp_water", "insect_bite", "swamp_terrain"],
+			"base_contraction_chance": 0.15,
+			"incubation_turns": 4,
+			"stages": [
+				{
+					"name": "mild",
+					"duration_turns": 6,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -10 }
+					],
+					"hp_loss_per_turn": 0,
+					"symptoms": ["slight_fever", "fatigue"],
+					"description": "You feel feverish and tired."
+				},
+				{
+					"name": "moderate",
+					"duration_turns": 8,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -20 },
+						{ "stat": "reflex", "type": "percentage", "value": -15 },
+						{ "stat": "aim", "type": "percentage", "value": -10 }
+					],
+					"hp_loss_per_turn": 0,
+					"symptoms": ["fever", "chills", "weakness"],
+					"description": "Fever and chills wrack your body."
+				},
+				{
+					"name": "severe",
+					"duration_turns": 12,
+					"modifiers": [
+						{ "stat": "all", "type": "percentage", "value": -30 }
+					],
+					"hp_loss_per_turn": 1,
+					"symptoms": ["high_fever", "delirium", "weakness"],
+					"description": "You're burning up and can barely stand."
+				}
+			],
+			"natural_recovery_chance": 0.05,
+			"rest_recovery_bonus": 0.10,
+			"treatments": {
+				"medicine": { "cure_chance": 0.60, "stage_reduction": 1 },
+				"doctor": { "cure_chance": 0.90, "stage_reduction": 2 },
+				"herbal_remedy": { "cure_chance": 0.30, "stage_reduction": 0 }
+			},
+			"immunity_duration_days": 7,
+			"contagious": false
+		},
+		"cholera": {
+			"id": "cholera",
+			"name": "Cholera",
+			"description": "A dangerous waterborne illness from contaminated water.",
+			"contraction_sources": ["bad_water", "contaminated_well"],
+			"base_contraction_chance": 0.25,
+			"incubation_turns": 2,
+			"stages": [
+				{
+					"name": "mild",
+					"duration_turns": 4,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -15 }
+					],
+					"hp_loss_per_turn": 0,
+					"thirst_multiplier": 1.5,
+					"symptoms": ["stomach_cramps", "nausea"],
+					"description": "Your stomach churns painfully."
+				},
+				{
+					"name": "moderate",
+					"duration_turns": 6,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -30 },
+						{ "stat": "reflex", "type": "percentage", "value": -20 }
+					],
+					"hp_loss_per_turn": 1,
+					"thirst_multiplier": 2.0,
+					"symptoms": ["severe_cramps", "vomiting", "dehydration"],
+					"description": "Violent illness drains your strength."
+				},
+				{
+					"name": "severe",
+					"duration_turns": 8,
+					"modifiers": [
+						{ "stat": "all", "type": "percentage", "value": -40 }
+					],
+					"hp_loss_per_turn": 2,
+					"thirst_multiplier": 3.0,
+					"symptoms": ["extreme_dehydration", "collapse_risk"],
+					"description": "You're dangerously dehydrated and weak."
+				}
+			],
+			"natural_recovery_chance": 0.03,
+			"rest_recovery_bonus": 0.08,
+			"treatments": {
+				"medicine": { "cure_chance": 0.50, "stage_reduction": 1 },
+				"doctor": { "cure_chance": 0.85, "stage_reduction": 2 },
+				"clean_water_rest": { "cure_chance": 0.20, "stage_reduction": 0 }
+			},
+			"immunity_duration_days": 14,
+			"contagious": true,
+			"contagion_chance": 0.10
+		},
+		"wound_infection": {
+			"id": "wound_infection",
+			"name": "Wound Infection",
+			"description": "An infected wound that spreads if left untreated.",
+			"contraction_sources": ["combat_wound", "animal_bite", "dirty_wound"],
+			"base_contraction_chance": 0.20,
+			"incubation_turns": 6,
+			"stages": [
+				{
+					"name": "mild",
+					"duration_turns": 8,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -5 }
+					],
+					"hp_loss_per_turn": 0,
+					"symptoms": ["redness", "swelling"],
+					"description": "The wound looks red and angry."
+				},
+				{
+					"name": "moderate",
+					"duration_turns": 10,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -15 },
+						{ "stat": "reflex", "type": "percentage", "value": -10 }
+					],
+					"hp_loss_per_turn": 1,
+					"symptoms": ["pus", "fever", "pain"],
+					"description": "The infection is spreading."
+				},
+				{
+					"name": "severe",
+					"duration_turns": 12,
+					"modifiers": [
+						{ "stat": "all", "type": "percentage", "value": -25 }
+					],
+					"hp_loss_per_turn": 2,
+					"symptoms": ["blood_poisoning", "high_fever"],
+					"description": "Blood poisoning sets in."
+				}
+			],
+			"natural_recovery_chance": 0.02,
+			"rest_recovery_bonus": 0.05,
+			"treatments": {
+				"bandage": { "cure_chance": 0.20, "stage_reduction": 0 },
+				"medicine": { "cure_chance": 0.55, "stage_reduction": 1 },
+				"doctor": { "cure_chance": 0.95, "stage_reduction": 2 },
+				"alcohol_clean": { "cure_chance": 0.35, "stage_reduction": 0 }
+			},
+			"immunity_duration_days": 0,
+			"contagious": false
+		},
+		"dust_lung": {
+			"id": "dust_lung",
+			"name": "Dust Lung",
+			"description": "Respiratory illness from breathing desert dust and sand.",
+			"contraction_sources": ["dust_storm", "desert_terrain", "mine_dust"],
+			"base_contraction_chance": 0.10,
+			"incubation_turns": 8,
+			"stages": [
+				{
+					"name": "mild",
+					"duration_turns": 12,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -10 }
+					],
+					"hp_loss_per_turn": 0,
+					"fatigue_multiplier": 1.25,
+					"symptoms": ["coughing", "shortness_of_breath"],
+					"description": "A persistent cough troubles you."
+				},
+				{
+					"name": "moderate",
+					"duration_turns": 16,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -20 },
+						{ "stat": "reflex", "type": "percentage", "value": -15 }
+					],
+					"hp_loss_per_turn": 0,
+					"fatigue_multiplier": 1.5,
+					"symptoms": ["severe_coughing", "chest_pain", "fatigue"],
+					"description": "Breathing becomes labored."
+				},
+				{
+					"name": "severe",
+					"duration_turns": 20,
+					"modifiers": [
+						{ "stat": "grit", "type": "percentage", "value": -35 },
+						{ "stat": "reflex", "type": "percentage", "value": -25 },
+						{ "stat": "aim", "type": "percentage", "value": -15 }
+					],
+					"hp_loss_per_turn": 1,
+					"fatigue_multiplier": 2.0,
+					"symptoms": ["bloody_cough", "weakness", "fever"],
+					"description": "Your lungs are failing you."
+				}
+			],
+			"natural_recovery_chance": 0.04,
+			"rest_recovery_bonus": 0.12,
+			"treatments": {
+				"medicine": { "cure_chance": 0.40, "stage_reduction": 1 },
+				"doctor": { "cure_chance": 0.75, "stage_reduction": 2 },
+				"clean_air_rest": { "cure_chance": 0.25, "stage_reduction": 0 }
+			},
+			"immunity_duration_days": 3,
+			"contagious": false
+		}
+	},
+	"immunity_modifiers": {
+		"well_fed": 0.15,
+		"hungry": -0.10,
+		"starving": -0.25,
+		"rested": 0.10,
+		"exhausted": -0.15,
+		"collapsing": -0.30,
+		"hydrated": 0.05,
+		"dehydrated": -0.20
+	},
+	"treatment_items": {
+		"medicine": {
+			"id": "medicine",
+			"name": "Medicine",
+			"description": "General purpose medicine for treating illness."
+		},
+		"bandage": {
+			"id": "bandage",
+			"name": "Bandage",
+			"description": "Clean bandages for wound care."
+		},
+		"herbal_remedy": {
+			"id": "herbal_remedy",
+			"name": "Herbal Remedy",
+			"description": "A folk remedy made from local plants."
+		}
+	}
+}

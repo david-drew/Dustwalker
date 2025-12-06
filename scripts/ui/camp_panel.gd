@@ -82,7 +82,8 @@ func _ready() -> void:
 	visible = false
 	_create_ui()
 	_connect_signals()
-
+	_survival_manager = get_node_or_null("/root/Main/Systems/SurvivalManager")
+	
 
 func _create_ui() -> void:
 	# Full screen overlay

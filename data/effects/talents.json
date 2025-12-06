@@ -1,0 +1,450 @@
+{
+  "talents": {
+    "quick_draw": {
+      "name": "Quick Draw",
+      "description": "Lightning-fast draw speed in duels and combat",
+      "type": "talent",
+      "category": "combat",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {"reflex": 3},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "derived", "name": "draw_speed", "type": "flat", "value": 2}
+      ],
+      "triggers": [
+        {"event": "combat_start", "action": "bonus_initiative", "value": 3, "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "⚡",
+        "color": "#FFD700"
+      }
+    },
+    "deadeye": {
+      "name": "Deadeye",
+      "description": "Once per combat, guarantee a ranged hit",
+      "type": "talent",
+      "category": "combat",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"aim": 5},
+        "skills": {"pistol": 3}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "activate", "action": "guarantee_hit", "value": 1, "uses_per_combat": 1}
+      ],
+      "visuals": {
+        "icon": "🎯",
+        "color": "#FF4444"
+      }
+    },
+    "trick_shot": {
+      "name": "Trick Shot",
+      "description": "Perform disarms, ricochets, and called shots",
+      "type": "talent",
+      "category": "combat",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"aim": 4},
+        "skills": {"pistol": 2}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "attack", "action": "enable_called_shot", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "🎪",
+        "color": "#9932CC"
+      }
+    },
+    "covered_retreat": {
+      "name": "Covered Retreat",
+      "description": "Disengage from melee without penalty",
+      "type": "talent",
+      "category": "combat",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"reflex": 4},
+        "skills": {}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "disengage", "action": "no_opportunity_attack", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "🛡️",
+        "color": "#4169E1"
+      }
+    },
+    "berserk_charge": {
+      "name": "Berserk Charge",
+      "description": "Move and attack in one action with bonus damage",
+      "type": "talent",
+      "category": "combat",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"grit": 5},
+        "skills": {"brawling": 2}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "charge", "action": "bonus_damage", "value": 3, "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "💥",
+        "color": "#DC143C"
+      }
+    },
+    "pathfinder": {
+      "name": "Pathfinder",
+      "description": "Reduced movement penalties in wilderness terrain",
+      "type": "talent",
+      "category": "survival",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {},
+        "skills": {"tracking": 1}
+      },
+      "modifiers": [
+        {"target": "multiplier", "name": "wilderness_move_cost", "type": "flat", "value": -0.25, "context": "wilderness"}
+      ],
+      "triggers": [],
+      "visuals": {
+        "icon": "🧭",
+        "color": "#228B22"
+      }
+    },
+    "iron_stomach": {
+      "name": "Iron Stomach",
+      "description": "Immune to food poisoning, can eat raw meat safely",
+      "type": "talent",
+      "category": "survival",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"fortitude": 4},
+        "skills": {}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "eat", "action": "immunity", "value": "food_poisoning", "chance": 1.0}
+      ],
+      "conditions": {
+        "immunities": ["food_poisoning"]
+      },
+      "visuals": {
+        "icon": "🍖",
+        "color": "#8B4513"
+      }
+    },
+    "desert_rat": {
+      "name": "Desert Rat",
+      "description": "Reduced water consumption in hot environments",
+      "type": "talent",
+      "category": "survival",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"fortitude": 4},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "multiplier", "name": "water_consumption", "type": "flat", "value": -0.3, "context": "hot"}
+      ],
+      "triggers": [],
+      "visuals": {
+        "icon": "🏜️",
+        "color": "#DAA520"
+      }
+    },
+    "beast_whisperer": {
+      "name": "Beast Whisperer",
+      "description": "Calm hostile animals, mount wild horses",
+      "type": "talent",
+      "category": "survival",
+      "acquisition": "story",
+      "prerequisites": {
+        "stats": {"spirit": 4},
+        "skills": {"horsemanship": 2}
+      },
+      "modifiers": [
+        {"target": "skill", "name": "horsemanship", "type": "flat", "value": 2, "context": "wild_animals"}
+      ],
+      "triggers": [
+        {"event": "encounter_animal", "action": "calm_option", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "🐴",
+        "color": "#8B7355"
+      }
+    },
+    "silver_tongue": {
+      "name": "Silver Tongue",
+      "description": "Social attacks cost 1 AP instead of 2",
+      "type": "talent",
+      "category": "social",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {"charm": 3},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "derived", "name": "social_attack_cost", "type": "flat", "value": -1}
+      ],
+      "triggers": [],
+      "visuals": {
+        "icon": "👅",
+        "color": "#C0C0C0"
+      }
+    },
+    "voice_of_command": {
+      "name": "Voice of Command",
+      "description": "Intimidate 3 enemies at once, Rally affects all visible allies",
+      "type": "talent",
+      "category": "social",
+      "acquisition": "story",
+      "prerequisites": {
+        "stats": {"charm": 5, "grit": 4},
+        "skills": {"intimidation": 3}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "intimidate", "action": "multi_target", "value": 3, "chance": 1.0},
+        {"event": "rally", "action": "area_effect", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "📢",
+        "color": "#FFD700"
+      }
+    },
+    "poker_face": {
+      "name": "Poker Face",
+      "description": "Immune to enemy social attacks, can use Bluff in combat",
+      "type": "talent",
+      "category": "social",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"spirit": 4},
+        "skills": {"deception": 2, "gambling": 2}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "social_attack_received", "action": "immunity", "chance": 1.0},
+        {"event": "combat", "action": "enable_bluff", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "😐",
+        "color": "#708090"
+      }
+    },
+    "preachers_fire": {
+      "name": "Preacher's Fire",
+      "description": "Mass Rally plus Demoralize unholy enemies",
+      "type": "talent",
+      "category": "social",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {"charm": 3, "spirit": 3},
+        "skills": {"persuasion": 1}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "rally", "action": "area_effect", "chance": 1.0},
+        {"event": "rally", "action": "demoralize_unholy", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "🔥",
+        "color": "#FF6347"
+      }
+    },
+    "keen_eye": {
+      "name": "Keen Eye",
+      "description": "Better at finding valuables and hidden caches",
+      "type": "talent",
+      "category": "utility",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {"wit": 3},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "skill", "name": "appraisal", "type": "flat", "value": 2},
+        {"target": "derived", "name": "loot_discovery", "type": "percentage", "value": 25}
+      ],
+      "triggers": [
+        {"event": "search", "action": "bonus_roll", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "👁️",
+        "color": "#00CED1"
+      }
+    },
+    "lucky": {
+      "name": "Lucky",
+      "description": "Reroll one failed check per day",
+      "type": "talent",
+      "category": "utility",
+      "acquisition": "story",
+      "prerequisites": {
+        "stats": {},
+        "skills": {}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "check_failed", "action": "offer_reroll", "uses_per_day": 1, "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "🍀",
+        "color": "#32CD32"
+      }
+    },
+    "quick_reload": {
+      "name": "Quick Reload",
+      "description": "Reload costs 1 less AP",
+      "type": "talent",
+      "category": "utility",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"reflex": 4},
+        "skills": {"pistol": 2}
+      },
+      "modifiers": [
+        {"target": "derived", "name": "reload_ap_cost", "type": "flat", "value": -1}
+      ],
+      "triggers": [],
+      "visuals": {
+        "icon": "🔄",
+        "color": "#FF8C00"
+      }
+    },
+    "combat_medic": {
+      "name": "Combat Medic",
+      "description": "Heal as a free action once per combat",
+      "type": "talent",
+      "category": "utility",
+      "acquisition": "purchased",
+      "prerequisites": {
+        "stats": {"wit": 4},
+        "skills": {"medicine": 3}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "heal", "action": "free_action", "uses_per_combat": 1, "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "💉",
+        "color": "#FF69B4"
+      }
+    },
+    "second_sight": {
+      "name": "Second Sight",
+      "description": "Detect supernatural presence, receive occasional visions",
+      "type": "talent",
+      "category": "supernatural",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {"spirit": 3},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "derived", "name": "supernatural_detection", "type": "flat", "value": 1}
+      ],
+      "triggers": [
+        {"event": "enter_location", "action": "detect_supernatural", "chance": 0.8},
+        {"event": "rest", "action": "vision", "chance": 0.1}
+      ],
+      "visuals": {
+        "icon": "👁️‍🗨️",
+        "color": "#9400D3"
+      }
+    },
+    "spirit_guide": {
+      "name": "Spirit Guide",
+      "description": "Occasional supernatural guidance and bonuses vs wildlife",
+      "type": "talent",
+      "category": "supernatural",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {"spirit": 3},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "stat", "name": "spirit", "type": "flat", "value": 1, "context": "wilderness"}
+      ],
+      "triggers": [
+        {"event": "critical_decision", "action": "guidance_hint", "chance": 0.3},
+        {"event": "combat_wildlife", "action": "advantage", "chance": 1.0}
+      ],
+      "visuals": {
+        "icon": "🦅",
+        "color": "#87CEEB"
+      }
+    },
+    "witchs_blessing": {
+      "name": "Witch's Blessing",
+      "description": "Minor magical abilities: curses and wards",
+      "type": "talent",
+      "category": "supernatural",
+      "acquisition": "supernatural",
+      "prerequisites": {
+        "stats": {"spirit": 5},
+        "skills": {"lore": 2}
+      },
+      "modifiers": [],
+      "triggers": [
+        {"event": "activate", "action": "minor_curse", "uses_per_day": 1, "chance": 1.0},
+        {"event": "activate", "action": "ward", "uses_per_day": 1, "chance": 1.0}
+      ],
+      "conditions": {
+        "drawbacks": ["reputation_suspicious"]
+      },
+      "visuals": {
+        "icon": "🌙",
+        "color": "#4B0082"
+      }
+    },
+    "adaptable": {
+      "name": "Adaptable",
+      "description": "Learn all skills 20% faster",
+      "type": "talent",
+      "category": "utility",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "multiplier", "name": "skill_xp_rate", "type": "flat", "value": 0.2}
+      ],
+      "triggers": [],
+      "visuals": {
+        "icon": "🔀",
+        "color": "#20B2AA"
+      }
+    },
+    "wanted": {
+      "name": "Wanted",
+      "description": "Higher rewards for crime, but law is always hostile",
+      "type": "talent",
+      "category": "social",
+      "acquisition": "starting",
+      "prerequisites": {
+        "stats": {},
+        "skills": {}
+      },
+      "modifiers": [
+        {"target": "multiplier", "name": "crime_reward", "type": "flat", "value": 0.5}
+      ],
+      "triggers": [
+        {"event": "enter_town", "action": "law_hostility_check", "chance": 0.5}
+      ],
+      "conditions": {
+        "drawbacks": ["law_hostile"]
+      },
+      "visuals": {
+        "icon": "📜",
+        "color": "#8B0000"
+      }
+    }
+  }
+}

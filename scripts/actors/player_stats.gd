@@ -10,7 +10,7 @@
 # - charm: Persuasion, trading, social
 # - fortitude: Disease/poison/fatigue resistance
 # - stealth: Avoiding detection, ambush
-# - survival: Tracking, foraging, navigation
+# - spirit: Willpower, fear resistance, supernatural
 #
 # MODIFIER SYSTEM:
 # Modifiers are temporary stat adjustments keyed by source.
@@ -18,7 +18,7 @@
 # Modifiers can be percentage-based or flat values.
 #
 # ROLL SYSTEM:
-# d10 + effective_stat vs difficulty
+# d10 + effective_stat vs difficulty (or d10 + stat + skill for skill checks)
 # Difficulties: trivial(5), easy(8), medium(12), hard(15), very_hard(18), legendary(21)
 
 extends Node
@@ -28,15 +28,18 @@ class_name PlayerStats
 # CONSTANTS
 # =============================================================================
 
-const STAT_MIN: int = 1
-const STAT_MAX: int = 8
-const ROLL_DIE_SIZE: int = 10
+const CONFIG_PATH := "res://data/character/stats_config.json"
 
-const STAT_NAMES: Array[String] = [
-	"grit", "reflex", "aim", "wit", "charm", "fortitude", "stealth", "survival"
+## Fallback values if config fails to load
+const FALLBACK_STAT_MIN: int = 1
+const FALLBACK_STAT_MAX: int = 8
+const FALLBACK_ROLL_DIE: int = 10
+
+const FALLBACK_STAT_NAMES: Array[String] = [
+	"grit", "reflex", "aim", "wit", "charm", "fortitude", "stealth", "spirit"
 ]
 
-const DEFAULT_STATS: Dictionary = {
+const FALLBACK_DEFAULT_STATS: Dictionary = {
 	"grit": 3,
 	"reflex": 3,
 	"aim": 3,
@@ -44,10 +47,10 @@ const DEFAULT_STATS: Dictionary = {
 	"charm": 3,
 	"fortitude": 3,
 	"stealth": 3,
-	"survival": 3
+	"spirit": 3
 }
 
-const DIFFICULTY_LEVELS: Dictionary = {
+const FALLBACK_DIFFICULTIES: Dictionary = {
 	"trivial": 5,
 	"easy": 8,
 	"medium": 12,
@@ -72,6 +75,21 @@ signal modifier_removed(source: String)
 ## Emitted after a stat check is rolled.
 signal stat_check_rolled(stat: String, result: Dictionary)
 
+## Emitted when max HP changes (due to grit change).
+signal max_hp_changed(old_max: int, new_max: int)
+
+# =============================================================================
+# CONFIGURATION (loaded from JSON)
+# =============================================================================
+
+var stat_min: int = FALLBACK_STAT_MIN
+var stat_max: int = FALLBACK_STAT_MAX
+var roll_die_size: int = FALLBACK_ROLL_DIE
+var stat_names: Array[String] = []
+var stat_config: Dictionary = {}
+var difficulty_levels: Dictionary = {}
+var stat_descriptions: Dictionary = {}
+
 # =============================================================================
 # STATE
 # =============================================================================
@@ -85,26 +103,101 @@ var base_stats: Dictionary = {}
 ## stat can be a stat name or "all" for all stats
 var modifiers: Array[Dictionary] = []
 
+## Cached max HP (recalculated when grit changes)
+var _cached_max_hp: int = 16
+
 # =============================================================================
 # INITIALIZATION
 # =============================================================================
 
 func _ready() -> void:
+	_load_config()
 	_initialize_stats()
 	add_to_group("player_stats")
-	print("PlayerStats: Initialized with default stats")
+	print("PlayerStats: Initialized with %d stats" % stat_names.size())
+
+
+func _load_config() -> void:
+	var config: Dictionary = {}
+	
+	# Try DataLoader first
+	var data_loader = get_node_or_null("/root/DataLoader")
+	if data_loader and data_loader.has_method("load_json"):
+		config = data_loader.load_json(CONFIG_PATH)
+	
+	# Fallback to direct file loading
+	if config.is_empty() and FileAccess.file_exists(CONFIG_PATH):
+		var file := FileAccess.open(CONFIG_PATH, FileAccess.READ)
+		if file:
+			var json := JSON.new()
+			var error := json.parse(file.get_as_text())
+			file.close()
+			if error == OK:
+				config = json.data
+	
+	# Apply config or use fallbacks
+	if not config.is_empty():
+		_apply_config(config)
+		print("PlayerStats: Loaded config from %s" % CONFIG_PATH)
+	else:
+		_use_fallback_config()
+		print("PlayerStats: Using fallback configuration")
+
+
+func _apply_config(config: Dictionary) -> void:
+	# Load stat rules
+	var rules: Dictionary = config.get("stat_rules", {})
+	stat_min = rules.get("min_value", FALLBACK_STAT_MIN)
+	stat_max = rules.get("max_value", FALLBACK_STAT_MAX)
+	roll_die_size = rules.get("roll_die_size", FALLBACK_ROLL_DIE)
+	
+	# Load difficulty levels
+	difficulty_levels = config.get("difficulty_levels", FALLBACK_DIFFICULTIES)
+	
+	# Load stat descriptions
+	stat_descriptions = config.get("stat_descriptions", {})
+	
+	# Load stat definitions
+	stat_config = config.get("stats", {})
+	stat_names.clear()
+	for stat_name in stat_config:
+		stat_names.append(stat_name)
+	
+	# Sort stat names for consistent ordering
+	stat_names.sort()
+
+
+func _use_fallback_config() -> void:
+	stat_min = FALLBACK_STAT_MIN
+	stat_max = FALLBACK_STAT_MAX
+	roll_die_size = FALLBACK_ROLL_DIE
+	stat_names = FALLBACK_STAT_NAMES.duplicate()
+	difficulty_levels = FALLBACK_DIFFICULTIES.duplicate()
+	stat_config = {}
 
 
 func _initialize_stats() -> void:
-	base_stats = DEFAULT_STATS.duplicate()
+	base_stats.clear()
+	
+	if not stat_config.is_empty():
+		# Initialize from config
+		for stat_name in stat_names:
+			base_stats[stat_name] = stat_config.get(stat_name, {}).get("default", 3)
+	else:
+		# Use fallback defaults
+		base_stats = FALLBACK_DEFAULT_STATS.duplicate()
+	
+	_update_cached_max_hp()
 
 
-## Initialize stats from a dictionary (for character creation).
+## Initialize stats from a dictionary (for character creation or loading).
 func initialize_from_dict(stats_dict: Dictionary) -> void:
-	for stat_name in STAT_NAMES:
+	for stat_name in stat_names:
 		if stats_dict.has(stat_name):
-			var value: int = clampi(stats_dict[stat_name], STAT_MIN, STAT_MAX)
+			var value: int = clampi(stats_dict[stat_name], stat_min, stat_max)
 			base_stats[stat_name] = value
+	
+	_update_cached_max_hp()
 	print("PlayerStats: Initialized from dictionary")
 
 # =============================================================================
@@ -156,14 +249,30 @@ func get_all_base_stats() -> Dictionary:
 ## Get all effective stats as a dictionary.
 func get_all_effective_stats() -> Dictionary:
 	var effective := {}
-	for stat_name in STAT_NAMES:
+	for stat_name in stat_names:
 		effective[stat_name] = get_effective_stat(stat_name)
 	return effective
 
 
 ## Check if a stat name is valid.
 func is_valid_stat(stat: String) -> bool:
-	return stat.to_lower() in STAT_NAMES
+	return stat.to_lower() in stat_names
+
+
+## Get stat info from config.
+func get_stat_info(stat: String) -> Dictionary:
+	var stat_lower := stat.to_lower()
+	return stat_config.get(stat_lower, {})
+
+
+## Get human-readable description of a stat value.
+func get_stat_value_description(value: int) -> String:
+	return stat_descriptions.get(str(value), "Unknown")
+
+
+## Get list of all stat names.
+func get_stat_names() -> Array[String]:
+	return stat_names.duplicate()
 
 # =============================================================================
 # STAT MODIFICATION
@@ -177,13 +286,17 @@ func set_base_stat(stat: String, value: int) -> void:
 		return
 	
 	var old_value: int = base_stats.get(stat_lower, 0)
-	var new_value: int = clampi(value, STAT_MIN, STAT_MAX)
+	var new_value: int = clampi(value, stat_min, stat_max)
 	
 	if old_value != new_value:
 		base_stats[stat_lower] = new_value
 		stat_changed.emit(stat_lower, old_value, new_value)
 		_emit_to_event_bus("player_stat_changed", [stat_lower, old_value, new_value])
 		print("PlayerStats: %s changed from %d to %d" % [stat_lower, old_value, new_value])
+		
+		# Update max HP if grit changed
+		if stat_lower == "grit":
+			_update_cached_max_hp()
 
 
 ## Increase a base stat by amount (for leveling).
@@ -233,15 +346,23 @@ func add_modifier(source: String, stat: String, type: String, value: int) -> voi
 	print("PlayerStats: Added modifier '%s' (%s %+d%s to %s)" % [
 		source, type, value, "%" if type == "percentage" else "", stat_lower
 	])
+	
+	# Update max HP if grit modifier
+	if stat_lower == "grit" or stat_lower == "all":
+		_update_cached_max_hp()
 
 
 ## Remove all modifiers from a specific source.
 func remove_modifier(source: String) -> void:
 	var removed := false
+	var affected_grit := false
 	var i := modifiers.size() - 1
 	
 	while i >= 0:
 		if modifiers[i].get("source", "") == source:
+			var mod_stat: String = modifiers[i].get("stat", "")
+			if mod_stat == "grit" or mod_stat == "all":
+				affected_grit = true
 			modifiers.remove_at(i)
 			removed = true
 		i -= 1
@@ -250,6 +371,9 @@ func remove_modifier(source: String) -> void:
 		modifier_removed.emit(source)
 		_emit_to_event_bus("player_modifier_removed", [source])
 		print("PlayerStats: Removed modifier '%s'" % source)
+		
+		if affected_grit:
+			_update_cached_max_hp()
 
 
 ## Remove all modifiers whose source starts with a prefix.
@@ -310,6 +434,7 @@ func clear_all_modifiers() -> void:
 		modifier_removed.emit(source)
 		_emit_to_event_bus("player_modifier_removed", [source])
 	
+	_update_cached_max_hp()
 	print("PlayerStats: Cleared all modifiers")
 
 # =============================================================================
@@ -319,21 +444,22 @@ func clear_all_modifiers() -> void:
 ## Perform a stat check: d10 + effective_stat vs difficulty.
 ## @param stat: The stat to use for the check.
 ## @param difficulty: Target number to meet or exceed (or difficulty name).
+## @param skill_bonus: Optional skill bonus to add (default 0).
 ## @return Dictionary with roll details.
-func roll_check(stat: String, difficulty) -> Dictionary:
+func roll_check(stat: String, difficulty, skill_bonus: int = 0) -> Dictionary:
 	var stat_lower := stat.to_lower()
 	var effective_value := get_effective_stat(stat_lower)
 	
 	# Handle difficulty as string or int
 	var dc: int
 	if difficulty is String:
-		dc = DIFFICULTY_LEVELS.get(difficulty.to_lower(), 12)
+		dc = difficulty_levels.get(difficulty.to_lower(), 12)
 	else:
 		dc = int(difficulty)
 	
 	# Roll d10 (1-10)
-	var roll: int = randi_range(1, ROLL_DIE_SIZE)
-	var total: int = roll + effective_value
+	var roll: int = randi_range(1, roll_die_size)
+	var total: int = roll + effective_value + skill_bonus
 	var success: bool = total >= dc
 	var margin: int = total - dc
 	
@@ -342,18 +468,20 @@ func roll_check(stat: String, difficulty) -> Dictionary:
 		"roll": roll,
 		"stat_name": stat_lower,
 		"stat_value": effective_value,
+		"skill_bonus": skill_bonus,
 		"total": total,
 		"difficulty": dc,
 		"margin": margin,
-		"critical": roll == ROLL_DIE_SIZE,  # Natural 10
+		"critical": roll == roll_die_size,  # Natural 10
 		"fumble": roll == 1  # Natural 1
 	}
 	
 	stat_check_rolled.emit(stat_lower, result)
 	_emit_to_event_bus("player_stat_check_rolled", [stat_lower, result])
 	
-	print("PlayerStats: %s check - rolled %d + %d = %d vs DC %d → %s (margin %+d)" % [
-		stat_lower, roll, effective_value, total, dc,
+	var skill_str := " + %d skill" % skill_bonus if skill_bonus > 0 else ""
+	print("PlayerStats: %s check - rolled %d + %d%s = %d vs DC %d → %s (margin %+d)" % [
+		stat_lower, roll, effective_value, skill_str, total, dc,
 		"SUCCESS" if success else "FAILURE", margin
 	])
 	
@@ -361,9 +489,9 @@ func roll_check(stat: String, difficulty) -> Dictionary:
 
 
 ## Roll a check with advantage (roll twice, take better).
-func roll_check_advantage(stat: String, difficulty) -> Dictionary:
-	var roll1 := roll_check(stat, difficulty)
-	var roll2 := roll_check(stat, difficulty)
+func roll_check_advantage(stat: String, difficulty, skill_bonus: int = 0) -> Dictionary:
+	var roll1 := roll_check(stat, difficulty, skill_bonus)
+	var roll2 := roll_check(stat, difficulty, skill_bonus)
 	
 	# Take the better result
 	if roll2["total"] > roll1["total"]:
@@ -375,9 +503,9 @@ func roll_check_advantage(stat: String, difficulty) -> Dictionary:
 
 
 ## Roll a check with disadvantage (roll twice, take worse).
-func roll_check_disadvantage(stat: String, difficulty) -> Dictionary:
-	var roll1 := roll_check(stat, difficulty)
-	var roll2 := roll_check(stat, difficulty)
+func roll_check_disadvantage(stat: String, difficulty, skill_bonus: int = 0) -> Dictionary:
+	var roll1 := roll_check(stat, difficulty, skill_bonus)
+	var roll2 := roll_check(stat, difficulty, skill_bonus)
 	
 	# Take the worse result
 	if roll2["total"] < roll1["total"]:
@@ -389,8 +517,8 @@ func roll_check_disadvantage(stat: String, difficulty) -> Dictionary:
 
 
 ## Get the difficulty value for a named difficulty.
-func get_difficulty(name: String) -> int:
-	return DIFFICULTY_LEVELS.get(name.to_lower(), 12)
+func get_difficulty(df_name: String) -> int:
+	return difficulty_levels.get(df_name.to_lower(), 12)
 
 # =============================================================================
 # DERIVED STATS
@@ -398,7 +526,16 @@ func get_difficulty(name: String) -> int:
 
 ## Calculate max HP based on Grit (10 + Grit × 2).
 func get_max_hp() -> int:
-	return 10 + get_effective_stat("grit") * 2
+	return _cached_max_hp
+
+
+func _update_cached_max_hp() -> void:
+	var old_max := _cached_max_hp
+	_cached_max_hp = 10 + get_effective_stat("grit") * 2
+	
+	if old_max != _cached_max_hp:
+		max_hp_changed.emit(old_max, _cached_max_hp)
+		_emit_to_event_bus("player_max_hp_changed", [old_max, _cached_max_hp])
 
 
 ## Calculate initiative bonus based on Reflex.
@@ -406,11 +543,31 @@ func get_initiative_bonus() -> int:
 	return get_effective_stat("reflex")
 
 
+## Calculate fear threshold based on Spirit.
+func get_fear_threshold() -> int:
+	return 5 + get_effective_stat("spirit")
+
+
+## Calculate skill XP multiplier based on Wit.
+func get_skill_xp_multiplier() -> float:
+	var wit := get_effective_stat("wit")
+	return 1.0 + (wit - 3) * 0.05
+
+
+## Calculate price modifier based on Charm.
+func get_price_modifier() -> float:
+	var charm := get_effective_stat("charm")
+	return 1.0 - (charm - 3) * 0.05
+
+
 ## Get all derived stats as a dictionary.
 func get_derived_stats() -> Dictionary:
 	return {
 		"max_hp": get_max_hp(),
-		"initiative_bonus": get_initiative_bonus()
+		"initiative_bonus": get_initiative_bonus(),
+		"fear_threshold": get_fear_threshold(),
+		"skill_xp_multiplier": get_skill_xp_multiplier(),
+		"price_modifier": get_price_modifier()
 	}
 
 # =============================================================================
@@ -429,12 +586,12 @@ func to_dict() -> Dictionary:
 func from_dict(data: Dictionary) -> void:
 	# Load base stats
 	if data.has("base_stats"):
-		for stat_name in STAT_NAMES:
+		for stat_name in stat_names:
 			if data["base_stats"].has(stat_name):
 				base_stats[stat_name] = clampi(
 					data["base_stats"][stat_name], 
-					STAT_MIN, 
-					STAT_MAX
+					stat_min, 
+					stat_max
 				)
 	
 	# Load modifiers
@@ -448,6 +605,7 @@ func from_dict(data: Dictionary) -> void:
 				"value": mod_data.get("value", 0)
 			})
 	
+	_update_cached_max_hp()
 	print("PlayerStats: Loaded from save data")
 
 # =============================================================================
@@ -457,13 +615,16 @@ func from_dict(data: Dictionary) -> void:
 ## Print current stats to console (debug).
 func debug_print_stats() -> void:
 	print("=== Player Stats ===")
-	for stat_name in STAT_NAMES:
+	for stat_name in stat_names:
 		var base := get_base_stat(stat_name)
 		var effective := get_effective_stat(stat_name)
+		var info: Dictionary = get_stat_info(stat_name)
+		var display_name: String = info.get("name", stat_name.capitalize())
+		
 		if base != effective:
-			print("  %s: %d (base %d)" % [stat_name, effective, base])
+			print("  %s: %d (base %d)" % [display_name, effective, base])
 		else:
-			print("  %s: %d" % [stat_name, base])
+			print("  %s: %d" % [display_name, base])
 	
 	if modifiers.size() > 0:
 		print("--- Active Modifiers ---")
@@ -477,8 +638,14 @@ func debug_print_stats() -> void:
 			])
 	
 	print("--- Derived ---")
-	print("  Max HP: %d" % get_max_hp())
-	print("  Initiative: +%d" % get_initiative_bonus())
+	var derived := get_derived_stats()
+	for key in derived:
+		print("  %s: %s" % [key, derived[key]])
+
+
+## Set a stat directly (debug only).
+func debug_set_stat(stat: String, value: int) -> void:
+	set_base_stat(stat, value)
 
 # =============================================================================
 # UTILITY

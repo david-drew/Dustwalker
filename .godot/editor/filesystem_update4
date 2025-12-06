@@ -1,0 +1,9 @@
+res://scenes/maps/main.tscn
+res://scripts/actors/talent_manager.gd
+res://scripts/actors/player_stats.gd
+res://scripts/actors/player_spawner.gd
+res://scripts/autoloads/effect_manager.gd
+res://scenes/actors/player.tscn
+res://scripts/actors/player.gd
+res://scripts/autoloads/event_bus.gd
+res://scripts/main.gd

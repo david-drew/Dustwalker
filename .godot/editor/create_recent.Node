@@ -1,2 +1,10 @@
-CampPanel
+SkillManager
+TalentManager
+PlayerStats
+Player
+StatusEffectDisplay
+WeatherManager
+CanvasLayer
+DiseaseManager
 Node
+CampPanel

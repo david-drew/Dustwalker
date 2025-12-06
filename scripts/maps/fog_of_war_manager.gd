@@ -151,13 +151,17 @@ func _connect_signals() -> void:
 		if time_manager.has_signal("day_started"):
 			time_manager.day_started.connect(_on_day_started)
 	
-	# Connect to EventBus for player movement
+	# Connect to EventBus for player movement and weather
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
 		if event_bus.has_signal("player_moved_to_hex"):
 			event_bus.player_moved_to_hex.connect(_on_player_moved_to_hex)
 		if event_bus.has_signal("player_spawned"):
 			event_bus.player_spawned.connect(_on_player_spawned)
+		if event_bus.has_signal("weather_started"):
+			event_bus.weather_started.connect(_on_weather_changed)
+		if event_bus.has_signal("weather_ended"):
+			event_bus.weather_ended.connect(_on_weather_ended)
 
 
 ## Initializes the fog system with grid and player references.
@@ -214,7 +218,7 @@ func reveal_spawn_area(spawn_coords: Vector2i) -> void:
 # VISION CALCULATION
 # =============================================================================
 
-## Updates the current vision range based on time of day.
+## Updates the current vision range based on time of day and weather.
 func _update_vision_range() -> void:
 	var old_range := current_vision_range
 	var new_range := base_vision_range
@@ -225,6 +229,13 @@ func _update_vision_range() -> void:
 		var time_name: String = time_manager.get_time_of_day()
 		var modifier: int = time_modifiers.get(time_name, 0)
 		new_range += modifier
+	
+	# Apply weather visibility modifier
+	var weather_manager = get_tree().get_first_node_in_group("weather_manager")
+	if weather_manager and weather_manager.has_method("get_visibility_modifier"):
+		var visibility: float = weather_manager.get_visibility_modifier()
+		# visibility 1.0 = full range, 0.3 = 30% range
+		new_range = int(round(float(new_range) * visibility))
 	
 	# Clamp to valid range
 	new_range = clampi(new_range, min_vision_range, max_vision_range)
@@ -506,6 +517,24 @@ func _on_player_moved_to_hex(coords: Vector2i) -> void:
 
 func _on_player_spawned(coords: Vector2i) -> void:
 	reveal_spawn_area(coords)
+
+
+func _on_weather_changed(_weather_type: String, _duration: int) -> void:
+	# Weather started - recalculate vision range
+	var old_range := current_vision_range
+	_update_vision_range()
+	
+	if current_vision_range != old_range:
+		update_vision()
+
+
+func _on_weather_ended(_weather_type: String) -> void:
+	# Weather ended - recalculate vision range
+	var old_range := current_vision_range
+	_update_vision_range()
+	
+	if current_vision_range != old_range:
+		update_vision()
 
 # =============================================================================
 # SERIALIZATION

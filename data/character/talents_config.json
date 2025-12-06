@@ -1,0 +1,96 @@
+{
+  "costs": {
+    "deadeye": 350,
+    "trick_shot": 250,
+    "covered_retreat": 200,
+    "berserk_charge": 300,
+    "iron_stomach": 150,
+    "desert_rat": 150,
+    "poker_face": 200,
+    "quick_reload": 200,
+    "combat_medic": 300,
+    "witchs_blessing": 500
+  },
+  "training_days": {
+    "deadeye": 15,
+    "trick_shot": 10,
+    "covered_retreat": 8,
+    "berserk_charge": 12,
+    "iron_stomach": 5,
+    "desert_rat": 5,
+    "poker_face": 8,
+    "quick_reload": 7,
+    "combat_medic": 12,
+    "witchs_blessing": 20
+  },
+  "trainers": {
+    "gunsmith_tombstone": {
+      "name": "Old Pete",
+      "title": "Master Gunsmith",
+      "location": "Tombstone",
+      "description": "A legendary gunfighter turned gunsmith. His hands shake now, but his eye is still sharp.",
+      "teaches": ["deadeye", "trick_shot", "quick_reload"],
+      "stat_requirements": {},
+      "reputation_required": "neutral"
+    },
+    "cavalry_fort": {
+      "name": "Sergeant Morrison",
+      "title": "Cavalry Instructor",
+      "location": "Fort Apache",
+      "description": "A grizzled cavalry veteran who's survived more battles than he can count.",
+      "teaches": ["covered_retreat", "berserk_charge"],
+      "stat_requirements": {"grit": 4},
+      "reputation_required": "friendly"
+    },
+    "wilderness_guide": {
+      "name": "Silent Fox",
+      "title": "Wilderness Guide",
+      "location": "Trading Post",
+      "description": "A native scout who knows every trail and trick for surviving the frontier.",
+      "teaches": ["iron_stomach", "desert_rat"],
+      "stat_requirements": {},
+      "reputation_required": "neutral"
+    },
+    "gambler_saloon": {
+      "name": "Diamond Dan",
+      "title": "Professional Gambler",
+      "location": "Silver Strike Saloon",
+      "description": "A sharply dressed card shark who's been run out of every major city.",
+      "teaches": ["poker_face"],
+      "stat_requirements": {"charm": 3},
+      "reputation_required": "neutral"
+    },
+    "army_doctor": {
+      "name": "Dr. Helena Cross",
+      "title": "Army Surgeon",
+      "location": "Fort Bowie",
+      "description": "A skilled surgeon who's patched up more gunshot wounds than she'd like to remember.",
+      "teaches": ["combat_medic"],
+      "stat_requirements": {"wit": 4},
+      "reputation_required": "friendly"
+    },
+    "witch_swamp": {
+      "name": "Mama Eulalia",
+      "title": "Swamp Witch",
+      "location": "Hidden Swamp Cabin",
+      "description": "An ancient woman of mysterious origins. Some say she's been here since before the war.",
+      "teaches": ["witchs_blessing"],
+      "stat_requirements": {"spirit": 5},
+      "reputation_required": "trusted",
+      "special_requirements": ["completed_supernatural_quest"]
+    }
+  },
+  "slot_limits": {
+    "starting": 1,
+    "purchased": 3,
+    "story": 2,
+    "supernatural": 2
+  },
+  "category_descriptions": {
+    "combat": "Talents focused on fighting and survival in dangerous encounters.",
+    "survival": "Talents that help you endure the harsh frontier environment.",
+    "social": "Talents for dealing with people, whether through charm or intimidation.",
+    "utility": "Versatile talents with various practical applications.",
+    "supernatural": "Mysterious abilities tied to forces beyond normal understanding."
+  }
+}

@@ -90,6 +90,8 @@ var _enemies_data: Dictionary = {}
 ## Callback for when combat ends (to return to encounter).
 var _on_combat_end_callback: Callable
 
+var disease_manager:DiseaseManager = null
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -110,6 +112,8 @@ const ENEMY_ACTION_DELAY: float = 0.3
 func _ready() -> void:
 	_load_config()
 	add_to_group("combat_manager")
+	
+	disease_manager = get_node_or_null("/root/Main/Systems/DiseaseManager")
 
 
 func _load_config() -> void:
@@ -468,6 +472,10 @@ func _execute_enemy_turn(enemy: Combatant) -> void:
 			
 			if hit and damage > 0:
 				_show_floating_damage(player_combatant.position, damage, true)
+				if disease_manager != null:
+					disease_manager.try_contract_disease("wound_infection", 0.02, "combat_wound")
+				else:
+					print("Error: DiseaseManager not initialized in CombatManager")
 			else:
 				_show_miss_indicator(player_combatant.position)
 		

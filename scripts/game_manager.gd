@@ -253,7 +253,7 @@ func _on_hex_clicked(coords: Vector2i) -> void:
 			print("GameManager: Invalid destination - %s" % result["reason"])
 
 
-func _on_player_movement_completed(total_hexes: int, total_turns: int) -> void:
+func _on_player_movement_completed(_total_hexes: int, _total_turns: int) -> void:
 	# Camera follow after movement
 	if map_camera and player:
 		_smooth_camera_to_player()

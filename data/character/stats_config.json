@@ -1,0 +1,134 @@
+{
+  "stats": {
+    "grit": {
+      "name": "Grit",
+      "description": "Health pool, resistance to hardship, intimidation presence",
+      "affects": ["max_hp", "pain_tolerance", "intimidation_checks"],
+      "derived": {
+        "max_hp": {
+          "formula": "10 + grit * 2"
+        }
+      },
+      "advancement_triggers": [
+        "Survive deadly situations",
+        "Endure hardship",
+        "Win intimidation contests"
+      ]
+    },
+    "reflex": {
+      "name": "Reflex",
+      "description": "Combat speed, dodging, quick-draw ability",
+      "affects": ["initiative", "dodge_chance", "action_points"],
+      "derived": {
+        "initiative_bonus": {
+          "formula": "reflex"
+        }
+      },
+      "advancement_triggers": [
+        "Frequent combat",
+        "Successful dodges",
+        "Agility challenges"
+      ]
+    },
+    "aim": {
+      "name": "Aim",
+      "description": "Ranged accuracy, perception of distant objects",
+      "affects": ["ranged_hit_chance", "spotting", "called_shots"],
+      "advancement_triggers": [
+        "Successful ranged hits",
+        "Target practice",
+        "Long-range shots"
+      ]
+    },
+    "wit": {
+      "name": "Wit",
+      "description": "Problem-solving, learning speed, spotting deception",
+      "affects": ["skill_learning_rate", "puzzle_solving", "deception_detection"],
+      "derived": {
+        "skill_xp_multiplier": {
+          "formula": "1.0 + (wit - 3) * 0.05"
+        }
+      },
+      "advancement_triggers": [
+        "Solve complex problems",
+        "Learn new skills",
+        "Detect lies or traps"
+      ]
+    },
+    "charm": {
+      "name": "Charm",
+      "description": "Persuasion, trading, information gathering",
+      "affects": ["dialogue_options", "prices", "npc_reactions"],
+      "derived": {
+        "price_modifier": {
+          "formula": "1.0 - (charm - 3) * 0.05"
+        }
+      },
+      "advancement_triggers": [
+        "Successful persuasion",
+        "Negotiate deals",
+        "Gather information"
+      ]
+    },
+    "fortitude": {
+      "name": "Fortitude",
+      "description": "Disease resistance, poison resistance, fatigue resistance, environmental hazards",
+      "affects": ["disease_resistance", "poison_resistance", "fatigue_resistance", "environmental_damage"],
+      "advancement_triggers": [
+        "Survive disease",
+        "Resist poison",
+        "Endure harsh conditions"
+      ]
+    },
+    "stealth": {
+      "name": "Stealth",
+      "description": "Avoiding detection, ambush setup, quiet movement",
+      "affects": ["detection_avoidance", "surprise_rounds", "theft"],
+      "advancement_triggers": [
+        "Avoid detection",
+        "Successful ambushes",
+        "Undetected actions"
+      ]
+    },
+    "spirit": {
+      "name": "Spirit",
+      "description": "Willpower, mental fortitude, supernatural sensitivity",
+      "affects": ["fear_resistance", "morale", "supernatural_resistance", "visions"],
+      "derived": {
+        "fear_threshold": {
+          "formula": "5 + spirit"
+        }
+      },
+      "advancement_triggers": [
+        "Survive supernatural encounters",
+        "Resist fear or intimidation",
+        "Complete spiritually significant acts",
+        "Witness horrors and maintain composure"
+      ]
+    }
+  },
+  "stat_rules": {
+    "min_value": 1,
+    "max_value": 8,
+    "default_value": 3,
+    "roll_die_size": 10
+  },
+  "difficulty_levels": {
+    "trivial": 5,
+    "easy": 8,
+    "medium": 12,
+    "hard": 15,
+    "very_hard": 18,
+    "legendary": 21
+  },
+  "stat_descriptions": {
+    "1": "Impaired - Significant weakness",
+    "2": "Below Average - Noticeable deficiency",
+    "3": "Trained - Competent, baseline professional",
+    "4": "Above Average - Notably capable",
+    "5": "Exceptional - Top of normal human range",
+    "6": "Remarkable - Rare natural talent",
+    "7": "Heroic - Legendary capability",
+    "8": "Mythic - Peak human potential"
+  }
+}

@@ -78,6 +78,8 @@ var config: Dictionary = {}
 var current_hp: int = 20
 var max_hp: int = 20
 
+var max_fatigue: int = 100
+
 # =============================================================================
 # STATE - Temperature
 # =============================================================================
@@ -296,6 +298,11 @@ func _calculate_temperature() -> void:
 	var terrain_adjustment: float = terrain_mod.get("night" if is_night else "day", 0)
 
 	current_temperature = base_temp + terrain_adjustment
+	
+	# Apply weather modifier
+	var weather_manager = get_tree().get_first_node_in_group("weather_manager")
+	if weather_manager and weather_manager.has_method("get_temperature_modifier"):
+		current_temperature += weather_manager.get_temperature_modifier()
 
 	# Calculate feels-like with clothing
 	var clothing_data: Dictionary = config.get("temperature", {}).get("clothing", {})
@@ -470,6 +477,13 @@ func _process_fatigue_per_turn() -> void:
 	# Base fatigue gain per turn (if awake and not resting)
 	if not is_sleeping:
 		var base_gain: int = config.get("fatigue", {}).get("sources", {}).get("turn_base", 3)
+		
+		# Apply weather fatigue modifier
+		var weather_manager = get_tree().get_first_node_in_group("weather_manager")
+		if weather_manager and weather_manager.has_method("get_fatigue_modifier"):
+			var modifier: float = weather_manager.get_fatigue_modifier()
+			base_gain = int(ceil(float(base_gain) * modifier))
+		
 		add_fatigue(base_gain, "time")
 
 	# Check for collapse
@@ -957,8 +971,14 @@ func _process_thirst_period() -> void:
 		return
 	
 	# Apply water consumption multiplier (from temperature)
-	var consumption := int(ceil(water_consumption_multiplier))
-	periods_without_water += consumption
+	var consumption := water_consumption_multiplier
+	
+	# Apply weather thirst modifier
+	var weather_manager = get_tree().get_first_node_in_group("weather_manager")
+	if weather_manager and weather_manager.has_method("get_thirst_modifier"):
+		consumption *= weather_manager.get_thirst_modifier()
+	
+	periods_without_water += int(ceil(consumption))
 	_update_thirst_stage()
 
 	# Check for dehydration death
