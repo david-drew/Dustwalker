@@ -1,269 +1,240 @@
 {
-  "backgrounds": {
-    "gunslinger": {
-      "name": "Gunslinger",
-      "description": "Former lawman, outlaw, or duelist with a reputation for quick draws and deadly aim.",
-      "backstory": "Whether you wore a badge or ran from the law, your skill with a six-shooter has defined your life. Now you're looking for something more than just the next gunfight.",
-      "stats": {
-        "grit": 3,
-        "reflex": 4,
-        "aim": 4,
-        "wit": 3,
-        "charm": 3,
-        "fortitude": 3,
-        "stealth": 2,
-        "spirit": 2
-      },
-      "skills": {
-        "pistol": 2,
-        "intimidation": 1
-      },
-      "starting_talent": "quick_draw",
-      "equipment": {
-        "weapons": ["quality_revolver"],
-        "armor": ["leather_duster"],
-        "items": ["ammo_pistol_24", "bedroll"],
-        "money": 75
-      },
-      "playstyle": "Combat-focused, dueling specialist, intimidation",
-      "difficulty": "normal",
-      "tags": ["combat", "social"]
-    },
-    "scout": {
-      "name": "Scout",
-      "description": "Army scout, frontier guide, or experienced trapper who knows the wilderness like the back of their hand.",
-      "backstory": "You've spent years reading trails, tracking game, and guiding others through dangerous territory. The frontier is your home.",
-      "stats": {
-        "grit": 2,
-        "reflex": 3,
-        "aim": 3,
-        "wit": 3,
-        "charm": 2,
-        "fortitude": 3,
-        "stealth": 3,
-        "spirit": 3
-      },
-      "skills": {
-        "tracking": 2,
-        "rifle": 1,
-        "foraging": 1
-      },
-      "starting_talent": "pathfinder",
-      "equipment": {
-        "weapons": ["rifle"],
-        "armor": [],
-        "items": ["ammo_rifle_20", "compass", "bedroll", "rations_3"],
-        "horse": "quality_horse",
-        "money": 50
-      },
-      "playstyle": "Exploration, stealth, wilderness survival",
-      "difficulty": "normal",
-      "tags": ["survival", "exploration"]
-    },
-    "prospector": {
-      "name": "Prospector",
-      "description": "Gold rush veteran and treasure hunter with an eye for valuables and a nose for opportunity.",
-      "backstory": "You've chased strikes from California to Colorado, always believing the next big find is just around the corner. Maybe this time you're right.",
-      "stats": {
-        "grit": 3,
-        "reflex": 2,
-        "aim": 2,
-        "wit": 4,
-        "charm": 3,
-        "fortitude": 4,
-        "stealth": 2,
-        "spirit": 2
-      },
-      "skills": {
-        "appraisal": 2,
-        "crafting": 2,
-        "foraging": 1
-      },
-      "starting_talent": "keen_eye",
-      "equipment": {
-        "weapons": ["pickaxe"],
-        "armor": [],
-        "items": ["mining_pan", "lantern", "rope", "rations_5"],
-        "horse": "mule",
-        "money": 100
-      },
-      "playstyle": "Exploration, resource gathering, wealth accumulation",
-      "difficulty": "easy",
-      "tags": ["exploration", "utility"]
-    },
-    "outlaw": {
-      "name": "Outlaw",
-      "description": "Bandit, rustler, or robber living outside the law with a price on their head.",
-      "backstory": "The law says you're a criminal, but you know it's more complicated than that. Or maybe it isn't. Either way, there's no going back now.",
-      "stats": {
-        "grit": 3,
-        "reflex": 3,
-        "aim": 3,
-        "wit": 2,
-        "charm": 2,
-        "fortitude": 2,
-        "stealth": 4,
-        "spirit": 3
-      },
-      "skills": {
-        "pistol": 1,
-        "lockpicking": 1,
-        "gambling": 1,
-        "deception": 1
-      },
-      "starting_talent": "wanted",
-      "equipment": {
-        "weapons": ["revolver", "knife"],
-        "armor": ["bandana"],
-        "items": ["lockpicks", "ammo_pistol_18", "whiskey"],
-        "horse": "stolen_horse",
-        "money": 150
-      },
-      "playstyle": "Criminal activities, stealth, morally gray choices",
-      "difficulty": "hard",
-      "tags": ["stealth", "combat", "social"],
-      "special_flags": ["wanted_by_law"]
-    },
-    "preacher": {
-      "name": "Preacher",
-      "description": "Circuit preacher, missionary, or reformed sinner spreading the word across the frontier.",
-      "backstory": "You carry a Bible and a message of hope to the lost souls of the frontier. But out here, sometimes faith alone isn't enough.",
-      "stats": {
-        "grit": 2,
-        "reflex": 2,
-        "aim": 2,
-        "wit": 3,
-        "charm": 4,
-        "fortitude": 3,
-        "stealth": 2,
-        "spirit": 4
-      },
-      "skills": {
-        "persuasion": 2,
-        "medicine": 1,
-        "lore": 1
-      },
-      "starting_talent": "preachers_fire",
-      "equipment": {
-        "weapons": [],
-        "armor": ["modest_clothing"],
-        "items": ["bible", "medical_kit", "rations_3", "water_canteen"],
-        "money": 60
-      },
-      "playstyle": "Social interactions, healing, moral choices, social combat",
-      "difficulty": "hard",
-      "tags": ["social", "support"]
-    },
-    "drifter": {
-      "name": "Drifter",
-      "description": "Wanderer with no ties, a mysterious past, and a knack for picking things up quickly.",
-      "backstory": "You've been moving from place to place for as long as you can remember. No roots, no attachments, just the open road ahead.",
-      "stats": {
-        "grit": 3,
-        "reflex": 3,
-        "aim": 3,
-        "wit": 3,
-        "charm": 3,
-        "fortitude": 3,
-        "stealth": 2,
-        "spirit": 2
-      },
-      "skills": {
-        "pistol": 1,
-        "foraging": 1,
-        "persuasion": 1,
-        "brawling": 1
-      },
-      "starting_talent": "adaptable",
-      "equipment": {
-        "weapons": ["worn_revolver"],
-        "armor": [],
-        "items": ["bedroll", "rations_2", "water_canteen", "rope"],
-        "money": 80
-      },
-      "playstyle": "Jack-of-all-trades, flexible development",
-      "difficulty": "normal",
-      "tags": ["versatile"]
-    },
-    "native_scout": {
-      "name": "Native Scout",
-      "description": "Tribal warrior and guide caught between two worlds, with deep knowledge of the land and its spirits.",
-      "backstory": "Your people have lived on this land since time immemorial. Now strangers flood across it, and you must find your place in a changing world.",
-      "stats": {
-        "grit": 2,
-        "reflex": 3,
-        "aim": 3,
-        "wit": 3,
-        "charm": 2,
-        "fortitude": 3,
-        "stealth": 3,
-        "spirit": 4
-      },
-      "skills": {
-        "tracking": 2,
-        "hunting": 2,
-        "lore": 1
-      },
-      "starting_talent": "spirit_guide",
-      "equipment": {
-        "weapons": ["bow", "knife"],
-        "armor": [],
-        "items": ["arrows_20", "herbs_medicine", "cultural_items", "pemmican_5"],
-        "horse": "mustang",
-        "money": 30
-      },
-      "playstyle": "Wilderness expert, cultural mediator, supernatural connection",
-      "difficulty": "normal",
-      "tags": ["survival", "supernatural"]
-    },
-    "occultist": {
-      "name": "Occultist",
-      "description": "Hedge witch, fortune teller, or someone touched by forces beyond normal understanding.",
-      "backstory": "You've always seen things others couldn't. Whether it's a gift or a curse, the veil between worlds is thin for you.",
-      "stats": {
-        "grit": 2,
-        "reflex": 2,
-        "aim": 2,
-        "wit": 4,
-        "charm": 3,
-        "fortitude": 2,
-        "stealth": 2,
-        "spirit": 5
-      },
-      "skills": {
-        "lore": 2,
-        "medicine": 1,
-        "persuasion": 1,
-        "deception": 1
-      },
-      "starting_talent": "second_sight",
-      "equipment": {
-        "weapons": [],
-        "armor": [],
-        "items": ["tarot_cards", "herbs_various", "strange_tome", "candles", "silver_mirror"],
-        "money": 70
-      },
-      "playstyle": "Supernatural specialist, information gathering, unique solutions",
-      "difficulty": "hard",
-      "tags": ["supernatural", "social"]
-    }
-  },
-  "stat_point_total": 24,
-  "skill_point_total": 4,
-  "difficulty_descriptions": {
-    "easy": "More resources and money to start. Good for learning the game.",
-    "normal": "Balanced starting position. The intended experience.",
-    "hard": "Fewer resources or special challenges. For experienced players."
-  },
-  "tag_descriptions": {
-    "combat": "Strong in direct confrontations and gunfights.",
-    "survival": "Excels at wilderness survival and self-sufficiency.",
-    "social": "Skilled at dealing with people and resolving conflicts peacefully.",
-    "exploration": "Good at finding resources, secrets, and navigating the frontier.",
-    "stealth": "Capable of avoiding detection and striking from the shadows.",
-    "supernatural": "Has connection to forces beyond normal understanding.",
-    "support": "Helps allies and provides healing or buffs.",
-    "utility": "Versatile with many practical skills.",
-    "versatile": "Well-rounded with no major weaknesses."
-  }
+  "backgrounds": [
+	{
+	  "id": "gunslinger",
+	  "name": "Gunslinger",
+	  "difficulty": "normal",
+	  "stats": {
+		"grit": 2,
+		"reflex": 4,
+		"aim": 4,
+		"wit": 2,
+		"charm": 2,
+		"fortitude": 2,
+		"stealth": 2,
+		"spirit": 2
+	  },
+	  "skills": {
+		"shooting": 2,
+		"intimidation": 1
+	  },
+	  "starting_talent": "quick_draw",
+	  "equipment": {
+		"weapons": ["quality_revolver"],
+		"clothing": ["leather_duster"],
+		"items": [],
+		"money": 75
+	  },
+	  "backstory": "Whether former lawman turned vigilante, notorious outlaw, or professional duelist, your reputation precedes you. The weight of a six-shooter feels like an extension of your arm, and more than a few souls have met their maker at the wrong end of your barrel.",
+	  "playstyle": "Combat-focused with intimidation options. Excel at gunfights but may struggle with wilderness survival."
+	},
+	{
+	  "id": "scout",
+	  "name": "Scout",
+	  "difficulty": "easy",
+	  "stats": {
+		"grit": 2,
+		"reflex": 3,
+		"aim": 3,
+		"wit": 2,
+		"charm": 1,
+		"fortitude": 3,
+		"stealth": 3,
+		"spirit": 3
+	  },
+	  "skills": {
+		"tracking": 2,
+		"shooting": 1,
+		"survival": 1
+	  },
+	  "starting_talent": "pathfinder",
+	  "equipment": {
+		"weapons": ["rifle"],
+		"clothing": ["trail_clothes"],
+		"items": ["compass", "binoculars"],
+		"money": 50
+	  },
+	  "backstory": "The wilderness is your home. Whether you served as an army scout, guided settlers through dangerous territory, or trapped furs in the high country, you know the land better than most know their own homes.",
+	  "playstyle": "Balanced survivalist. Good at exploration and avoiding danger. Recommended for new players."
+	},
+	{
+	  "id": "prospector",
+	  "name": "Prospector",
+	  "difficulty": "normal",
+	  "stats": {
+		"grit": 3,
+		"reflex": 2,
+		"aim": 2,
+		"wit": 4,
+		"charm": 2,
+		"fortitude": 4,
+		"stealth": 1,
+		"spirit": 2
+	  },
+	  "skills": {
+		"mining": 2,
+		"appraisal": 1,
+		"survival": 1
+	  },
+	  "starting_talent": "keen_eye",
+	  "equipment": {
+		"weapons": ["pickaxe"],
+		"clothing": ["work_clothes"],
+		"items": ["gold_pan", "mining_maps"],
+		"money": 40,
+		"mount": "mule"
+	  },
+	  "backstory": "You've chased the dream of striking it rich through played-out gold fields and silver boomtowns. The gold rush may be over, but you know there's still wealth in these hills for those with the patience and know-how to find it.",
+	  "playstyle": "Economy-focused with treasure hunting. Good at finding valuables but weaker in combat."
+	},
+	{
+	  "id": "outlaw",
+	  "name": "Outlaw",
+	  "difficulty": "hard",
+	  "stats": {
+		"grit": 3,
+		"reflex": 3,
+		"aim": 2,
+		"wit": 2,
+		"charm": 2,
+		"fortitude": 2,
+		"stealth": 4,
+		"spirit": 2
+	  },
+	  "skills": {
+		"shooting": 1,
+		"lockpicking": 1,
+		"gambling": 1,
+		"deception": 1
+	  },
+	  "starting_talent": "wanted",
+	  "equipment": {
+		"weapons": ["revolver", "knife"],
+		"clothing": ["dark_clothes", "bandana"],
+		"items": ["lockpicks"],
+		"money": 150,
+		"mount": "stolen_horse"
+	  },
+	  "backstory": "The law has a price on your head, and for good reason. Whether you fell into banditry through desperation or choice, you've crossed lines that can't be uncrossed. But out here in the territories, a clever outlaw can always find opportunity.",
+	  "playstyle": "High risk, high reward. Better payouts for criminal activities but law enforcement is hostile. Challenging start."
+	},
+	{
+	  "id": "preacher",
+	  "name": "Preacher",
+	  "difficulty": "normal",
+	  "stats": {
+		"grit": 2,
+		"reflex": 2,
+		"aim": 1,
+		"wit": 3,
+		"charm": 4,
+		"fortitude": 3,
+		"stealth": 1,
+		"spirit": 4
+	  },
+	  "skills": {
+		"persuasion": 2,
+		"medicine": 1,
+		"lore": 1
+	  },
+	  "starting_talent": "voice_of_authority",
+	  "equipment": {
+		"weapons": [],
+		"clothing": ["preacher_clothes"],
+		"items": ["bible", "medical_supplies"],
+		"money": 60
+	  },
+	  "backstory": "You carry the Word to those who need it most - the lost souls of the frontier. Whether a circuit preacher traveling between towns, a missionary to the tribes, or a reformed sinner seeking redemption, your faith gives you strength others lack.",
+	  "playstyle": "Social and support focused. Excellent at negotiations and healing but weak in direct combat."
+	},
+	{
+	  "id": "drifter",
+	  "name": "Drifter",
+	  "difficulty": "easy",
+	  "stats": {
+		"grit": 3,
+		"reflex": 3,
+		"aim": 2,
+		"wit": 3,
+		"charm": 2,
+		"fortitude": 3,
+		"stealth": 2,
+		"spirit": 2
+	  },
+	  "skills": {
+		"shooting": 1,
+		"survival": 1,
+		"persuasion": 1,
+		"brawling": 1
+	  },
+	  "starting_talent": "adaptable",
+	  "equipment": {
+		"weapons": ["old_revolver"],
+		"clothing": ["worn_clothes"],
+		"items": ["bedroll", "canteen"],
+		"money": 80
+	  },
+	  "backstory": "No home, no ties, no past worth speaking of. You drift from town to town, taking work where you find it and moving on when the mood strikes. Your mysterious past is your own business - what matters is the road ahead.",
+	  "playstyle": "Jack of all trades. Balanced stats and faster skill learning. Flexible development path."
+	},
+	{
+	  "id": "tribal_scout",
+	  "name": "Tribal Scout",
+	  "difficulty": "normal",
+	  "stats": {
+		"grit": 2,
+		"reflex": 3,
+		"aim": 3,
+		"wit": 2,
+		"charm": 2,
+		"fortitude": 3,
+		"stealth": 3,
+		"spirit": 4
+	  },
+	  "skills": {
+		"tracking": 2,
+		"archery": 2,
+		"herbalism": 1,
+		"lore": 1
+	  },
+	  "starting_talent": "spirit_guide",
+	  "equipment": {
+		"weapons": ["bow", "hunting_knife"],
+		"clothing": ["traditional_garb"],
+		"items": ["medicine_pouch", "tribal_tokens"],
+		"money": 30
+	  },
+	  "backstory": "You walk between two worlds - the ways of your people and the encroaching frontier. Whether serving as a guide, warrior, or mediator, you carry the wisdom of your ancestors while navigating the changing times.",
+	  "playstyle": "Wilderness expert with supernatural connection. Strong tracking and herbalism, unique spirit abilities."
+	},
+	{
+	  "id": "occultist",
+	  "name": "Occultist",
+	  "difficulty": "hard",
+	  "stats": {
+		"grit": 2,
+		"reflex": 2,
+		"aim": 1,
+		"wit": 4,
+		"charm": 3,
+		"fortitude": 2,
+		"stealth": 2,
+		"spirit": 4
+	  },
+	  "skills": {
+		"lore": 2,
+		"herbalism": 1,
+		"persuasion": 1
+	  },
+	  "starting_talent": "second_sight",
+	  "equipment": {
+		"weapons": [],
+		"clothing": ["eccentric_clothes"],
+		"items": ["tarot_deck", "ritual_components", "strange_tome"],
+		"money": 45
+	  },
+	  "backstory": "You've glimpsed what lies beyond the veil. Whether a hedge witch practicing folk magic, a fortune teller with genuine sight, or someone cursed - or blessed - with supernatural awareness, you know the Weird West is more than just a name.",
+	  "playstyle": "Supernatural specialist. Can detect and interact with weird elements but physically vulnerable. Advanced difficulty."
+	}
+  ]
 }

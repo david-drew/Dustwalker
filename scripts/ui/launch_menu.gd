@@ -2,7 +2,20 @@
 # Main menu screen shown at game start.
 # Provides options for New Game, Load Game, Settings, and Quit.
 #
-# Styled as a Western-themed title screen with dusty, weathered aesthetic.
+# REQUIRED SCENE STRUCTURE (launch_menu.tscn):
+# LaunchMenu (Control) - this script
+# ├── Background (ColorRect)
+# ├── CenterContainer (CenterContainer)
+# │   └── MainVBox (VBoxContainer)
+# │       ├── Title (Label)
+# │       ├── Subtitle (Label)
+# │       ├── Spacer (Control)
+# │       └── ButtonContainer (VBoxContainer)
+# │           ├── NewGameButton (Button)
+# │           ├── ContinueButton (Button)
+# │           ├── SettingsButton (Button)
+# │           └── QuitButton (Button)
+# └── VersionLabel (Label)
 
 extends Control
 class_name LaunchMenu
@@ -17,49 +30,30 @@ signal settings_requested()
 signal quit_pressed()
 
 # =============================================================================
-# CONFIGURATION
-# =============================================================================
-
-## Game title.
-@export var game_title: String = "DUSTWALKER"
-
-## Subtitle/tagline.
-@export var subtitle: String = "A Weird West Journey"
-
-## Background color.
-@export var bg_color: Color = Color(0.12, 0.10, 0.08)
-
-## Title color.
-@export var title_color: Color = Color(0.85, 0.75, 0.55)
-
-## Button normal color.
-@export var button_color: Color = Color(0.25, 0.22, 0.18)
-
-## Button hover color.
-@export var button_hover_color: Color = Color(0.35, 0.30, 0.22)
-
-## Button text color.
-@export var button_text_color: Color = Color(0.9, 0.85, 0.7)
-
-# =============================================================================
 # NODE REFERENCES
 # =============================================================================
 
-var _background: ColorRect
-var _title_label: Label
-var _subtitle_label: Label
-var _button_container: VBoxContainer
-var _new_game_button: Button
-var _load_game_button: Button
-var _settings_button: Button
-var _quit_button: Button
-var _version_label: Label
+@onready var _background: ColorRect = $Background
+@onready var _title: Label = $CenterContainer/MainVBox/Title
+@onready var _subtitle: Label = $CenterContainer/MainVBox/Subtitle
+@onready var _new_game_button: Button = $CenterContainer/MainVBox/ButtonContainer/NewGameButton
+@onready var _continue_button: Button = $CenterContainer/MainVBox/ButtonContainer/ContinueButton
+@onready var _settings_button: Button = $CenterContainer/MainVBox/ButtonContainer/SettingsButton
+@onready var _quit_button: Button = $CenterContainer/MainVBox/ButtonContainer/QuitButton
+@onready var _version_label: Label = $VersionLabel
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+@export var game_title: String = "DUSTWALKER"
+@export var subtitle: String = "A Weird West Journey"
+@export var version_text: String = "v0.1.0 - Early Development"
 
 # =============================================================================
 # STATE
 # =============================================================================
 
-## Whether there are save files to load.
 var has_saves: bool = false
 
 # =============================================================================
@@ -67,99 +61,39 @@ var has_saves: bool = false
 # =============================================================================
 
 func _ready() -> void:
-	_create_ui()
+	_apply_configuration()
 	_connect_buttons()
 	_check_for_saves()
-	
-	# Ensure full rect
-	set_anchors_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_STOP
+	_style_buttons()
 
 
-func _create_ui() -> void:
-	# Background
-	_background = ColorRect.new()
-	_background.name = "Background"
-	_background.color = bg_color
-	_background.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(_background)
-	
-	# Main container (centered)
-	var main_container := VBoxContainer.new()
-	main_container.name = "MainContainer"
-	main_container.set_anchors_preset(Control.PRESET_CENTER)
-	main_container.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	main_container.grow_vertical = Control.GROW_DIRECTION_BOTH
-	main_container.add_theme_constant_override("separation", 20)
-	add_child(main_container)
-	
-	# Title
-	_title_label = Label.new()
-	_title_label.name = "Title"
-	_title_label.text = game_title
-	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_title_label.add_theme_font_size_override("font_size", 72)
-	_title_label.add_theme_color_override("font_color", title_color)
-	main_container.add_child(_title_label)
-	
-	# Subtitle
-	_subtitle_label = Label.new()
-	_subtitle_label.name = "Subtitle"
-	_subtitle_label.text = subtitle
-	_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_subtitle_label.add_theme_font_size_override("font_size", 24)
-	_subtitle_label.add_theme_color_override("font_color", title_color.darkened(0.3))
-	main_container.add_child(_subtitle_label)
-	
-	# Spacer
-	var spacer := Control.new()
-	spacer.custom_minimum_size = Vector2(0, 40)
-	main_container.add_child(spacer)
-	
-	# Button container
-	_button_container = VBoxContainer.new()
-	_button_container.name = "ButtonContainer"
-	_button_container.add_theme_constant_override("separation", 12)
-	_button_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	main_container.add_child(_button_container)
-	
-	# Create buttons
-	_new_game_button = _create_menu_button("New Game")
-	_button_container.add_child(_new_game_button)
-	
-	_load_game_button = _create_menu_button("Continue")
-	_button_container.add_child(_load_game_button)
-	
-	_settings_button = _create_menu_button("Settings")
-	_button_container.add_child(_settings_button)
-	
-	_quit_button = _create_menu_button("Quit")
-	_button_container.add_child(_quit_button)
-	
-	# Version label (bottom right)
-	_version_label = Label.new()
-	_version_label.name = "Version"
-	_version_label.text = "v0.1.0 - Early Development"
-	_version_label.add_theme_font_size_override("font_size", 14)
-	_version_label.add_theme_color_override("font_color", Color(0.5, 0.45, 0.4))
-	_version_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_version_label.offset_left = -200
-	_version_label.offset_top = -30
-	_version_label.offset_right = -10
-	_version_label.offset_bottom = -10
-	_version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	add_child(_version_label)
+func _apply_configuration() -> void:
+	if _title:
+		_title.text = game_title
+	if _subtitle:
+		_subtitle.text = subtitle
+	if _version_label:
+		_version_label.text = version_text
 
 
-func _create_menu_button(text: String) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.custom_minimum_size = Vector2(250, 50)
+func _connect_buttons() -> void:
+	if _new_game_button:
+		_new_game_button.pressed.connect(_on_new_game_pressed)
+	if _continue_button:
+		_continue_button.pressed.connect(_on_continue_pressed)
+	if _settings_button:
+		_settings_button.pressed.connect(_on_settings_pressed)
+	if _quit_button:
+		_quit_button.pressed.connect(_on_quit_pressed)
+
+
+func _style_buttons() -> void:
+	# Apply western-themed styling to all buttons
+	var buttons := [_new_game_button, _continue_button, _settings_button, _quit_button]
 	
-	# Style the button
 	var style_normal := StyleBoxFlat.new()
-	style_normal.bg_color = button_color
-	style_normal.border_color = title_color.darkened(0.2)
+	style_normal.bg_color = Color(0.25, 0.22, 0.18)
+	style_normal.border_color = Color(0.595, 0.525, 0.385)
 	style_normal.set_border_width_all(2)
 	style_normal.set_corner_radius_all(4)
 	style_normal.content_margin_left = 20
@@ -168,35 +102,26 @@ func _create_menu_button(text: String) -> Button:
 	style_normal.content_margin_bottom = 10
 	
 	var style_hover := style_normal.duplicate()
-	style_hover.bg_color = button_hover_color
-	style_hover.border_color = title_color
+	style_hover.bg_color = Color(0.35, 0.30, 0.22)
+	style_hover.border_color = Color(0.85, 0.75, 0.55)
 	
 	var style_pressed := style_normal.duplicate()
-	style_pressed.bg_color = button_hover_color.darkened(0.2)
+	style_pressed.bg_color = Color(0.2, 0.18, 0.14)
 	
 	var style_disabled := style_normal.duplicate()
-	style_disabled.bg_color = button_color.darkened(0.3)
-	style_disabled.border_color = title_color.darkened(0.5)
+	style_disabled.bg_color = Color(0.18, 0.16, 0.13)
+	style_disabled.border_color = Color(0.4, 0.36, 0.28)
 	
-	button.add_theme_stylebox_override("normal", style_normal)
-	button.add_theme_stylebox_override("hover", style_hover)
-	button.add_theme_stylebox_override("pressed", style_pressed)
-	button.add_theme_stylebox_override("disabled", style_disabled)
-	
-	button.add_theme_font_size_override("font_size", 20)
-	button.add_theme_color_override("font_color", button_text_color)
-	button.add_theme_color_override("font_hover_color", button_text_color)
-	button.add_theme_color_override("font_pressed_color", button_text_color.darkened(0.2))
-	button.add_theme_color_override("font_disabled_color", button_text_color.darkened(0.5))
-	
-	return button
-
-
-func _connect_buttons() -> void:
-	_new_game_button.pressed.connect(_on_new_game_pressed)
-	_load_game_button.pressed.connect(_on_load_game_pressed)
-	_settings_button.pressed.connect(_on_settings_pressed)
-	_quit_button.pressed.connect(_on_quit_pressed)
+	for button in buttons:
+		if button:
+			button.add_theme_stylebox_override("normal", style_normal)
+			button.add_theme_stylebox_override("hover", style_hover)
+			button.add_theme_stylebox_override("pressed", style_pressed)
+			button.add_theme_stylebox_override("disabled", style_disabled)
+			button.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
+			button.add_theme_color_override("font_hover_color", Color(0.95, 0.9, 0.8))
+			button.add_theme_color_override("font_pressed_color", Color(0.7, 0.65, 0.55))
+			button.add_theme_color_override("font_disabled_color", Color(0.5, 0.45, 0.38))
 
 # =============================================================================
 # SAVE DETECTION
@@ -217,11 +142,12 @@ func _check_for_saves() -> void:
 		save_dir.list_dir_end()
 	
 	# Update continue button state
-	_load_game_button.disabled = not has_saves
-	_load_game_button.text = "Continue" if has_saves else "Continue (No Saves)"
+	if _continue_button:
+		_continue_button.disabled = not has_saves
+		_continue_button.text = "Continue" if has_saves else "Continue (No Saves)"
 
 
-## Refresh the menu (e.g., after returning from settings).
+## Refresh the menu state.
 func refresh() -> void:
 	_check_for_saves()
 
@@ -235,13 +161,11 @@ func _on_new_game_pressed() -> void:
 	_emit_to_event_bus("new_game_requested", [])
 
 
-func _on_load_game_pressed() -> void:
+func _on_continue_pressed() -> void:
 	if not has_saves:
 		return
 	
-	print("LaunchMenu: Load Game pressed")
-	
-	# Find most recent save
+	print("LaunchMenu: Continue pressed")
 	var most_recent := _find_most_recent_save()
 	load_game_pressed.emit(most_recent)
 	_emit_to_event_bus("load_game_requested", [most_recent])

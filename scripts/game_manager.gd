@@ -2,7 +2,10 @@
 # Orchestrates game initialization and connects all systems.
 # Handles the startup sequence: Map → Player spawn → Camera focus.
 #
-# Attach to a node in the Main scene, or use as a script component.
+# IMPORTANT: This version does NOT auto-initialize in _ready().
+# Main.gd calls initialize_game() when transitioning to gameplay state.
+#
+# Attach to a node in the Main scene.
 
 extends Node
 class_name GameManager
@@ -75,9 +78,23 @@ var player_ready: bool = false
 # =============================================================================
 
 func _ready() -> void:
+	add_to_group("game_manager")
+	# NOTE: We do NOT auto-initialize here anymore.
+	# Main.gd will call initialize_game() when ready.
+	print("GameManager: Ready (waiting for initialization)")
+
+
+## Public method for Main to call when entering gameplay state.
+func initialize_game() -> void:
+	if is_initialized:
+		print("GameManager: Already initialized")
+		return
+	
+	print("GameManager: Starting initialization...")
+	
 	# Wait a frame to ensure all nodes are ready
 	await get_tree().process_frame
-
+	
 	_find_references()
 	_connect_signals()
 	_initialize_game()
@@ -88,55 +105,55 @@ func _find_references() -> void:
 	hex_grid = get_tree().get_first_node_in_group("hex_grid") as HexGrid
 	if hex_grid == null:
 		hex_grid = get_node_or_null("../HexGrid") as HexGrid
-
+	
 	# Find movement controller
 	movement_controller = get_tree().get_first_node_in_group("movement_controller") as MovementController
 	if movement_controller == null:
-		movement_controller = get_node_or_null("../../MovementController") as MovementController
-
+		movement_controller = get_node_or_null("../MovementController") as MovementController
+	
 	# Find player spawner
 	player_spawner = get_tree().get_first_node_in_group("player_spawner") as PlayerSpawner
 	if player_spawner == null:
-		player_spawner = get_node_or_null("../../PlayerSpawner") as PlayerSpawner
-
+		player_spawner = get_node_or_null("../PlayerSpawner") as PlayerSpawner
+	
 	# Find fog of war manager
 	fog_manager = get_tree().get_first_node_in_group("fog_manager") as FogOfWarManager
 	if fog_manager == null:
-		fog_manager = get_node_or_null("../../FogOfWarManager") as FogOfWarManager
-
+		fog_manager = get_node_or_null("../FogOfWarManager") as FogOfWarManager
+	
 	# Find survival manager
 	survival_manager = get_tree().get_first_node_in_group("survival_manager") as SurvivalManager
 	if survival_manager == null:
-		survival_manager = get_node_or_null("../../SurvivalManager") as SurvivalManager
-
+		survival_manager = get_node_or_null("../SurvivalManager") as SurvivalManager
+	
 	# Find inventory manager
 	inventory_manager = get_tree().get_first_node_in_group("inventory_manager") as InventoryManager
 	if inventory_manager == null:
-		inventory_manager = get_node_or_null("../../InventoryManager") as InventoryManager
-
+		inventory_manager = get_node_or_null("../InventoryManager") as InventoryManager
+	
 	# Find encounter manager
 	encounter_manager = get_tree().get_first_node_in_group("encounter_manager") as EncounterManager
 	if encounter_manager == null:
-		encounter_manager = get_node_or_null("../../EncounterManager") as EncounterManager
-
+		encounter_manager = get_node_or_null("../EncounterManager") as EncounterManager
+	
 	# Find camera
 	map_camera = get_tree().get_first_node_in_group("map_camera") as Camera2D
 	if map_camera == null:
 		map_camera = get_node_or_null("../MapCamera") as Camera2D
-
+	
 	# Find UI panels
-	turn_panel = get_node_or_null("../../UI/TurnPanel") as TurnPanel
-	survival_panel = get_node_or_null("../../UI/SurvivalPanel") as SurvivalPanel
-	inventory_panel = get_node_or_null("../../UI/InventoryPanel") as InventoryPanel
-	encounter_window = get_node_or_null("../../UI/EncounterWindow") as EncounterWindow
-	game_over_screen = get_node_or_null("../../UI/GameOverScreen") as GameOverScreen
+	turn_panel = get_node_or_null("../UI/TurnPanel") as TurnPanel
+	survival_panel = get_node_or_null("../UI/SurvivalPanel") as SurvivalPanel
+	inventory_panel = get_node_or_null("../UI/InventoryPanel") as InventoryPanel
+	encounter_window = get_node_or_null("../UI/EncounterWindow") as EncounterWindow
+	game_over_screen = get_node_or_null("../UI/GameOverScreen") as GameOverScreen
 
 
 func _connect_signals() -> void:
 	# Connect hex cell clicks for movement
 	if hex_grid:
 		hex_grid.hex_clicked.connect(_on_hex_clicked)
-
+	
 	# Connect player movement events
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
@@ -146,12 +163,7 @@ func _connect_signals() -> void:
 			event_bus.encounter_ui_opened.connect(_on_encounter_opened)
 		if event_bus.has_signal("encounter_ui_closed"):
 			event_bus.encounter_ui_closed.connect(_on_encounter_closed)
-		# Combat signals
-		if event_bus.has_signal("combat_started"):
-			event_bus.combat_started.connect(_on_combat_started)
-		if event_bus.has_signal("combat_ended"):
-			event_bus.combat_ended.connect(_on_combat_ended)
-
+	
 	# Connect game over screen
 	if game_over_screen:
 		game_over_screen.load_save_requested.connect(_on_load_save_requested)
@@ -160,67 +172,67 @@ func _connect_signals() -> void:
 
 func _initialize_game() -> void:
 	print("GameManager: Initializing game...")
-
+	
 	if hex_grid == null:
 		push_error("GameManager: HexGrid not found!")
 		return
-
+	
 	if movement_controller == null:
 		push_error("GameManager: MovementController not found!")
 		return
-
+	
 	if player_spawner == null:
 		push_error("GameManager: PlayerSpawner not found!")
 		return
-
+	
 	# Wait for map generation to complete if needed
 	await get_tree().process_frame
-
+	
 	# Initialize fog of war (before player spawn so fog is in place)
 	if fog_manager:
 		fog_manager.initialize(hex_grid, null)  # Player ref added after spawn
-
+	
 	# Initialize survival and inventory systems
 	#if survival_manager:		survival_manager.initialize()
-
+	
 	if inventory_manager and survival_manager:
 		inventory_manager.initialize(survival_manager)
-
+	
 	# Initialize encounter manager
 	if encounter_manager:
 		encounter_manager.initialize(hex_grid, survival_manager, inventory_manager)
 		if encounter_window:
 			encounter_manager.set_encounter_window(encounter_window)
-
+	
 	# Initialize UI panels
 	if survival_panel and survival_manager:
 		survival_panel.initialize(survival_manager)
-
+	
 	if inventory_panel and inventory_manager and survival_manager:
 		inventory_panel.initialize(inventory_manager, survival_manager)
-
+	
 	# Spawn the player
 	player = player_spawner.spawn_player(hex_grid, movement_controller)
-
+	
 	if player:
 		player_ready = true
-
+		
 		# Update fog manager with player reference
 		if fog_manager:
 			fog_manager.player = player
 			fog_manager.reveal_spawn_area(player.current_hex)
-
+		
 		# Focus camera on player
 		if map_camera:
 			_center_camera_on_player()
-
+		
 		# Connect player signals
 		player.movement_completed.connect(_on_player_local_movement_completed)
-
+	
 	is_initialized = true
 	game_ready.emit()
 	new_game_started.emit()
-
+	
 	print("GameManager: Game ready!")
 
 # =============================================================================
@@ -230,17 +242,13 @@ func _initialize_game() -> void:
 func _on_hex_clicked(coords: Vector2i) -> void:
 	if not is_initialized or not player_ready:
 		return
-
-	# Block during encounters or combat
-	if _encounter_active or _is_combat_blocking_input():
-		return
-
+	
 	if player and player.is_moving:
 		return
-
+	
 	# Request movement to clicked hex
 	var result := movement_controller.request_movement(coords)
-
+	
 	match result["action"]:
 		"moved":
 			print("GameManager: Movement confirmed")
@@ -253,7 +261,7 @@ func _on_hex_clicked(coords: Vector2i) -> void:
 			print("GameManager: Invalid destination - %s" % result["reason"])
 
 
-func _on_player_movement_completed(_total_hexes: int, _total_turns: int) -> void:
+func _on_player_movement_completed(total_hexes: int, total_turns: int) -> void:
 	# Camera follow after movement
 	if map_camera and player:
 		_smooth_camera_to_player()
@@ -269,28 +277,21 @@ func _on_player_local_movement_completed(total_hexes: int, total_turns: int) -> 
 func _center_camera_on_player() -> void:
 	if map_camera == null or player == null:
 		return
-
-	if map_camera.has_method("center_on"):
-		map_camera.center_on(player.position, true)
-	else:
-		map_camera.position = player.position
+	
+	map_camera.position = player.position
 
 
 func _smooth_camera_to_player() -> void:
 	if map_camera == null or player == null:
 		return
-
+	
 	# Check if camera follow is enabled
 	var loader = get_node_or_null("/root/DataLoader")
 	if loader:
 		var config: Dictionary = loader.load_map_config("movement_config")
 		if not config.get("camera_follow_player", true):
 			return
-
-	if map_camera.has_method("center_on"):
-		map_camera.center_on(player.position)
-		return
-
+	
 	# Smooth tween to player position
 	var tween := create_tween()
 	tween.set_ease(Tween.EASE_OUT)
@@ -304,27 +305,27 @@ func _smooth_camera_to_player() -> void:
 ## Starts a new game with a new map.
 func start_new_game(map_seed: int = 0) -> void:
 	print("GameManager: Starting new game...")
-
+	
 	# Reset time
 	var time_manager = get_node_or_null("/root/TimeManager")
 	if time_manager:
 		time_manager.reset_time()
-
+	
 	# Generate new map
 	if hex_grid:
 		hex_grid.generate_complete_map(map_seed)
-
+	
 	# Respawn player
 	if player_spawner:
 		if player_spawner.has_player():
 			player_spawner.respawn_player()
 		else:
 			player = player_spawner.spawn_player(hex_grid, movement_controller)
-
+	
 	# Center camera
 	if player and map_camera:
 		_center_camera_on_player()
-
+	
 	player_ready = true
 	new_game_started.emit()
 
@@ -332,26 +333,26 @@ func start_new_game(map_seed: int = 0) -> void:
 ## Loads a game from a save file.
 func load_game(file_path: String) -> bool:
 	print("GameManager: Loading game from %s..." % file_path)
-
+	
 	if hex_grid == null:
 		return false
-
+	
 	# Load map (this also loads player data if present)
 	var loaded_seed := hex_grid.load_map(file_path)
-
+	
 	if loaded_seed < 0:
 		push_error("GameManager: Failed to load map")
 		return false
-
+	
 	# TODO: Load player position from save data
 	# For now, respawn player
 	if player_spawner and player_spawner.has_player():
 		player_spawner.respawn_player()
-
+	
 	# Center camera
 	if player and map_camera:
 		_center_camera_on_player()
-
+	
 	game_loaded.emit()
 	return true
 
@@ -360,7 +361,7 @@ func load_game(file_path: String) -> bool:
 func save_game(filename: String = "") -> String:
 	if hex_grid == null:
 		return ""
-
+	
 	# TODO: Include player data in save
 	return hex_grid.save_map(filename)
 
@@ -378,49 +379,6 @@ func _on_encounter_closed() -> void:
 	_encounter_active = false
 
 # =============================================================================
-# COMBAT HANDLING
-# =============================================================================
-
-var _combat_active: bool = false
-
-func _on_combat_started() -> void:
-	_combat_active = true
-
-	# Cancel any queued or active travel so clicks aren't blocked after combat
-	if movement_controller:
-		movement_controller.cancel_pending_movement()
-	elif player and player.is_moving:
-		player.cancel_movement()
-
-
-func _on_combat_ended(_victory: bool, _loot: Dictionary) -> void:
-	_combat_active = false
-	_encounter_active = false
-
-	if encounter_manager and encounter_manager.has_method("_close_encounter"):
-		encounter_manager.call_deferred("_close_encounter")
-
-	# Ensure we don't resume an old path after combat UIs close
-	if movement_controller:
-		movement_controller.cancel_pending_movement()
-	elif player and player.is_moving:
-		player.cancel_movement()
-
-
-func _is_combat_blocking_input() -> bool:
-	if not _combat_active:
-		return false
-
-	var combat_manager = get_tree().get_first_node_in_group("combat_manager")
-	if combat_manager and combat_manager.has_method("is_combat_active"):
-		if combat_manager.is_combat_active():
-			return true
-
-	# No combat manager means the flag is stale
-	_combat_active = false
-	return false
-
-# =============================================================================
 # GAME OVER HANDLING
 # =============================================================================
 
@@ -429,10 +387,10 @@ func _on_load_save_requested() -> void:
 	var dir := DirAccess.open("user://saves/maps/")
 	if dir == null:
 		return
-
+	
 	var newest_file := ""
 	var newest_time := 0
-
+	
 	dir.list_dir_begin()
 	var file_name := dir.get_next()
 	while file_name != "":
@@ -444,7 +402,7 @@ func _on_load_save_requested() -> void:
 				newest_file = full_path
 		file_name = dir.get_next()
 	dir.list_dir_end()
-
+	
 	if newest_file != "":
 		load_game(newest_file)
 
@@ -460,20 +418,20 @@ func _on_restart_requested() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_initialized:
 		return
-
-	# Block input during encounters or combat
-	if _encounter_active or _is_combat_blocking_input():
+	
+	# Block input during encounters
+	if _encounter_active:
 		return
-
+	
 	# Cancel movement preview on right-click or Escape
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			movement_controller.cancel_pending_movement()
-
+	
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_ESCAPE:
 			movement_controller.cancel_pending_movement()
-
+		
 		# Confirm movement with Enter/Space
 		if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
 			if movement_controller.pending_movement:
@@ -496,13 +454,3 @@ func is_game_ready() -> bool:
 ## Checks if an encounter is currently active.
 func is_encounter_active() -> bool:
 	return _encounter_active
-
-
-## Checks if tactical combat is currently active.
-func is_combat_active() -> bool:
-	return _is_combat_blocking_input()
-
-
-## Checks if any blocking UI (encounter or combat) is active.
-func is_input_blocked() -> bool:
-	return _encounter_active or _is_combat_blocking_input()

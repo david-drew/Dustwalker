@@ -1,0 +1,201 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvylf6wfohmri"]
+
+[ext_resource type="Script" uid="uid://dcycxlltvx2cd" path="res://scripts/ui/character_creation_screen.gd" id="1_script"]
+
+[node name="CharacterCreationScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.1, 0.08, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 160
+theme_override_constants/margin_top = 120
+theme_override_constants/margin_right = 160
+theme_override_constants/margin_bottom = 120
+
+[node name="MainVBox" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="Title" type="Label" parent="MarginContainer/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 36
+text = "CREATE YOUR CHARACTER"
+horizontal_alignment = 1
+
+[node name="ContentHBox" type="HBoxContainer" parent="MarginContainer/MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/MainVBox/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+
+[node name="LeftMargin" type="MarginContainer" parent="MarginContainer/MainVBox/ContentHBox/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="LeftVBox" type="VBoxContainer" parent="MarginContainer/MainVBox/ContentHBox/LeftPanel/LeftMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackgroundsLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/LeftPanel/LeftMargin/LeftVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 20
+text = "Choose Your Background"
+
+[node name="BackgroundScroll" type="ScrollContainer" parent="MarginContainer/MainVBox/ContentHBox/LeftPanel/LeftMargin/LeftVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BackgroundList" type="VBoxContainer" parent="MarginContainer/MainVBox/ContentHBox/LeftPanel/LeftMargin/LeftVBox/BackgroundScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="RightPanel" type="VBoxContainer" parent="MarginContainer/MainVBox/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.6
+theme_override_constants/separation = 15
+
+[node name="NameRow" type="HBoxContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/NameRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_font_sizes/font_size = 18
+text = "Name:"
+
+[node name="NameInput" type="LineEdit" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/NameRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+placeholder_text = "Enter character name..."
+
+[node name="PreviewPanel" type="PanelContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PreviewMargin" type="MarginContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 15
+
+[node name="PreviewScroll" type="ScrollContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PreviewVBox" type="VBoxContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="StatsLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 18
+text = "Stats (Click +/- to adjust)"
+
+[node name="StatsGrid" type="GridContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="PointsLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.55, 0.45, 1)
+theme_override_font_sizes/font_size = 14
+text = "Remaining Points: 0"
+
+[node name="SkillsLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 18
+text = "Starting Skills"
+
+[node name="SkillsList" type="VBoxContainer" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TalentLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 18
+text = "Starting Talent"
+
+[node name="TalentDescription" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "(Select a background)"
+autowrap_mode = 3
+
+[node name="DescriptionLabel" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
+theme_override_font_sizes/font_size = 18
+text = "Background Story"
+
+[node name="BackgroundDescription" type="Label" parent="MarginContainer/MainVBox/ContentHBox/RightPanel/PreviewPanel/PreviewMargin/PreviewScroll/PreviewVBox"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
+theme_override_font_sizes/font_size = 14
+text = "(Select a background to see description)"
+autowrap_mode = 3
+
+[node name="ButtonRow" type="HBoxContainer" parent="MarginContainer/MainVBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="BackButton" type="Button" parent="MarginContainer/MainVBox/ButtonRow"]
+custom_minimum_size = Vector2(180, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[node name="ConfirmButton" type="Button" parent="MarginContainer/MainVBox/ButtonRow"]
+custom_minimum_size = Vector2(180, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "Begin Journey"

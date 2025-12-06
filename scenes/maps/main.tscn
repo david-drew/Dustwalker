@@ -70,14 +70,14 @@ script = ExtResource("10_8465s")
 script = ExtResource("11_7goih")
 
 [node name="MapCamera" type="Camera2D" parent="." groups=["map_camera"]]
-position = Vector2(800, 600)
 script = ExtResource("2_camera")
 
 [node name="EnvironmentManager" type="CanvasLayer" parent="."]
 script = ExtResource("13_h4pg4")
 
 [node name="UI" type="CanvasLayer" parent="."]
-layer = 10
+layer = 50
+follow_viewport_enabled = true
 
 [node name="TurnPanel" type="Control" parent="UI"]
 layout_mode = 3
@@ -124,6 +124,7 @@ grow_vertical = 2
 script = ExtResource("16_gameover")
 
 [node name="CampPanel" type="Control" parent="UI"]
+visible = false
 custom_minimum_size = Vector2(500, 300)
 layout_mode = 3
 anchors_preset = 8
@@ -141,6 +142,7 @@ script = ExtResource("17_b02sy")
 metadata/_custom_type_script = "uid://dliny77geftb2"
 
 [node name="StatusEffectDisplay" type="Control" parent="UI"]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
