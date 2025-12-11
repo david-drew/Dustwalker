@@ -1,10 +1,5 @@
 res://scenes/maps/main.tscn
-res://scripts/game_manager.gd
-res://scripts/main.gd
-res://scripts/ui/character_creation_screen.gd
-res://scripts/ui/launch_menu.gd
-res://scripts/ui/settings_screen.gd
-res://scenes/ui/character_creation_screen.tscn
-res://scenes/ui/launch_menu.tscn
-res://scripts/actors/character_creator.gd
-res://data/character/backgrounds.json
+res://scripts/ui/survival_panel.gd
+res://scripts/ui/turn_panel.gd
+res://scripts/ui/inventory_panel.gd
+res://scripts/ui/status_effect_display.gd

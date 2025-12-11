@@ -2,6 +2,7 @@
   "costs": {
     "deadeye": 350,
     "trick_shot": 250,
+    "quick_draw": 300,
     "covered_retreat": 200,
     "berserk_charge": 300,
     "iron_stomach": 150,
@@ -14,6 +15,7 @@
   "training_days": {
     "deadeye": 15,
     "trick_shot": 10,
+    "quick_draw": 10,
     "covered_retreat": 8,
     "berserk_charge": 12,
     "iron_stomach": 5,
@@ -29,7 +31,7 @@
       "title": "Master Gunsmith",
       "location": "Tombstone",
       "description": "A legendary gunfighter turned gunsmith. His hands shake now, but his eye is still sharp.",
-      "teaches": ["deadeye", "trick_shot", "quick_reload"],
+      "teaches": ["deadeye", "trick_shot", "quick_reload", "quick_draw"],
       "stat_requirements": {},
       "reputation_required": "neutral"
     },

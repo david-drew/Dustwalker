@@ -348,7 +348,7 @@ func _ready() -> void:
 
 func _create_ui() -> void:
 	# Main container
-	custom_minimum_size = Vector2(200, icon_size + 8)
+	custom_minimum_size = Vector2(200, icon_size + 12)
 	
 	# Background
 	_background = ColorRect.new()
@@ -359,16 +359,16 @@ func _create_ui() -> void:
 	# Margin container for padding
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 6)
-	margin.add_theme_constant_override("margin_right", 6)
-	margin.add_theme_constant_override("margin_top", 4)
-	margin.add_theme_constant_override("margin_bottom", 4)
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
 	add_child(margin)
 	
 	# Icon container
 	_icon_container = HBoxContainer.new()
 	_icon_container.add_theme_constant_override("separation", icon_spacing)
-	_icon_container.alignment = BoxContainer.ALIGNMENT_BEGIN
+	_icon_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	margin.add_child(_icon_container)
 
 
@@ -653,7 +653,7 @@ func _create_status_icon(status_id: String, tooltip: String) -> void:
 		var text_label := Label.new()
 		text_label.text = def.get("label", status_id)
 		text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		text_label.add_theme_font_size_override("font_size", 10)
+		text_label.add_theme_font_size_override("font_size", 24)
 		text_label.add_theme_color_override("font_color", def.get("color", Color.WHITE))
 		container.add_child(text_label)
 	

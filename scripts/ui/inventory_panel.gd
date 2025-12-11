@@ -58,7 +58,7 @@ func _ready() -> void:
 
 func _create_ui() -> void:
 	# Position below survival panel (bottom-right) using proper anchoring
-	position = Vector2(10, 900)
+	#position = Vector2(10, 900)
 	'''
 	anchor_left = 1.0
 	anchor_right = 1.0

@@ -60,7 +60,7 @@ func _ready() -> void:
 
 func _create_ui() -> void:
 	# Position in bottom-right using proper anchoring
-	position = Vector2(10,500)
+	#position = Vector2(10,500)
 	#anchor_left = 1.0
 	#anchor_right = 1.0
 	#anchor_top = 1.0

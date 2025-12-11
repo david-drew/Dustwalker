@@ -70,6 +70,7 @@ script = ExtResource("10_8465s")
 script = ExtResource("11_7goih")
 
 [node name="MapCamera" type="Camera2D" parent="." groups=["map_camera"]]
+position = Vector2(1720, 720)
 script = ExtResource("2_camera")
 
 [node name="EnvironmentManager" type="CanvasLayer" parent="."]
@@ -80,18 +81,39 @@ layer = 50
 follow_viewport_enabled = true
 
 [node name="TurnPanel" type="Control" parent="UI"]
+custom_minimum_size = Vector2(300, 400)
 layout_mode = 3
 anchors_preset = 0
+offset_left = 2800.0
+offset_top = 20.0
+offset_right = 3350.0
+offset_bottom = 670.0
 script = ExtResource("5_turnpanel")
 
 [node name="SurvivalPanel" type="Control" parent="UI"]
+custom_minimum_size = Vector2(400, 500)
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = 130.0
+offset_right = -90.0
+offset_bottom = 630.0
+grow_horizontal = 0
+grow_vertical = 2
 script = ExtResource("13_survivalpanel")
 
 [node name="InventoryPanel" type="Control" parent="UI"]
+custom_minimum_size = Vector2(550, 400)
 layout_mode = 3
 anchors_preset = 0
+offset_left = -290.0
+offset_top = 950.0
+offset_right = 260.0
+offset_bottom = 1350.0
 script = ExtResource("14_inventorypanel")
 
 [node name="GenerationPanel" type="Control" parent="UI"]
@@ -105,10 +127,13 @@ script = ExtResource("4_genpanel")
 
 [node name="EncounterWindow" type="Control" parent="UI"]
 visible = false
+custom_minimum_size = Vector2(700, 500)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("15_encounterwindow")
@@ -142,11 +167,16 @@ script = ExtResource("17_b02sy")
 metadata/_custom_type_script = "uid://dliny77geftb2"
 
 [node name="StatusEffectDisplay" type="Control" parent="UI"]
-visible = false
+custom_minimum_size = Vector2(200, 80)
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 20.0
+offset_right = -220.0
+offset_bottom = 50.0
+grow_horizontal = 2
 script = ExtResource("21_h4pg4")
 metadata/_custom_type_script = "uid://bge34uy2lfrvj"
 

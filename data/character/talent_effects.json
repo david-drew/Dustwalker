@@ -1,0 +1,123 @@
+{
+  "talents": {
+	"quick_draw": {
+	  "id": "quick_draw",
+	  "duel_mode": true,
+	  "effects": {
+		"duel": {
+		  "crosshair_follow_speed_mult": 1.2,
+		  "crosshair_wobble_mult": 0.9,
+		  "reaction_delay_mult": 0.85
+		}
+	  }
+	},
+	"deadeye": {
+	  "id": "deadeye",
+	  "duel_mode": true,
+	  "effects": {
+		"duel": {
+		  "crosshair_wobble_mult": 0.7,
+		  "crosshair_drift_mult": 0.7,
+		  "focus_factor_mult": 0.85,
+		  "accuracy_mult": 1.15
+		}
+	  }
+	},
+	"trick_shot": {
+	  "id": "trick_shot",
+	  "duel_mode": true,
+	  "effects": {
+		"duel": {
+		  "crosshair_wobble_mult": 0.9,
+		  "crosshair_drift_mult": 0.9,
+		  "humiliation_shot_bonus": 1.0
+		}
+	  }
+	},
+	"poker_face": {
+	  "id": "poker_face",
+	  "duel_mode": true,
+	  "effects": {
+		"duel": {
+		  "feint_chance_mult": 1.25
+		},
+		"social": {
+		  "tell_reveal_chance_mult": 0.8,
+		  "bluff_success_bonus": 0.1
+		}
+	  }
+	},
+	"covered_retreat": {
+	  "id": "covered_retreat",
+	  "duel_mode": false,
+	  "effects": {
+		"tactical": {
+		  "ranged_defense_bonus_while_retreating": 0.2,
+		  "opportunity_attack_chance_mult": 0.7
+		}
+	  }
+	},
+	"berserk_charge": {
+	  "id": "berserk_charge",
+	  "duel_mode": false,
+	  "effects": {
+		"tactical": {
+		  "melee_damage_mult_on_charge": 1.3,
+		  "incoming_ranged_damage_mult_on_charge": 1.2
+		}
+	  }
+	},
+	"iron_stomach": {
+	  "id": "iron_stomach",
+	  "duel_mode": false,
+	  "effects": {
+		"overland": {
+		  "food_poisoning_chance_mult": 0.5,
+		  "spoiled_food_penalty_mult": 0.5
+		}
+	  }
+	},
+	"desert_rat": {
+	  "id": "desert_rat",
+	  "duel_mode": false,
+	  "effects": {
+		"overland": {
+		  "desert_movement_cost_mult": 0.8,
+		  "heat_exhaustion_chance_mult": 0.5
+		}
+	  }
+	},
+	"quick_reload": {
+	  "id": "quick_reload",
+	  "duel_mode": false,
+	  "effects": {
+		"tactical": {
+		  "reload_ap_cost_mult": 0.75
+		}
+	  }
+	},
+	"combat_medic": {
+	  "id": "combat_medic",
+	  "duel_mode": false,
+	  "effects": {
+		"tactical": {
+		  "stabilize_time_mult": 0.5,
+		  "healing_item_effect_mult": 1.25
+		}
+	  }
+	},
+	"witchs_blessing": {
+	  "id": "witchs_blessing",
+	  "duel_mode": false,
+	  "effects": {
+		"overland": {
+		  "occult_event_survival_bonus": 0.15,
+		  "curse_resistance_mult": 0.7
+		},
+		"tactical": {
+		  "supernatural_damage_resist_mult": 0.8
+		}
+	  }
+	}
+  }
+}

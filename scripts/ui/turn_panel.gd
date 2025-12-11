@@ -88,7 +88,7 @@ func _ready() -> void:
 func _create_ui() -> void:
 	# Position in top-left
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
-	position = Vector2(3100, 10)
+	#position = Vector2(3100, 10)
 	custom_minimum_size = Vector2(320, 0)
 	
 	# Main panel
