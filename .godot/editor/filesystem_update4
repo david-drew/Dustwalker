@@ -1,5 +1,4 @@
 res://scenes/maps/main.tscn
-res://scripts/ui/survival_panel.gd
-res://scripts/ui/turn_panel.gd
-res://scripts/ui/inventory_panel.gd
-res://scripts/ui/status_effect_display.gd
+res://scripts/main.gd
+res://scripts/maps/hex_grid.gd
+res://scripts/actors/movement_controller.gd

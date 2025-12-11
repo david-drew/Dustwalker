@@ -554,7 +554,7 @@ func get_modifiers_of_type(target_id: String, target_type: String) -> Dictionary
 # DURATION AND TRIGGERS
 # =============================================================================
 
-func _on_turn_started(turn_number: int, _day: int, _period: int) -> void:
+func _on_turn_started(turn_number: int, _day: int, _period: String) -> void:
 	_current_turn = turn_number
 	_tick_all_effects()
 	_process_turn_triggers()

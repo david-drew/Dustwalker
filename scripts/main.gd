@@ -88,6 +88,11 @@ func _ready() -> void:
 	
 	print("Main: Initialized")
 
+	#var text := get_tree().get_root().get_tree_string_pretty()
+	#var file := FileAccess.open("res://scene_tree.txt", FileAccess.WRITE)
+	#file.store_string(text)
+	#file.close()
+
 
 func _hide_gameplay() -> void:
 	for child in get_children():
@@ -305,28 +310,51 @@ func _on_player_died(cause: String) -> void:
 func _apply_character_data(character_data: Dictionary) -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if not player:
-		push_warning("Main: Player not found")
+		push_warning("Main: Player not found - cannot apply character data")
 		return
 	
-	print("Main: Applying character data")
+	print("Main: Applying character data: %s" % character_data.get("name", "Unknown"))
 	
+	# Name
 	if character_data.has("name"):
 		player.player_name = character_data.name
 	
-	if character_data.has("stats") and player.player_stats:
-		for stat_name in character_data.stats:
-			if player.player_stats.has_method("set_base_stat"):
+	# Background ID (store as metadata for UI display)
+	if character_data.has("background_id"):
+		player.set_meta("background_id", character_data.background_id)
+	
+	# Stats
+	if character_data.has("stats"):
+		if player.player_stats and player.player_stats.has_method("set_base_stat"):
+			for stat_name in character_data.stats:
 				player.player_stats.set_base_stat(stat_name, character_data.stats[stat_name])
+			print("Main: Applied %d stats" % character_data.stats.size())
+		else:
+			push_warning("Main: player.player_stats not available")
 	
-	if character_data.has("skills") and player.skill_manager:
-		for skill_name in character_data.skills:
-			if player.skill_manager.has_method("set_skill_level"):
+	# Skills
+	if character_data.has("skills"):
+		if player.skill_manager and player.skill_manager.has_method("set_skill_level"):
+			for skill_name in character_data.skills:
 				player.skill_manager.set_skill_level(skill_name, character_data.skills[skill_name])
+			print("Main: Applied %d skills" % character_data.skills.size())
+		else:
+			push_warning("Main: player.skill_manager not available")
 	
-	if character_data.has("starting_talent") and player.talent_manager:
+	# Starting talent
+	if character_data.has("starting_talent"):
 		var talent_id: String = character_data.starting_talent
-		if not talent_id.is_empty() and player.talent_manager.has_method("acquire_starting_talent"):
-			player.talent_manager.acquire_starting_talent(talent_id)
+		if not talent_id.is_empty():
+			if player.talent_manager and player.talent_manager.has_method("acquire_starting_talent"):
+				player.talent_manager.acquire_starting_talent(talent_id)
+				print("Main: Applied starting talent: %s" % talent_id)
+			else:
+				push_warning("Main: player.talent_manager not available")
+	
+	# Emit signal for UI to update
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus and event_bus.has_signal("character_data_applied"):
+		event_bus.emit_signal("character_data_applied", character_data)
 
 # =============================================================================
 # PUBLIC API

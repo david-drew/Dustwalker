@@ -142,11 +142,11 @@ func _find_references() -> void:
 		map_camera = get_node_or_null("../MapCamera") as Camera2D
 	
 	# Find UI panels
-	turn_panel = get_node_or_null("../UI/TurnPanel") as TurnPanel
-	survival_panel = get_node_or_null("../UI/SurvivalPanel") as SurvivalPanel
-	inventory_panel = get_node_or_null("../UI/InventoryPanel") as InventoryPanel
-	encounter_window = get_node_or_null("../UI/EncounterWindow") as EncounterWindow
-	game_over_screen = get_node_or_null("../UI/GameOverScreen") as GameOverScreen
+	turn_panel = get_node_or_null("../../UI/TurnPanel") as TurnPanel
+	survival_panel = get_node_or_null("../../UI/SurvivalPanel") as SurvivalPanel
+	inventory_panel = get_node_or_null("../../UI/InventoryPanel") as InventoryPanel
+	encounter_window = get_node_or_null("../../UI/EncounterWindow") as EncounterWindow
+	game_over_screen = get_node_or_null("../../UI/GameOverScreen") as GameOverScreen
 
 
 func _connect_signals() -> void:

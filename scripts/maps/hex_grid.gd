@@ -97,7 +97,6 @@ func _ready() -> void:
 	if use_procedural_generation:
 		generate_complete_map(generation_seed)
 
-
 func _init_generators() -> void:
 	var loader = get_node_or_null("/root/DataLoader")
 	

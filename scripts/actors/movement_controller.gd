@@ -69,7 +69,6 @@ var pending_movement: bool = false
 func _ready() -> void:
 	_load_config()
 
-
 ## Initializes with references to game objects.
 func initialize(grid: HexGrid, player_ref: Player) -> void:
 	hex_grid = grid

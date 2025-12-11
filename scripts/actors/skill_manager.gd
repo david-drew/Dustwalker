@@ -463,7 +463,7 @@ func _track_action(skill: String, action: String) -> void:
 	recent_actions[skill][action]["last_turn"] = _current_turn
 
 
-func _on_turn_started(turn_number: int, _day: int, _period: int) -> void:
+func _on_turn_started(turn_number: int, _day: int, _period: String) -> void:
 	_current_turn = turn_number
 	_decay_recent_actions()
 

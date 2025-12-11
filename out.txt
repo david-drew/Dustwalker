@@ -1,0 +1,158 @@
+root
+│   project.godot
+│   README.md
+│   
+├───.codex
+│       AGENTS.md
+│       config.toml
+│       
+├───assets
+│   └───images
+│       ├───actors
+│       │       
+│       ├───maps
+│       │   │   
+│       │   ├───locations
+│       │   │       
+│       │   └───terrain
+│       │           
+│       └───ui
+│               
+├───data
+│   ├───character
+│   │       backgrounds.json
+│   │       skills_config.json
+│   │       stats_config.json
+│   │       talents_config.json
+│   │       talent_effects.json
+│   │       
+│   ├───combat
+│   │       enemies.json
+│   │       weapons.json
+│   │       
+│   ├───effects
+│   │       status.json
+│   │       talents.json
+│   │       
+│   ├───encounters
+│   │       encounters.json
+│   │       
+│   ├───maps
+│   │       default.json
+│   │       fog_config.json
+│   │       locations_config.json
+│   │       movement_config.json
+│   │       terrain_config.json
+│   │       test_small.json
+│   │       
+│   ├───regions
+│   │       
+│   └───survival
+│           diseases.json
+│           survival_config.json
+│           weather_config.json
+│           
+├───docs
+│       Character_Progression_System.md
+│       Character_System.md
+│       Character_System_Addendum.md
+│       Combat_Social.md
+│       Combat_Systems.md
+│       Concept_and_Game_Overview.md
+│       Dustwalker_Overview.md
+│       Effects_System_Design.md
+│       Encounter_Design.md
+│       Game_Loop.md
+│       Map_and_Exploration.md
+│       Mini-Game_Designs.md
+│       Procedural_Event_Generation.md
+│       Quest_System.md
+│       Reputation_and_Factions.md
+│       Sample_Character_Builds.md
+│       Settings_and_Accessibility.md
+│       Survival_Systems.md
+│       Technical_Considerations_and_Appendices.md
+│       Time_Management.md
+│       UI_UX_Design.md
+│       World_Generation.md
+│       _docs_list.txt
+│       
+├───scenes
+│   ├───actors
+│   │       player.tscn
+│   │       
+│   ├───maps
+│   │       main.tscn
+│   │       
+│   └───ui
+│           character_creation_screen.tscn
+│           launch_menu.tscn
+│           settings_screen.tscn
+│           
+└───scripts
+    │   game_manager.gd
+    │   main.gd
+    │   
+    ├───actors
+    │       character_creator.gd
+    │       movement_controller.gd
+    │       player.gd
+    │       player_spawner.gd
+    │       player_stats.gd
+    │       skill_manager.gd
+    │       talent_manager.gd
+    │       
+    ├───autoloads
+    │       data_loader.gd
+    │       effect_manager.gd
+    │       event_bus.gd
+    │       time_manager.gd
+    │       
+    ├───combat
+    │       combatant.gd
+    │       combat_ai.gd
+    │       combat_camera.gd
+    │       combat_manager.gd
+    │       tactical_hex_cell.gd
+    │       tactical_map.gd
+    │       
+    ├───maps
+    │       fog_of_war_manager.gd
+    │       hex_cell.gd
+    │       hex_grid.gd
+    │       hex_utils.gd
+    │       location_placer.gd
+    │       map_camera.gd
+    │       map_serializer.gd
+    │       map_tester.gd
+    │       map_validator.gd
+    │       river_generator.gd
+    │       terrain_generator.gd
+    │       
+    ├───systems
+    │       disease_manager.gd
+    │       encounter_manager.gd
+    │       environment_manager.gd
+    │       inventory_manager.gd
+    │       survival_manager.gd
+    │       weather_manager.gd
+    │       
+    └───ui
+            camp_panel.gd
+            character_creation_screen.gd
+            character_panel.gd
+            combat_defeat_screen.gd
+            combat_hud.gd
+            combat_victory_screen.gd
+            debug_display.gd
+            encounter_window.gd
+            floating_damage.gd
+            game_over_screen.gd
+            generation_panel.gd
+            inventory_panel.gd
+            launch_menu.gd
+            settings_screen.gd
+            status_effect_display.gd
+            survival_panel.gd
+            turn_panel.gd
+ 
