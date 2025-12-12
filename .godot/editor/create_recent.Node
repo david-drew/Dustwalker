@@ -1,3 +1,5 @@
+HazardManager
+Node
 SkillManager
 TalentManager
 PlayerStats
@@ -6,5 +8,4 @@ StatusEffectDisplay
 WeatherManager
 CanvasLayer
 DiseaseManager
-Node
 CampPanel

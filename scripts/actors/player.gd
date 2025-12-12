@@ -88,6 +88,28 @@ var _hex_size: float = 64.0
 @onready var talent_manager: Node = $TalentManager
 
 # =============================================================================
+# EQUIPMENT SYSTEM
+# =============================================================================
+
+## Weapon ID equipped in slot 1 (empty string if none).
+var equipped_slot_1: String = ""
+
+## Weapon ID equipped in slot 2 (empty string if none).
+var equipped_slot_2: String = ""
+
+## Active equipment slot (0 for slot 1, 1 for slot 2).
+var active_slot: int = 0
+
+## Emitted when a weapon is equipped to a slot.
+signal weapon_equipped(slot: int, weapon_id: String)
+
+## Emitted when a weapon is unequipped from a slot.
+signal weapon_unequipped(slot: int)
+
+## Emitted when the active slot changes.
+signal active_slot_changed(new_slot: int)
+
+# =============================================================================
 # STUB DATA (for future systems)
 # =============================================================================
 
@@ -362,6 +384,148 @@ func activate_talent(talent_id: String, context: Dictionary = {}) -> Dictionary:
 	return {"success": false, "reason": "no_talent_manager"}
 
 # =============================================================================
+# EQUIPMENT MANAGEMENT
+# =============================================================================
+
+## Equips a weapon to the specified slot (0 or 1).
+## @param weapon_id: String - ID of weapon from weapons.json
+## @param slot: int - Equipment slot (0 = slot 1, 1 = slot 2)
+## @return bool - True if equipped successfully
+func equip_weapon(weapon_id: String, slot: int) -> bool:
+	if slot < 0 or slot > 1:
+		push_warning("Player: Invalid equipment slot: %d" % slot)
+		return false
+
+	# Validate weapon exists in weapons.json
+	var loader = get_node_or_null("/root/DataLoader")
+	if loader:
+		var weapons_data: Dictionary = loader.load_json("res://data/combat/weapons.json")
+		if not weapons_data.get("weapons", {}).has(weapon_id):
+			push_warning("Player: Unknown weapon ID: %s" % weapon_id)
+			return false
+
+	# Equip the weapon
+	if slot == 0:
+		equipped_slot_1 = weapon_id
+	else:
+		equipped_slot_2 = weapon_id
+
+	weapon_equipped.emit(slot, weapon_id)
+	_emit_to_event_bus("weapon_equipped", [slot, weapon_id])
+
+	print("Player: Equipped %s to slot %d" % [weapon_id, slot + 1])
+	return true
+
+
+## Unequips a weapon from the specified slot.
+## @param slot: int - Equipment slot (0 = slot 1, 1 = slot 2)
+func unequip_weapon(slot: int) -> void:
+	if slot < 0 or slot > 1:
+		push_warning("Player: Invalid equipment slot: %d" % slot)
+		return
+
+	if slot == 0:
+		equipped_slot_1 = ""
+	else:
+		equipped_slot_2 = ""
+
+	weapon_unequipped.emit(slot)
+	_emit_to_event_bus("weapon_unequipped", [slot])
+
+	print("Player: Unequipped slot %d" % (slot + 1))
+
+
+## Gets the weapon ID equipped in the specified slot.
+## @param slot: int - Equipment slot (0 = slot 1, 1 = slot 2)
+## @return String - Weapon ID or empty string if none equipped
+func get_equipped_weapon(slot: int) -> String:
+	if slot == 0:
+		return equipped_slot_1
+	elif slot == 1:
+		return equipped_slot_2
+	return ""
+
+
+## Gets the weapon ID of the currently active equipment slot.
+## @return String - Weapon ID or empty string if none equipped
+func get_active_weapon() -> String:
+	return get_equipped_weapon(active_slot)
+
+
+## Gets the full weapon data for the currently active weapon.
+## @return Dictionary - Weapon data from weapons.json, or unarmed data if none equipped
+func get_active_weapon_data() -> Dictionary:
+	var weapon_id: String = get_active_weapon()
+
+	print("Player.get_active_weapon_data(): slot %d = '%s'" % [active_slot, weapon_id])
+	print("  equipped_slot_1 = '%s'" % equipped_slot_1)
+	print("  equipped_slot_2 = '%s'" % equipped_slot_2)
+
+	# If no weapon equipped, return unarmed combat data
+	if weapon_id.is_empty():
+		weapon_id = "unarmed"
+		print("  -> Using unarmed (no weapon equipped)")
+
+	var loader = get_node_or_null("/root/DataLoader")
+	if loader:
+		var weapons_data: Dictionary = loader.load_json("res://data/combat/weapons.json")
+		var weapons: Dictionary = weapons_data.get("weapons", {})
+		if weapons.has(weapon_id):
+			print("  -> Loaded weapon data for: %s" % weapon_id)
+			return weapons[weapon_id]
+		else:
+			push_warning("Player: Weapon '%s' not found in weapons.json" % weapon_id)
+
+	# Fallback unarmed data if loading fails
+	print("  -> Using fallback unarmed data")
+	return {
+		"id": "unarmed",
+		"name": "Unarmed",
+		"weapon_type": "melee",
+		"stat_used": "grit",
+		"skill_used": "brawling",
+		"damage_min": 1,
+		"damage_max": 2,
+		"range": 1,
+		"ap_cost": 1,
+		"hands_required": 1
+	}
+
+
+## Switches the active equipment slot (free action, no AP cost).
+func switch_active_slot() -> void:
+	# Toggle between 0 and 1
+	active_slot = 1 - active_slot
+
+	active_slot_changed.emit(active_slot)
+	_emit_to_event_bus("active_slot_changed", [active_slot])
+
+	var weapon_name: String = "None"
+	var weapon_id: String = get_active_weapon()
+	if not weapon_id.is_empty():
+		var weapon_data: Dictionary = get_active_weapon_data()
+		weapon_name = weapon_data.get("name", weapon_id)
+
+	print("Player: Switched to slot %d (%s)" % [active_slot + 1, weapon_name])
+
+
+## Checks if the player has any weapon equipped in either slot.
+## @return bool - True if at least one slot has a weapon
+func has_weapon_equipped() -> bool:
+	return not equipped_slot_1.is_empty() or not equipped_slot_2.is_empty()
+
+
+## Gets the number of equipped weapons.
+## @return int - Number of weapons equipped (0-2)
+func get_equipped_weapon_count() -> int:
+	var count: int = 0
+	if not equipped_slot_1.is_empty():
+		count += 1
+	if not equipped_slot_2.is_empty():
+		count += 1
+	return count
+
+# =============================================================================
 # POSITION MANAGEMENT
 # =============================================================================
 
@@ -553,21 +717,26 @@ func to_dict() -> Dictionary:
 		"name": player_name,
 		"current_hex": {"q": current_hex.x, "r": current_hex.y},
 		"inventory": inventory,
-		"status_effects": status_effects
+		"status_effects": status_effects,
+		"equipment": {
+			"slot_1": equipped_slot_1,
+			"slot_2": equipped_slot_2,
+			"active_slot": active_slot
+		}
 	}
-	
+
 	# Include PlayerStats if available
 	if player_stats and player_stats.has_method("to_dict"):
 		data["stats"] = player_stats.to_dict()
-	
+
 	# Include SkillManager if available
 	if skill_manager and skill_manager.has_method("to_dict"):
 		data["skills"] = skill_manager.to_dict()
-	
+
 	# Include TalentManager if available
 	if talent_manager and talent_manager.has_method("to_dict"):
 		data["talents"] = talent_manager.to_dict()
-	
+
 	return data
 
 
@@ -575,30 +744,37 @@ func to_dict() -> Dictionary:
 func from_dict(data: Dictionary, hex_grid: HexGrid) -> void:
 	_hex_grid = hex_grid
 	_hex_size = hex_grid.hex_size
-	
+
 	player_name = data.get("name", "Wanderer")
-	
+
 	var hex_data: Dictionary = data.get("current_hex", {"q": 0, "r": 0})
 	var loaded_hex := Vector2i(hex_data.get("q", 0), hex_data.get("r", 0))
-	
+
 	inventory = data.get("inventory", [])
 	status_effects = data.get("status_effects", [])
-	
+
+	# Load equipment
+	if data.has("equipment"):
+		var equipment: Dictionary = data.get("equipment", {})
+		equipped_slot_1 = equipment.get("slot_1", "")
+		equipped_slot_2 = equipment.get("slot_2", "")
+		active_slot = equipment.get("active_slot", 0)
+
 	# Load PlayerStats if available
 	if player_stats and player_stats.has_method("from_dict") and data.has("stats"):
 		player_stats.from_dict(data["stats"])
-	
+
 	# Load SkillManager if available
 	if skill_manager and skill_manager.has_method("from_dict") and data.has("skills"):
 		skill_manager.from_dict(data["skills"])
-	
+
 	# Load TalentManager if available
 	if talent_manager and talent_manager.has_method("from_dict") and data.has("talents"):
 		talent_manager.from_dict(data["talents"])
-	
+
 	_rebuild_token()
 	teleport_to_hex(loaded_hex)
-	
+
 	print("Player: Loaded at hex %s" % loaded_hex)
 
 # =============================================================================

@@ -1,13 +1,17 @@
 # inventory_panel.gd
 # UI panel for displaying and using inventory items and actions.
 # Toggle-able panel with item counts and action buttons.
+# Press [I] to toggle visibility.
 #
 # CURRENT ITEMS:
+# - Money (display only)
+# - Equipment (2 weapon slots, switch button)
 # - Rations (Eat button)
 # - Water (Drink button)
 #
 # ACTIONS:
 # - Rest (reduces fatigue, consumes 1 turn)
+# - Camp (opens camp menu)
 
 extends Control
 class_name InventoryPanel
@@ -22,6 +26,9 @@ class_name InventoryPanel
 ## Panel border color.
 @export var border_color: Color = Color(0.3, 0.3, 0.35)
 
+## Toggle key for showing/hiding inventory panel.
+@export var toggle_key: Key = KEY_I
+
 # =============================================================================
 # NODE REFERENCES
 # =============================================================================
@@ -29,6 +36,15 @@ class_name InventoryPanel
 var _toggle_button: Button
 var _panel: PanelContainer
 var _vbox: VBoxContainer
+
+var _money_label: Label
+
+var _weapon_slot_1_label: Label
+var _weapon_slot_1_equip_button: Button
+var _weapon_slot_2_label: Label
+var _weapon_slot_2_equip_button: Button
+var _switch_weapon_button: Button
+var _available_weapons_container: VBoxContainer
 
 var _rations_label: Label
 var _rations_button: Button
@@ -46,6 +62,7 @@ var _camp_button: Button
 var _inventory_manager: InventoryManager = null
 var _survival_manager: SurvivalManager = null
 var _is_expanded: bool = true
+var _is_visible: bool = true
 
 # =============================================================================
 # INITIALIZATION
@@ -104,7 +121,13 @@ func _create_ui() -> void:
 	_vbox = VBoxContainer.new()
 	_vbox.add_theme_constant_override("separation", 12)
 	_panel.add_child(_vbox)
-	
+
+	# Money row (display-only, no button)
+	_create_money_row()
+
+	# Equipment section
+	_create_equipment_section()
+
 	# Rations row
 	_create_item_row("Rations", "rations", "Eat")
 	
@@ -118,6 +141,133 @@ func _create_ui() -> void:
 	
 	# Rest action row
 	_create_action_row()
+
+
+func _create_money_row() -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	_vbox.add_child(row)
+
+	# Money icon (yellow/gold colored box)
+	var icon := ColorRect.new()
+	icon.custom_minimum_size = Vector2(28, 28)
+	icon.color = Color(0.8, 0.7, 0.2)  # Gold/yellow color
+	row.add_child(icon)
+
+	# Money label
+	_money_label = Label.new()
+	_money_label.name = "money_label"
+	_money_label.text = "Money: $20"
+	_money_label.add_theme_font_size_override("font_size", 24)
+	_money_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	_money_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(_money_label)
+
+
+func _create_equipment_section() -> void:
+	# Separator before equipment
+	var separator := HSeparator.new()
+	separator.add_theme_constant_override("separation", 4)
+	_vbox.add_child(separator)
+
+	# Equipment header
+	var header := Label.new()
+	header.text = "Equipment"
+	header.add_theme_font_size_override("font_size", 20)
+	header.add_theme_color_override("font_color", Color(0.7, 0.7, 0.8))
+	_vbox.add_child(header)
+
+	# Weapon Slot 1
+	var slot1_row := HBoxContainer.new()
+	slot1_row.add_theme_constant_override("separation", 8)
+	_vbox.add_child(slot1_row)
+
+	var icon1 := ColorRect.new()
+	icon1.custom_minimum_size = Vector2(28, 28)
+	icon1.color = Color(0.5, 0.5, 0.6)
+	slot1_row.add_child(icon1)
+
+	_weapon_slot_1_label = Label.new()
+	_weapon_slot_1_label.text = "Slot 1: Empty"
+	_weapon_slot_1_label.add_theme_font_size_override("font_size", 20)
+	_weapon_slot_1_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	_weapon_slot_1_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slot1_row.add_child(_weapon_slot_1_label)
+
+	_weapon_slot_1_equip_button = Button.new()
+	_weapon_slot_1_equip_button.text = "Change"
+	_weapon_slot_1_equip_button.custom_minimum_size = Vector2(80, 28)
+	_weapon_slot_1_equip_button.add_theme_font_size_override("font_size", 16)
+	_weapon_slot_1_equip_button.pressed.connect(_on_equip_slot_1_pressed)
+	slot1_row.add_child(_weapon_slot_1_equip_button)
+
+	# Weapon Slot 2
+	var slot2_row := HBoxContainer.new()
+	slot2_row.add_theme_constant_override("separation", 8)
+	_vbox.add_child(slot2_row)
+
+	var icon2 := ColorRect.new()
+	icon2.custom_minimum_size = Vector2(28, 28)
+	icon2.color = Color(0.5, 0.5, 0.6)
+	slot2_row.add_child(icon2)
+
+	_weapon_slot_2_label = Label.new()
+	_weapon_slot_2_label.text = "Slot 2: Empty"
+	_weapon_slot_2_label.add_theme_font_size_override("font_size", 20)
+	_weapon_slot_2_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	_weapon_slot_2_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slot2_row.add_child(_weapon_slot_2_label)
+
+	_weapon_slot_2_equip_button = Button.new()
+	_weapon_slot_2_equip_button.text = "Change"
+	_weapon_slot_2_equip_button.custom_minimum_size = Vector2(80, 28)
+	_weapon_slot_2_equip_button.add_theme_font_size_override("font_size", 16)
+	_weapon_slot_2_equip_button.pressed.connect(_on_equip_slot_2_pressed)
+	slot2_row.add_child(_weapon_slot_2_equip_button)
+
+	# Switch weapon button
+	var button_row := HBoxContainer.new()
+	button_row.add_theme_constant_override("separation", 12)
+	_vbox.add_child(button_row)
+
+	var spacer := Control.new()
+	spacer.custom_minimum_size = Vector2(28, 0)
+	button_row.add_child(spacer)
+
+	_switch_weapon_button = Button.new()
+	_switch_weapon_button.text = "Switch Active Weapon"
+	_switch_weapon_button.custom_minimum_size = Vector2(0, 36)
+	_switch_weapon_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var btn_style := StyleBoxFlat.new()
+	btn_style.bg_color = Color(0.3, 0.3, 0.4)
+	btn_style.set_corner_radius_all(6)
+	btn_style.set_content_margin_all(8)
+	_switch_weapon_button.add_theme_stylebox_override("normal", btn_style)
+	_switch_weapon_button.add_theme_font_size_override("font_size", 20)
+
+	var btn_hover := btn_style.duplicate()
+	btn_hover.bg_color = Color(0.4, 0.4, 0.5)
+	_switch_weapon_button.add_theme_stylebox_override("hover", btn_hover)
+
+	var btn_disabled := btn_style.duplicate()
+	btn_disabled.bg_color = Color(0.2, 0.2, 0.2)
+	_switch_weapon_button.add_theme_stylebox_override("disabled", btn_disabled)
+
+	_switch_weapon_button.pressed.connect(_on_switch_weapon_pressed)
+	button_row.add_child(_switch_weapon_button)
+
+	# Available weapons list (initially hidden)
+	_available_weapons_container = VBoxContainer.new()
+	_available_weapons_container.name = "AvailableWeapons"
+	_available_weapons_container.add_theme_constant_override("separation", 4)
+	_available_weapons_container.visible = false
+	_vbox.add_child(_available_weapons_container)
+
+	# Separator after equipment
+	var separator2 := HSeparator.new()
+	separator2.add_theme_constant_override("separation", 4)
+	_vbox.add_child(separator2)
 
 
 func _create_item_row(item_name: String, item_id: String, action_text: String) -> void:
@@ -251,6 +401,14 @@ func _connect_signals() -> void:
 	if event_bus:
 		if event_bus.has_signal("inventory_changed"):
 			event_bus.inventory_changed.connect(_on_inventory_changed)
+		if event_bus.has_signal("money_changed"):
+			event_bus.money_changed.connect(_on_money_changed)
+		if event_bus.has_signal("weapon_equipped"):
+			event_bus.weapon_equipped.connect(_on_weapon_equipped)
+		if event_bus.has_signal("weapon_unequipped"):
+			event_bus.weapon_unequipped.connect(_on_weapon_unequipped)
+		if event_bus.has_signal("active_slot_changed"):
+			event_bus.active_slot_changed.connect(_on_active_slot_changed)
 		if event_bus.has_signal("hunger_changed"):
 			event_bus.hunger_changed.connect(_on_survival_changed)
 		if event_bus.has_signal("thirst_changed"):
@@ -271,10 +429,10 @@ func _connect_signals() -> void:
 func initialize(inventory_mgr: InventoryManager, survival_mgr: SurvivalManager) -> void:
 	_inventory_manager = inventory_mgr
 	_survival_manager = survival_mgr
-	
+
 	# Reset all button states to enabled first
 	_reset_button_states()
-	
+
 	_update_display()
 
 
@@ -289,6 +447,8 @@ func _reset_button_states() -> void:
 		_rest_button.disabled = false
 	if _camp_button:
 		_camp_button.disabled = false
+	if _switch_weapon_button:
+		_switch_weapon_button.disabled = false
 
 # =============================================================================
 # DISPLAY UPDATES
@@ -297,20 +457,121 @@ func _reset_button_states() -> void:
 func _update_display() -> void:
 	if _inventory_manager == null:
 		return
-	
+
+	# Update money
+	var money_amount := _inventory_manager.get_money()
+	_money_label.text = "Money: $%d" % money_amount
+
+	# Update equipment
+	_update_equipment_display()
+
 	# Update rations
 	var rations_count := _inventory_manager.get_item_count("rations")
 	_rations_label.text = "Rations: %d" % rations_count
-	
+
 	# Update water
 	var water_count := _inventory_manager.get_item_count("water")
 	_water_label.text = "Water: %d" % water_count
-	
+
 	# Update fatigue display
 	_update_fatigue_display()
-	
+
 	# Update button states
 	_update_button_states()
+
+
+func _update_equipment_display() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		_weapon_slot_1_label.text = "Slot 1: Empty"
+		_weapon_slot_2_label.text = "Slot 2: Empty"
+		_switch_weapon_button.disabled = true
+		return
+
+	# Get weapon data
+	var loader = get_node_or_null("/root/DataLoader")
+	if not loader:
+		return
+
+	var weapons_data: Dictionary = loader.load_json("res://data/combat/weapons.json")
+	var weapons: Dictionary = weapons_data.get("weapons", {})
+
+	var active:int = 0
+	var slot_1_id: String = ""
+	var slot_2_id: String = ""
+	
+	# Get player's equipped weapons and active slot
+	if "equipped_slot_1" in player:
+		slot_1_id = player.equipped_slot_1
+	else:
+		slot_1_id = ""
+	
+	if "equipped_slot_2" in player:
+		slot_2_id = player.equipped_slot_2
+	else:
+		slot_1_id = ""
+	
+	if "active_slot"  in player:
+		active = player.active_slot
+	else:
+		active = 0
+	
+	# Update slot 1
+	if slot_1_id.is_empty():
+		_weapon_slot_1_label.text = "Slot 1: Empty"
+		_weapon_slot_1_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+	else:
+		var weapon: Dictionary = weapons.get(slot_1_id, {})
+		var weapon_name: String = weapon.get("name", slot_1_id.capitalize())
+
+		var active_marker: String = ""
+		if active == 0:
+			active_marker = " ●"
+
+		# Get ammo info for ranged weapons
+		var ammo_text := ""
+		if weapon.get("weapon_type") == "ranged" and _inventory_manager:
+			var ammo_type: String = weapon.get("ammo_type", "")
+			if not ammo_type.is_empty():
+				var ammo_count: int = _inventory_manager.get_item_count(ammo_type)
+				ammo_text = " [%d]" % ammo_count
+
+		_weapon_slot_1_label.text = "Slot 1: %s%s%s" % [weapon_name, ammo_text, active_marker]
+
+		if active == 0:
+			_weapon_slot_1_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		else:
+			_weapon_slot_1_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+
+	# Update slot 2
+	if slot_2_id.is_empty():
+		_weapon_slot_2_label.text = "Slot 2: Empty"
+		_weapon_slot_2_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+	else:
+		var weapon: Dictionary = weapons.get(slot_2_id, {})
+		var weapon_name: String = weapon.get("name", slot_2_id.capitalize())
+
+		var active_marker: String = ""
+		if active == 1:
+			active_marker = " ●"
+
+		# Get ammo info for ranged weapons
+		var ammo_text := ""
+		if weapon.get("weapon_type") == "ranged" and _inventory_manager:
+			var ammo_type: String = weapon.get("ammo_type", "")
+			if not ammo_type.is_empty():
+				var ammo_count: int = _inventory_manager.get_item_count(ammo_type)
+				ammo_text = " [%d]" % ammo_count
+
+		_weapon_slot_2_label.text = "Slot 2: %s%s%s" % [weapon_name, ammo_text, active_marker]
+
+		if active == 1:
+			_weapon_slot_2_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		else:
+			_weapon_slot_2_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+
+	# Enable switch button only if at least one weapon is equipped
+	_switch_weapon_button.disabled = slot_1_id.is_empty() and slot_2_id.is_empty()
 
 
 func _update_fatigue_display() -> void:
@@ -477,6 +738,255 @@ func _on_inventory_changed() -> void:
 	_update_display()
 
 
+func _on_money_changed(_new_amount: int, _old_amount: int) -> void:
+	if _money_label and _inventory_manager:
+		var money_amount := _inventory_manager.get_money()
+		_money_label.text = "Money: $%d" % money_amount
+
+
+func _on_weapon_equipped(_slot: int, _weapon_id: String) -> void:
+	_update_equipment_display()
+
+
+func _on_weapon_unequipped(_slot: int) -> void:
+	_update_equipment_display()
+
+
+func _on_active_slot_changed(_new_slot: int) -> void:
+	_update_equipment_display()
+
+
+func _on_switch_weapon_pressed() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("switch_active_slot"):
+		player.switch_active_slot()
+		_update_equipment_display()
+
+
+var _equipping_slot: int = -1  # Track which slot we're equipping to
+
+
+func _on_equip_slot_1_pressed() -> void:
+	_equipping_slot = 0
+	_show_available_weapons()
+
+
+func _on_equip_slot_2_pressed() -> void:
+	_equipping_slot = 1
+	_show_available_weapons()
+
+
+func _show_available_weapons() -> void:
+	# Clear existing list
+	for child in _available_weapons_container.get_children():
+		child.queue_free()
+
+	if not _inventory_manager:
+		return
+
+	# Get all items from inventory
+	var all_items: Dictionary = _inventory_manager.get_all_items()
+
+	# Load weapon data to check which items are weapons
+	var loader = get_node_or_null("/root/DataLoader")
+	if not loader:
+		print("InventoryPanel: No DataLoader")
+		return
+
+	var weapons_data: Dictionary = loader.load_json("res://data/combat/weapons.json")
+	var weapons: Dictionary = weapons_data.get("weapons", {})
+	print("InventoryPanel: Loaded %d weapon definitions" % weapons.size())
+
+	# Header
+	var header := Label.new()
+	if _equipping_slot == 0:
+		header.text = "Select weapon for Slot 1:"
+	else:
+		header.text = "Select weapon for Slot 2:"
+	header.add_theme_font_size_override("font_size", 16)
+	header.add_theme_color_override("font_color", Color(0.8, 0.8, 0.6))
+	_available_weapons_container.add_child(header)
+
+	var has_weapons := false
+	var listed_weapons: Array = []
+
+	# List weapons in inventory
+	for item_id in all_items:
+		print("  Checking item: %s" % item_id)
+		if weapons.has(item_id):
+			print("    -> Is a weapon!")
+			has_weapons = true
+			listed_weapons.append(item_id)
+			var weapon: Dictionary = weapons[item_id]
+			var weapon_name: String = weapon.get("name", item_id.capitalize())
+			var weapon_type: String = weapon.get("weapon_type", "unknown")
+
+			var weapon_row := HBoxContainer.new()
+			weapon_row.add_theme_constant_override("separation", 8)
+			_available_weapons_container.add_child(weapon_row)
+
+			# Indent
+			var spacer := Control.new()
+			spacer.custom_minimum_size = Vector2(28, 0)
+			weapon_row.add_child(spacer)
+
+			# Weapon name label
+			var name_label := Label.new()
+			name_label.text = "%s (%s)" % [weapon_name, weapon_type]
+			name_label.add_theme_font_size_override("font_size", 16)
+			name_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			weapon_row.add_child(name_label)
+
+			# Equip button
+			var equip_btn := Button.new()
+			equip_btn.text = "Equip"
+			equip_btn.custom_minimum_size = Vector2(70, 24)
+			equip_btn.add_theme_font_size_override("font_size", 14)
+			equip_btn.pressed.connect(_on_equip_weapon.bind(item_id))
+			weapon_row.add_child(equip_btn)
+
+	# Also list currently equipped weapons (if not already listed)
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		var slot_1_id: String = ""
+		var slot_2_id: String = ""
+
+		if "equipped_slot_1" in player:
+			slot_1_id = player.equipped_slot_1
+		if "equipped_slot_2" in player:
+			slot_2_id = player.equipped_slot_2
+
+		# Add slot 1 weapon if not in inventory list
+		if not slot_1_id.is_empty() and not listed_weapons.has(slot_1_id) and weapons.has(slot_1_id):
+			print("  Adding equipped weapon from slot 1: %s" % slot_1_id)
+			has_weapons = true
+			var weapon: Dictionary = weapons[slot_1_id]
+			var weapon_name: String = weapon.get("name", slot_1_id.capitalize())
+			var weapon_type: String = weapon.get("weapon_type", "unknown")
+
+			var weapon_row := HBoxContainer.new()
+			weapon_row.add_theme_constant_override("separation", 8)
+			_available_weapons_container.add_child(weapon_row)
+
+			var spacer := Control.new()
+			spacer.custom_minimum_size = Vector2(28, 0)
+			weapon_row.add_child(spacer)
+
+			var name_label := Label.new()
+			name_label.text = "%s (%s) [equipped]" % [weapon_name, weapon_type]
+			name_label.add_theme_font_size_override("font_size", 16)
+			name_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			weapon_row.add_child(name_label)
+
+			var equip_btn := Button.new()
+			equip_btn.text = "Equip"
+			equip_btn.custom_minimum_size = Vector2(70, 24)
+			equip_btn.add_theme_font_size_override("font_size", 14)
+			equip_btn.pressed.connect(_on_equip_weapon.bind(slot_1_id))
+			weapon_row.add_child(equip_btn)
+
+		# Add slot 2 weapon if not in inventory list
+		if not slot_2_id.is_empty() and not listed_weapons.has(slot_2_id) and weapons.has(slot_2_id):
+			print("  Adding equipped weapon from slot 2: %s" % slot_2_id)
+			has_weapons = true
+			var weapon: Dictionary = weapons[slot_2_id]
+			var weapon_name: String = weapon.get("name", slot_2_id.capitalize())
+			var weapon_type: String = weapon.get("weapon_type", "unknown")
+
+			var weapon_row := HBoxContainer.new()
+			weapon_row.add_theme_constant_override("separation", 8)
+			_available_weapons_container.add_child(weapon_row)
+
+			var spacer := Control.new()
+			spacer.custom_minimum_size = Vector2(28, 0)
+			weapon_row.add_child(spacer)
+
+			var name_label := Label.new()
+			name_label.text = "%s (%s) [equipped]" % [weapon_name, weapon_type]
+			name_label.add_theme_font_size_override("font_size", 16)
+			name_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			weapon_row.add_child(name_label)
+
+			var equip_btn := Button.new()
+			equip_btn.text = "Equip"
+			equip_btn.custom_minimum_size = Vector2(70, 24)
+			equip_btn.add_theme_font_size_override("font_size", 14)
+			equip_btn.pressed.connect(_on_equip_weapon.bind(slot_2_id))
+			weapon_row.add_child(equip_btn)
+
+	# Add "Unequip" option
+	var unequip_row := HBoxContainer.new()
+	unequip_row.add_theme_constant_override("separation", 8)
+	_available_weapons_container.add_child(unequip_row)
+
+	var spacer2 := Control.new()
+	spacer2.custom_minimum_size = Vector2(28, 0)
+	unequip_row.add_child(spacer2)
+
+	var unequip_label := Label.new()
+	unequip_label.text = "(Empty slot)"
+	unequip_label.add_theme_font_size_override("font_size", 16)
+	unequip_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	unequip_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	unequip_row.add_child(unequip_label)
+
+	var unequip_btn := Button.new()
+	unequip_btn.text = "Unequip"
+	unequip_btn.custom_minimum_size = Vector2(70, 24)
+	unequip_btn.add_theme_font_size_override("font_size", 14)
+	unequip_btn.pressed.connect(_on_unequip_weapon)
+	unequip_row.add_child(unequip_btn)
+
+	# Cancel button
+	var cancel_row := HBoxContainer.new()
+	cancel_row.add_theme_constant_override("separation", 8)
+	_available_weapons_container.add_child(cancel_row)
+
+	var spacer3 := Control.new()
+	spacer3.custom_minimum_size = Vector2(28, 0)
+	cancel_row.add_child(spacer3)
+
+	var cancel_btn := Button.new()
+	cancel_btn.text = "Cancel"
+	cancel_btn.custom_minimum_size = Vector2(0, 28)
+	cancel_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cancel_btn.add_theme_font_size_override("font_size", 16)
+	cancel_btn.pressed.connect(_on_cancel_equip)
+	cancel_row.add_child(cancel_btn)
+
+	if not has_weapons:
+		var no_weapons := Label.new()
+		no_weapons.text = "  (No weapons in inventory)"
+		no_weapons.add_theme_font_size_override("font_size", 14)
+		no_weapons.add_theme_color_override("font_color", Color(0.6, 0.5, 0.5))
+		_available_weapons_container.add_child(no_weapons)
+
+	_available_weapons_container.visible = true
+
+
+func _on_equip_weapon(weapon_id: String) -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("equip_weapon"):
+		player.equip_weapon(weapon_id, _equipping_slot)
+		_available_weapons_container.visible = false
+		_update_equipment_display()
+
+
+func _on_unequip_weapon() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("unequip_weapon"):
+		player.unequip_weapon(_equipping_slot)
+		_available_weapons_container.visible = false
+		_update_equipment_display()
+
+
+func _on_cancel_equip() -> void:
+	_available_weapons_container.visible = false
+
+
 func _on_survival_changed(_new_value: int, _old_value: int) -> void:
 	# Button states might have changed
 	_update_button_states()
@@ -495,6 +1005,8 @@ func _on_encounter_opened() -> void:
 		_rest_button.disabled = true
 	if _camp_button:
 		_camp_button.disabled = true
+	if _switch_weapon_button:
+		_switch_weapon_button.disabled = true
 
 
 func _on_encounter_closed() -> void:
@@ -505,9 +1017,10 @@ func _on_encounter_closed() -> void:
 		_rest_button.disabled = false
 	if _camp_button:
 		_camp_button.disabled = false
-	
+
 	# Now apply proper disabled states based on game logic
 	_update_button_states()
+	_update_equipment_display()
 
 
 func _on_combat_started() -> void:
@@ -518,6 +1031,8 @@ func _on_combat_started() -> void:
 		_rest_button.disabled = true
 	if _camp_button:
 		_camp_button.disabled = true
+	if _switch_weapon_button:
+		_switch_weapon_button.disabled = true
 
 
 func _on_combat_ended(_victory: bool, _loot: Dictionary) -> void:
@@ -528,13 +1043,46 @@ func _on_combat_ended(_victory: bool, _loot: Dictionary) -> void:
 		_rest_button.disabled = false
 	if _camp_button:
 		_camp_button.disabled = false
-	
+
 	# Now apply proper disabled states based on game logic
 	_update_button_states()
+	_update_equipment_display()
+
+# =============================================================================
+# INPUT
+# =============================================================================
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == toggle_key:
+			toggle()
+			get_viewport().set_input_as_handled()
 
 # =============================================================================
 # PUBLIC API
 # =============================================================================
+
+## Toggle panel visibility.
+func toggle() -> void:
+	_is_visible = not _is_visible
+	visible = _is_visible
+
+	if _is_visible:
+		_update_display()
+
+
+## Show the panel.
+func show_panel() -> void:
+	_is_visible = true
+	visible = true
+	_update_display()
+
+
+## Hide the panel.
+func hide_panel() -> void:
+	_is_visible = false
+	visible = false
+
 
 ## Show or hide the inventory panel content.
 func set_expanded(expanded: bool) -> void:

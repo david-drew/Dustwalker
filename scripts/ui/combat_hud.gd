@@ -15,6 +15,9 @@ signal end_turn_pressed()
 ## Emitted when player clicks Reload button.
 signal reload_pressed()
 
+## Emitted when player clicks Switch Weapon button.
+signal switch_weapon_pressed()
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -45,6 +48,7 @@ var _weapon_label: Label
 var _action_panel: PanelContainer
 var _end_turn_button: Button
 var _reload_button: Button
+var _switch_weapon_button: Button
 
 # Combat log (bottom left, collapsible)
 var _log_panel: PanelContainer
@@ -244,8 +248,8 @@ func _create_action_panel() -> void:
 	
 	# Position at bottom center
 	_action_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_action_panel.position = Vector2(-120, -70)
-	_action_panel.custom_minimum_size = Vector2(240, 60)
+	_action_panel.position = Vector2(-180, -70)
+	_action_panel.custom_minimum_size = Vector2(360, 60)
 	
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.12, 0.10, 0.08, 0.9)
@@ -260,11 +264,15 @@ func _create_action_panel() -> void:
 	hbox.add_theme_constant_override("separation", 12)
 	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	_action_panel.add_child(hbox)
-	
+
+	# Switch Weapon button
+	_switch_weapon_button = _create_action_button("Switch [W]", hbox)
+	_switch_weapon_button.pressed.connect(_on_switch_weapon_pressed)
+
 	# Reload button
 	_reload_button = _create_action_button("Reload [R]", hbox)
 	_reload_button.pressed.connect(_on_reload_pressed)
-	
+
 	# End Turn button
 	_end_turn_button = _create_action_button("End Turn [E]", hbox)
 	_end_turn_button.pressed.connect(_on_end_turn_pressed)
@@ -450,7 +458,7 @@ func _connect_signals() -> void:
 func _input(event: InputEvent) -> void:
 	if not visible or not _is_player_turn:
 		return
-	
+
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
 			KEY_E:
@@ -460,6 +468,10 @@ func _input(event: InputEvent) -> void:
 			KEY_R:
 				if not _reload_button.disabled:
 					_on_reload_pressed()
+				get_viewport().set_input_as_handled()
+			KEY_W:
+				if not _switch_weapon_button.disabled:
+					_on_switch_weapon_pressed()
 				get_viewport().set_input_as_handled()
 
 # =============================================================================
@@ -596,8 +608,22 @@ func _update_ap_display() -> void:
 
 
 func _update_ammo_display() -> void:
-	_ammo_label.text = "Ammo: %d/%d" % [_current_ammo, _max_ammo]
-	
+	# Get total ammo from inventory
+	var total_ammo_text := ""
+	if _combat_manager and _combat_manager.has_method("get_player_combatant"):
+		var player_combatant = _combat_manager.get_player_combatant()
+		if player_combatant and player_combatant.is_player:
+			var weapon: Dictionary = player_combatant.weapon
+			var ammo_type: String = weapon.get("ammo_type", "")
+
+			if not ammo_type.is_empty():
+				var inventory_manager = get_tree().get_first_node_in_group("inventory_manager")
+				if inventory_manager and inventory_manager.has_method("get_item_count"):
+					var total_ammo: int = inventory_manager.get_item_count(ammo_type)
+					total_ammo_text = " [%d total]" % total_ammo
+
+	_ammo_label.text = "Ammo: %d/%d%s" % [_current_ammo, _max_ammo, total_ammo_text]
+
 	if _current_ammo == 0:
 		_ammo_label.add_theme_color_override("font_color", Color(0.8, 0.4, 0.4))
 	elif _current_ammo <= 2:
@@ -609,10 +635,13 @@ func _update_ammo_display() -> void:
 func _update_button_states() -> void:
 	# End Turn always available during player turn
 	_end_turn_button.disabled = not _is_player_turn
-	
+
 	# Reload available if not full ammo, has AP, and is player turn
 	var can_reload := _is_player_turn and _current_ammo < _max_ammo and _current_ap >= 1
 	_reload_button.disabled = not can_reload
+
+	# Switch Weapon always available during player turn (free action)
+	_switch_weapon_button.disabled = not _is_player_turn
 
 
 func _rebuild_log_display() -> void:
@@ -720,6 +749,12 @@ func _on_reload_pressed() -> void:
 	if _combat_manager and _combat_manager.has_method("player_reload"):
 		_combat_manager.player_reload()
 	reload_pressed.emit()
+
+
+func _on_switch_weapon_pressed() -> void:
+	if _combat_manager and _combat_manager.has_method("player_switch_weapon"):
+		_combat_manager.player_switch_weapon()
+	switch_weapon_pressed.emit()
 
 
 func _on_log_toggle_pressed() -> void:

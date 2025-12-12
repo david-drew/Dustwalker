@@ -241,18 +241,27 @@ func create_character() -> bool:
 func get_character_preview() -> Dictionary:
 	if _selected_background_id.is_empty():
 		return {}
-	
-	return {
+
+	var equipment_data: Dictionary = _selected_background.get("equipment", {}).duplicate()
+	print("CharacterCreator: get_character_preview() called")
+	print("CharacterCreator: Background: %s" % _selected_background_id)
+	print("CharacterCreator: Equipment from background: %s" % str(equipment_data))
+
+	var result := {
 		"name": _character_name,
 		"background_id": _selected_background_id,
 		"stats": _customized_stats.duplicate(),
 		"skills": _selected_background.get("skills", {}).duplicate(),
 		"starting_talent": _selected_background.get("starting_talent", ""),
-		"equipment": _selected_background.get("equipment", {}).duplicate(),
+		"equipment": equipment_data,
 		"backstory": _selected_background.get("backstory", ""),
 		"playstyle": _selected_background.get("playstyle", ""),
 		"seed": randi()
 	}
+
+	print("CharacterCreator: Final character data: %s" % str(result))
+
+	return result
 
 # =============================================================================
 # RESET

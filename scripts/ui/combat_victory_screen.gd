@@ -1,6 +1,6 @@
 # combat_victory_screen.gd
 # Displays victory message and loot after winning tactical combat.
-# Shows gold gained, items collected, and a continue button.
+# Shows money gained, items collected, and a continue button.
 #
 # NOTE: This extends Control (not CanvasLayer) because it's added as a child
 # of combat_manager's ui_layer which is already a CanvasLayer at layer 100+.
@@ -25,7 +25,7 @@ var _vbox: VBoxContainer
 var _title_label: Label
 var _subtitle_label: Label
 var _loot_container: VBoxContainer
-var _gold_label: Label
+var _money_label: Label
 var _items_label: Label
 var _continue_button: Button
 
@@ -123,14 +123,14 @@ func _create_ui() -> void:
 	_loot_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vbox.add_child(_loot_container)
 	
-	# Gold label - IGNORE
-	_gold_label = Label.new()
-	_gold_label.text = "Gold: 0"
-	_gold_label.add_theme_font_size_override("font_size", 24)
-	_gold_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.3))
-	_gold_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_gold_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_loot_container.add_child(_gold_label)
+	# Money label - IGNORE
+	_money_label = Label.new()
+	_money_label.text = "Money: 0"
+	_money_label.add_theme_font_size_override("font_size", 24)
+	_money_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.3))
+	_money_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_money_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_loot_container.add_child(_money_label)
 	
 	# Items label - IGNORE
 	_items_label = Label.new()
@@ -182,7 +182,7 @@ func _create_ui() -> void:
 # =============================================================================
 
 ## Show the victory screen with loot data.
-## @param loot: Dictionary with "gold" (int) and "items" (Array of {id, quantity}).
+## @param loot: Dictionary with "money" (int) and "items" (Array of {id, quantity}).
 ## @param enemies_defeated: Number of enemies defeated.
 func show_screen(loot: Dictionary, enemies_defeated: int = 0) -> void:
 	_loot_data = loot
@@ -196,13 +196,13 @@ func show_screen(loot: Dictionary, enemies_defeated: int = 0) -> void:
 	else:
 		_subtitle_label.text = "All enemies defeated!"
 	
-	# Update gold display
-	var gold: int = loot.get("gold", 0)
-	if gold > 0:
-		_gold_label.text = "+ %d Gold" % gold
-		_gold_label.show()
+	# Update money display
+	var money: int = loot.get("money", 0)
+	if money > 0:
+		_money_label.text = "+ %d dollars" % money
+		_money_label.show()
 	else:
-		_gold_label.hide()
+		_money_label.hide()
 	
 	# Update items display
 	var items: Array = loot.get("items", [])

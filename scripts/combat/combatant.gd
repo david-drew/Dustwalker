@@ -47,11 +47,14 @@ var max_hp: int = 20
 ## Current hit points.
 var current_hp: int = 20
 
-## Aim stat (affects hit chance).
+## Aim stat (affects hit chance for ranged weapons).
 var aim: int = 3
 
-## Reflex stat (affects initiative).
+## Reflex stat (affects initiative and hit chance for thrown weapons).
 var reflex: int = 3
+
+## Grit stat (affects hit chance for melee weapons).
+var grit: int = 3
 
 # =============================================================================
 # COMBAT STATE
@@ -116,22 +119,23 @@ func initialize_as_player(player_data: Dictionary, hex_size: float) -> void:
 	is_player = true
 	combatant_name = "Player"
 	_hex_size = hex_size
-	
+
 	# Load stats from player data
 	max_hp = player_data.get("max_hp", 20)
 	current_hp = player_data.get("current_hp", 20)
 	aim = player_data.get("aim", 3)
 	reflex = player_data.get("reflex", 3)
-	
-	# Default weapon (pistol)
+	grit = player_data.get("grit", 3)
+
+	# Default weapon (pistol) - will be overridden by set_weapon() if called
 	_load_weapon("pistol")
-	
+
 	# Reset AP
 	max_ap = 4
 	current_ap = max_ap
-	
+
 	is_alive = current_hp > 0
-	
+
 	_create_visuals()
 	_update_hp_bar()
 
@@ -140,35 +144,41 @@ func initialize_as_player(player_data: Dictionary, hex_size: float) -> void:
 func initialize_as_enemy(enemy_data: Dictionary, weapons_data: Dictionary, hex_size: float) -> void:
 	is_player = false
 	_hex_size = hex_size
-	
+
 	enemy_type = enemy_data.get("id", "bandit")
 	combatant_name = enemy_data.get("name", "Enemy")
-	
+
 	max_hp = enemy_data.get("hp", 8)
 	current_hp = max_hp
 	aim = enemy_data.get("aim", 2)
 	reflex = enemy_data.get("reflex", 2)
-	
+	grit = enemy_data.get("grit", 2)
+
 	ai_behavior = enemy_data.get("ai_behavior", "aggressive")
 	loot_data = enemy_data.get("loot", {})
-	
+
 	# Load weapon
 	var weapon_id: String = enemy_data.get("weapon", "pistol")
 	if weapons_data.has(weapon_id):
 		weapon = weapons_data[weapon_id].duplicate()
-		max_ammo = weapon.get("ammo_capacity", 6)
-		current_ammo = max_ammo
-	
+		# Handle ammo based on weapon type
+		if weapon.get("weapon_type") == "ranged":
+			max_ammo = weapon.get("ammo_capacity", 6)
+			current_ammo = max_ammo
+		else:
+			max_ammo = 0
+			current_ammo = 0
+
 	# Reset AP
 	max_ap = 4
 	current_ap = max_ap
-	
+
 	is_alive = true
-	
+
 	# Set visual color
 	var visual_data: Dictionary = enemy_data.get("visual", {})
 	var color_data: Dictionary = visual_data.get("color", {"r": 0.7, "g": 0.3, "b": 0.3})
-	
+
 	_create_visuals()
 	_set_token_color(Color(color_data.get("r", 0.7), color_data.get("g", 0.3), color_data.get("b", 0.3)))
 	_update_hp_bar()
@@ -183,6 +193,22 @@ func _load_weapon(weapon_id: String) -> void:
 			weapon = weapons[weapon_id].duplicate()
 			max_ammo = weapon.get("ammo_capacity", 6)
 			current_ammo = max_ammo
+
+
+## Set weapon from weapon data dictionary.
+func set_weapon(weapon_data: Dictionary) -> void:
+	weapon = weapon_data.duplicate()
+
+	# Handle ammo for ranged weapons
+	if weapon.get("weapon_type") == "ranged":
+		max_ammo = weapon.get("ammo_capacity", 6)
+		current_ammo = max_ammo
+	else:
+		# Melee/thrown weapons don't use ammo
+		max_ammo = 0
+		current_ammo = 0
+
+	ammo_changed.emit(current_ammo, max_ammo)
 
 # =============================================================================
 # VISUALS
@@ -317,29 +343,43 @@ func shoot(target: Combatant, hit_chance_modifier: float = 0.0) -> Dictionary:
 		"message": "",
 		"out_of_ammo": false
 	}
-	
-	# Check ammo
-	if current_ammo <= 0:
-		result["out_of_ammo"] = true
-		result["message"] = "%s is out of ammo!" % combatant_name
-		return result
-	
+
+	var weapon_type: String = weapon.get("weapon_type", "ranged")
+
+	# Check ammo (only for ranged weapons)
+	if weapon_type == "ranged":
+		if current_ammo <= 0:
+			result["out_of_ammo"] = true
+			result["message"] = "%s is out of ammo!" % combatant_name
+			return result
+
 	# Check AP
 	var ap_cost: int = weapon.get("ap_cost", 1)
 	if not spend_ap(ap_cost):
-		result["message"] = "Not enough AP to shoot"
+		result["message"] = "Not enough AP to attack"
 		return result
-	
-	# Consume ammo
-	current_ammo -= 1
-	ammo_changed.emit(current_ammo, max_ammo)
-	
+
+	# Consume ammo (ranged only)
+	if weapon_type == "ranged":
+		current_ammo -= 1
+		ammo_changed.emit(current_ammo, max_ammo)
+
+	# Get the stat used for this weapon
+	var stat_used: String = weapon.get("stat_used", "aim")
+	var stat_value: int = aim  # Default to aim
+
+	# Get appropriate stat value
+	match stat_used:
+		"aim": stat_value = aim
+		"reflex": stat_value = reflex
+		"grit": stat_value = grit
+
 	# Calculate hit chance
 	var base_chance: float = 0.50
-	var aim_bonus: float = aim * 0.05
-	var total_chance: float = base_chance + aim_bonus + hit_chance_modifier
+	var stat_bonus: float = stat_value * 0.05
+	var total_chance: float = base_chance + stat_bonus + hit_chance_modifier
 	total_chance = clampf(total_chance, 0.05, 0.95)  # 5%-95% bounds
-	
+
 	# Roll to hit
 	var roll := randf()
 	if roll <= total_chance:
@@ -347,28 +387,80 @@ func shoot(target: Combatant, hit_chance_modifier: float = 0.0) -> Dictionary:
 		var damage_min: int = weapon.get("damage_min", 2)
 		var damage_max: int = weapon.get("damage_max", 3)
 		var damage: int = randi_range(damage_min, damage_max)
-		
+
 		result["hit"] = true
 		result["damage"] = damage
-		result["message"] = "%s hit %s for %d damage!" % [combatant_name, target.combatant_name, damage]
-		
+
+		# Generate message based on weapon type
+		var action_verb := "hit"
+		match weapon_type:
+			"melee": action_verb = "struck"
+			"thrown": action_verb = "hit"
+			"ranged": action_verb = "shot"
+
+		result["message"] = "%s %s %s for %d damage!" % [combatant_name, action_verb, target.combatant_name, damage]
+
 		target.take_damage(damage)
 	else:
 		result["hit"] = false
 		result["message"] = "%s missed %s!" % [combatant_name, target.combatant_name]
-	
+
 	attacked.emit(target, result["hit"], result["damage"])
 	return result
 
 
 ## Reload the current weapon.
+## For players: consumes ammo from inventory.
+## For enemies: infinite ammo (refills to max).
+## @return bool - True if reloaded, false if not enough AP or ammo.
 func reload_weapon() -> bool:
 	if not spend_ap(1):
 		return false
-	
-	current_ammo = max_ammo
+
+	# Enemies get infinite ammo
+	if not is_player:
+		current_ammo = max_ammo
+		ammo_changed.emit(current_ammo, max_ammo)
+		reloaded.emit()
+		return true
+
+	# Players must consume ammo from inventory
+	var ammo_type: String = weapon.get("ammo_type", "")
+	if ammo_type.is_empty():
+		# No ammo type (melee/thrown weapons) - shouldn't be reloading
+		return false
+
+	# Get inventory manager
+	var inventory_manager = get_tree().get_first_node_in_group("inventory_manager")
+	if not inventory_manager:
+		push_error("Combatant: Cannot reload - InventoryManager not found")
+		return false
+
+	# Calculate how much ammo we need
+	var ammo_needed: int = max_ammo - current_ammo
+	if ammo_needed <= 0:
+		# Already full
+		return false
+
+	# Check if player has ammo
+	var available_ammo: int = inventory_manager.get_item_count(ammo_type)
+	if available_ammo <= 0:
+		# No ammo available
+		print("Combatant: No %s available to reload" % ammo_type)
+		return false
+
+	# Consume ammo from inventory (use minimum of what we need and what we have)
+	var ammo_to_use: int = mini(ammo_needed, available_ammo)
+	if not inventory_manager.remove_item(ammo_type, ammo_to_use):
+		push_error("Combatant: Failed to remove %s from inventory" % ammo_type)
+		return false
+
+	# Reload weapon
+	current_ammo += ammo_to_use
 	ammo_changed.emit(current_ammo, max_ammo)
 	reloaded.emit()
+
+	print("Combatant: Reloaded %d %s (now %d/%d)" % [ammo_to_use, ammo_type, current_ammo, max_ammo])
 	return true
 
 
@@ -405,11 +497,24 @@ func get_weapon_ap_cost() -> int:
 
 ## Check if can shoot (has ammo and AP).
 func can_shoot() -> bool:
-	return current_ammo > 0 and has_ap(get_weapon_ap_cost())
+	var weapon_type: String = weapon.get("weapon_type", "ranged")
+
+	# Ranged weapons need ammo
+	if weapon_type == "ranged":
+		return current_ammo > 0 and has_ap(get_weapon_ap_cost())
+
+	# Melee and thrown weapons only need AP
+	return has_ap(get_weapon_ap_cost())
 
 
 ## Check if needs to reload.
 func needs_reload() -> bool:
+	var weapon_type: String = weapon.get("weapon_type", "ranged")
+
+	# Only ranged weapons can reload
+	if weapon_type != "ranged":
+		return false
+
 	return current_ammo <= 0
 
 
@@ -419,14 +524,14 @@ func generate_loot() -> Dictionary:
 		return {}
 	
 	var loot := {
-		"gold": 0,
+		"money": 0,
 		"items": []
 	}
 	
-	# Gold
-	var gold_min: int = loot_data.get("gold_min", 0)
-	var gold_max: int = loot_data.get("gold_max", 0)
-	loot["gold"] = randi_range(gold_min, gold_max)
+	# Money 
+	var money_min: int = loot_data.get("money_min", 0)
+	var money_max: int = loot_data.get("money_max", 0)
+	loot["money"] = randi_range(money_min, money_max)
 	
 	# Items
 	var items: Array = loot_data.get("items", [])

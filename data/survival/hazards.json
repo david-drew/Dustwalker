@@ -1,0 +1,497 @@
+{
+  "settings": {
+    "hazard_check_chance": 0.15,
+    "stat_save_bonus_per_skill": 2,
+    "message_duration_seconds": 3.0
+  },
+
+  "hazards": {
+    "terrain": {
+      "quicksand": {
+        "id": "quicksand",
+        "name": "Quicksand",
+        "description": "You step into hidden quicksand!",
+        "category": "terrain",
+        "trigger_conditions": {
+          "terrains": ["swamp", "wetlands"],
+          "weather": [],
+          "time_of_day": [],
+          "base_chance": 0.08
+        },
+        "stat_save": {
+          "stat": "reflex",
+          "dc": 12,
+          "success_message": "You quickly leap free!",
+          "failure_message": "You sink deeper, struggling to escape."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 3,
+            "status_effects": ["exhausted_minor"],
+            "turn_cost": 2
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 1
+          }
+        },
+        "rarity": "uncommon"
+      },
+
+      "rockslide": {
+        "id": "rockslide",
+        "name": "Rockslide",
+        "description": "Loose rocks tumble down the slope!",
+        "category": "terrain",
+        "trigger_conditions": {
+          "terrains": ["mountains", "badlands"],
+          "weather": ["rain"],
+          "time_of_day": [],
+          "base_chance": 0.06
+        },
+        "stat_save": {
+          "stat": "reflex",
+          "dc": 14,
+          "success_message": "You dive aside as rocks crash past you.",
+          "failure_message": "The falling stones batter you."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 5,
+            "status_effects": ["wounded"],
+            "turn_cost": 0
+          },
+          "on_success": {
+            "damage": 1,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "uncommon"
+      },
+
+      "thorny_brush": {
+        "id": "thorny_brush",
+        "name": "Thorny Brush",
+        "description": "Dense thorns tear at you as you pass.",
+        "category": "terrain",
+        "trigger_conditions": {
+          "terrains": ["scrubland", "badlands", "desert"],
+          "weather": [],
+          "time_of_day": [],
+          "base_chance": 0.12
+        },
+        "stat_save": {
+          "stat": "stealth",
+          "dc": 10,
+          "success_message": "You carefully navigate through the thorns.",
+          "failure_message": "The thorns snag your clothing and skin."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 2,
+            "status_effects": [],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "common"
+      },
+
+      "crevasse": {
+        "id": "crevasse",
+        "name": "Hidden Crevasse",
+        "description": "The ground gives way beneath you!",
+        "category": "terrain",
+        "trigger_conditions": {
+          "terrains": ["mountains"],
+          "weather": ["fog"],
+          "time_of_day": [],
+          "base_chance": 0.05
+        },
+        "stat_save": {
+          "stat": "reflex",
+          "dc": 15,
+          "success_message": "You catch yourself at the edge!",
+          "failure_message": "You tumble into the crevasse."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 6,
+            "status_effects": ["wounded", "exhausted_moderate"],
+            "turn_cost": 3
+          },
+          "on_success": {
+            "damage": 1,
+            "status_effects": [],
+            "turn_cost": 1
+          }
+        },
+        "rarity": "rare"
+      }
+    },
+
+    "weather_amplification": {
+      "lightning_strike": {
+        "id": "lightning_strike",
+        "name": "Lightning Strike",
+        "description": "A bolt of lightning cracks near you!",
+        "category": "weather_amplification",
+        "trigger_conditions": {
+          "terrains": ["plains", "desert", "badlands"],
+          "weather": ["rain", "dust_storm"],
+          "time_of_day": [],
+          "base_chance": 0.04
+        },
+        "stat_save": {
+          "stat": "reflex",
+          "dc": 16,
+          "success_message": "You dive for cover as lightning strikes nearby.",
+          "failure_message": "The lightning blast knocks you down!"
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 8,
+            "status_effects": ["stunned"],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 2,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "rare"
+      },
+
+      "flash_flood": {
+        "id": "flash_flood",
+        "name": "Flash Flood",
+        "description": "Water surges through the canyon!",
+        "category": "weather_amplification",
+        "trigger_conditions": {
+          "terrains": ["badlands", "mountains", "desert"],
+          "weather": ["rain"],
+          "time_of_day": [],
+          "base_chance": 0.07
+        },
+        "stat_save": {
+          "stat": "fortitude",
+          "dc": 13,
+          "success_message": "You fight through the rushing water.",
+          "failure_message": "The flood sweeps you off your feet."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 4,
+            "status_effects": ["exhausted_moderate", "soaked"],
+            "turn_cost": 2
+          },
+          "on_success": {
+            "damage": 1,
+            "status_effects": ["soaked"],
+            "turn_cost": 1
+          }
+        },
+        "rarity": "uncommon"
+      },
+
+      "blinding_dust": {
+        "id": "blinding_dust",
+        "name": "Blinding Dust Cloud",
+        "description": "A massive wall of dust engulfs you!",
+        "category": "weather_amplification",
+        "trigger_conditions": {
+          "terrains": ["desert", "badlands", "plains"],
+          "weather": ["dust_storm"],
+          "time_of_day": [],
+          "base_chance": 0.15
+        },
+        "stat_save": {
+          "stat": "fortitude",
+          "dc": 11,
+          "success_message": "You cover your face and press on.",
+          "failure_message": "Dust fills your lungs and eyes."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 2,
+            "status_effects": ["blinded_temporary"],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "common"
+      },
+
+      "ice_sheet": {
+        "id": "ice_sheet",
+        "name": "Ice Sheet",
+        "description": "You slip on hidden ice!",
+        "category": "weather_amplification",
+        "trigger_conditions": {
+          "terrains": ["mountains", "tundra"],
+          "weather": ["cold_snap"],
+          "time_of_day": [],
+          "base_chance": 0.10
+        },
+        "stat_save": {
+          "stat": "reflex",
+          "dc": 12,
+          "success_message": "You catch your balance.",
+          "failure_message": "You fall hard on the ice."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 3,
+            "status_effects": ["wounded"],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "common"
+      }
+    },
+
+    "supernatural": {
+      "cursed_ground": {
+        "id": "cursed_ground",
+        "name": "Cursed Ground",
+        "description": "An unnatural chill runs through you.",
+        "category": "supernatural",
+        "trigger_conditions": {
+          "terrains": ["swamp", "badlands", "desert"],
+          "weather": [],
+          "time_of_day": ["night", "late_night"],
+          "base_chance": 0.03
+        },
+        "stat_save": {
+          "stat": "spirit",
+          "dc": 14,
+          "success_message": "Your will resists the dark influence.",
+          "failure_message": "The curse takes hold of you."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 3,
+            "status_effects": ["cursed"],
+            "turn_cost": 0
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "rare"
+      },
+
+      "ghost_town_whispers": {
+        "id": "ghost_town_whispers",
+        "name": "Phantom Whispers",
+        "description": "Ghostly voices echo around you.",
+        "category": "supernatural",
+        "trigger_conditions": {
+          "terrains": ["plains", "desert", "badlands"],
+          "weather": ["fog"],
+          "time_of_day": ["dusk", "night"],
+          "base_chance": 0.05
+        },
+        "stat_save": {
+          "stat": "spirit",
+          "dc": 12,
+          "success_message": "You steel yourself against the haunting.",
+          "failure_message": "The whispers fill your mind with dread."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 0,
+            "status_effects": ["fear", "haunted"],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "uncommon"
+      },
+
+      "spirit_zone": {
+        "id": "spirit_zone",
+        "name": "Spirit Manifestation",
+        "description": "The boundary between worlds thins...",
+        "category": "supernatural",
+        "trigger_conditions": {
+          "terrains": ["swamp", "forest"],
+          "weather": ["fog"],
+          "time_of_day": ["dawn", "dusk"],
+          "base_chance": 0.04
+        },
+        "stat_save": {
+          "stat": "spirit",
+          "dc": 15,
+          "success_message": "You maintain your grip on reality.",
+          "failure_message": "The spirits drain your essence."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 4,
+            "status_effects": ["spirit_touched"],
+            "turn_cost": 2
+          },
+          "on_success": {
+            "damage": 1,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "rare"
+      }
+    },
+
+    "environmental_toxins": {
+      "toxic_gas": {
+        "id": "toxic_gas",
+        "name": "Toxic Gas Seepage",
+        "description": "Noxious fumes rise from the ground.",
+        "category": "environmental_toxins",
+        "trigger_conditions": {
+          "terrains": ["swamp", "badlands"],
+          "weather": [],
+          "time_of_day": [],
+          "base_chance": 0.06
+        },
+        "stat_save": {
+          "stat": "fortitude",
+          "dc": 13,
+          "success_message": "You hold your breath and hurry past.",
+          "failure_message": "The gas overwhelms you."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 3,
+            "status_effects": ["poisoned"],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 1,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "uncommon"
+      },
+
+      "contaminated_area": {
+        "id": "contaminated_area",
+        "name": "Contaminated Zone",
+        "description": "The area shows signs of corruption.",
+        "category": "environmental_toxins",
+        "trigger_conditions": {
+          "terrains": ["badlands", "desert"],
+          "weather": [],
+          "time_of_day": [],
+          "base_chance": 0.04
+        },
+        "stat_save": {
+          "stat": "fortitude",
+          "dc": 14,
+          "success_message": "Your constitution resists the contamination.",
+          "failure_message": "The toxins seep into your body."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 2,
+            "status_effects": ["radiation_sickness"],
+            "turn_cost": 0
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "rare"
+      },
+
+      "poisonous_plants": {
+        "id": "poisonous_plants",
+        "name": "Poisonous Plants",
+        "description": "You brush against toxic vegetation.",
+        "category": "environmental_toxins",
+        "trigger_conditions": {
+          "terrains": ["forest", "swamp"],
+          "weather": [],
+          "time_of_day": [],
+          "base_chance": 0.08
+        },
+        "stat_save": {
+          "stat": "fortitude",
+          "dc": 10,
+          "success_message": "You recognize the danger and avoid it.",
+          "failure_message": "The plant's toxins irritate your skin."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 1,
+            "status_effects": ["plant_toxin"],
+            "turn_cost": 0
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": [],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "common"
+      },
+
+      "miasma": {
+        "id": "miasma",
+        "name": "Swamp Miasma",
+        "description": "Thick, putrid vapors surround you.",
+        "category": "environmental_toxins",
+        "trigger_conditions": {
+          "terrains": ["swamp"],
+          "weather": ["heat_wave", "fog"],
+          "time_of_day": [],
+          "base_chance": 0.10
+        },
+        "stat_save": {
+          "stat": "fortitude",
+          "dc": 12,
+          "success_message": "You push through the foul air.",
+          "failure_message": "The miasma makes you violently ill."
+        },
+        "effects": {
+          "on_failure": {
+            "damage": 2,
+            "status_effects": ["swamp_fever_mild", "nauseated"],
+            "turn_cost": 1
+          },
+          "on_success": {
+            "damage": 0,
+            "status_effects": ["nauseated"],
+            "turn_cost": 0
+          }
+        },
+        "rarity": "uncommon"
+      }
+    }
+  }
+}

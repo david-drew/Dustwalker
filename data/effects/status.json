@@ -343,6 +343,220 @@
         "color": "#44CC44",
         "priority": 0
       }
+    },
+    "exhausted_minor": {
+      "name": "Winded",
+      "description": "Short of breath from exertion",
+      "type": "status",
+      "category": "fatigue",
+      "duration": {"type": "turns", "value": 4},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1}
+      ],
+      "visuals": {
+        "icon": "😮",
+        "color": "#CCAA66",
+        "priority": 1
+      }
+    },
+    "exhausted_moderate": {
+      "name": "Battered",
+      "description": "Bruised and worn from harsh conditions",
+      "type": "status",
+      "category": "fatigue",
+      "duration": {"type": "turns", "value": 6},
+      "stacking": {"mode": "stack", "max_stacks": 2},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -1},
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -1}
+      ],
+      "visuals": {
+        "icon": "🤕",
+        "color": "#CC8844",
+        "priority": 2
+      }
+    },
+    "stunned": {
+      "name": "Stunned",
+      "description": "Dazed and disoriented",
+      "type": "status",
+      "category": "combat",
+      "duration": {"type": "turns", "value": 2},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -3},
+        {"target": "stat", "name": "aim", "type": "flat", "value": -2}
+      ],
+      "visuals": {
+        "icon": "😵",
+        "color": "#FFAA44",
+        "priority": 3
+      }
+    },
+    "soaked": {
+      "name": "Soaked",
+      "description": "Drenched and uncomfortable",
+      "type": "status",
+      "category": "environmental",
+      "duration": {"type": "turns", "value": 8},
+      "stacking": {"mode": "replace"},
+      "modifiers": [
+        {"target": "multiplier", "name": "fatigue_rate", "type": "flat", "value": 0.25},
+        {"target": "stat", "name": "stealth", "type": "flat", "value": -1}
+      ],
+      "conditions": {
+        "blocks": ["temp_warm"]
+      },
+      "visuals": {
+        "icon": "💧",
+        "color": "#4488CC",
+        "priority": 1
+      }
+    },
+    "blinded_temporary": {
+      "name": "Blinded",
+      "description": "Eyes filled with dust and grit",
+      "type": "status",
+      "category": "combat",
+      "duration": {"type": "turns", "value": 3},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "aim", "type": "flat", "value": -4},
+        {"target": "stat", "name": "reflex", "type": "flat", "value": -2}
+      ],
+      "visuals": {
+        "icon": "🙈",
+        "color": "#886644",
+        "priority": 3
+      }
+    },
+    "cursed": {
+      "name": "Cursed",
+      "description": "Marked by dark forces",
+      "type": "status",
+      "category": "supernatural",
+      "duration": {"type": "turns", "value": 12},
+      "stacking": {"mode": "stack", "max_stacks": 3},
+      "modifiers": [
+        {"target": "stat", "name": "all", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.15}
+      ],
+      "visuals": {
+        "icon": "💀",
+        "color": "#6633AA",
+        "priority": 3
+      }
+    },
+    "fear": {
+      "name": "Afraid",
+      "description": "Gripped by supernatural fear",
+      "type": "status",
+      "category": "supernatural",
+      "duration": {"type": "turns", "value": 4},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "spirit", "type": "flat", "value": -2},
+        {"target": "stat", "name": "wit", "type": "flat", "value": -1}
+      ],
+      "visuals": {
+        "icon": "😨",
+        "color": "#AA66CC",
+        "priority": 2
+      }
+    },
+    "haunted": {
+      "name": "Haunted",
+      "description": "Followed by restless spirits",
+      "type": "status",
+      "category": "supernatural",
+      "duration": {"type": "turns", "value": 24},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "stat", "name": "spirit", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.05}
+      ],
+      "conditions": {
+        "blocks": ["well_rested"]
+      },
+      "visuals": {
+        "icon": "👻",
+        "color": "#9988BB",
+        "priority": 2
+      }
+    },
+    "spirit_touched": {
+      "name": "Spirit-Touched",
+      "description": "The veil between worlds has thinned for you",
+      "type": "status",
+      "category": "supernatural",
+      "duration": {"type": "turns", "value": 36},
+      "stacking": {"mode": "none"},
+      "modifiers": [
+        {"target": "stat", "name": "spirit", "type": "flat", "value": 1},
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2}
+      ],
+      "visuals": {
+        "icon": "✨",
+        "color": "#BB88FF",
+        "priority": 2
+      }
+    },
+    "radiation_sickness": {
+      "name": "Radiation Sickness",
+      "description": "Exposed to strange energies",
+      "type": "status",
+      "category": "disease",
+      "duration": {"type": "turns", "value": 48},
+      "stacking": {"mode": "stack", "max_stacks": 3},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2},
+        {"target": "stat", "name": "grit", "type": "flat", "value": -1}
+      ],
+      "triggers": [
+        {"event": "turn_start", "action": "damage", "value": 1, "chance": 0.25}
+      ],
+      "visuals": {
+        "icon": "☢",
+        "color": "#AAFF44",
+        "priority": 4
+      }
+    },
+    "plant_toxin": {
+      "name": "Plant Toxin",
+      "description": "Skin irritated by poisonous plants",
+      "type": "status",
+      "category": "health",
+      "duration": {"type": "turns", "value": 8},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -1}
+      ],
+      "visuals": {
+        "icon": "🍃",
+        "color": "#88CC44",
+        "priority": 1
+      }
+    },
+    "nauseated": {
+      "name": "Nauseated",
+      "description": "Stomach churning from foul conditions",
+      "type": "status",
+      "category": "health",
+      "duration": {"type": "turns", "value": 4},
+      "stacking": {"mode": "refresh"},
+      "modifiers": [
+        {"target": "stat", "name": "fortitude", "type": "flat", "value": -2}
+      ],
+      "visuals": {
+        "icon": "🤢",
+        "color": "#99BB66",
+        "priority": 2
+      }
     }
   },
   "environmental": {

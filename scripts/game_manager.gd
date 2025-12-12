@@ -57,6 +57,9 @@ var inventory_manager: InventoryManager = null
 ## Reference to the encounter manager.
 var encounter_manager: EncounterManager = null
 
+## Reference to the hazard manager.
+var hazard_manager: HazardManager = null
+
 ## Reference to UI panels.
 var survival_panel: SurvivalPanel = null
 var inventory_panel: InventoryPanel = null
@@ -97,7 +100,7 @@ func initialize_game() -> void:
 	
 	_find_references()
 	_connect_signals()
-	_initialize_game()
+	await _initialize_game()
 
 
 func _find_references() -> void:
@@ -135,7 +138,12 @@ func _find_references() -> void:
 	encounter_manager = get_tree().get_first_node_in_group("encounter_manager") as EncounterManager
 	if encounter_manager == null:
 		encounter_manager = get_node_or_null("../EncounterManager") as EncounterManager
-	
+
+	# Find hazard manager
+	hazard_manager = get_tree().get_first_node_in_group("hazard_manager") as HazardManager
+	if hazard_manager == null:
+		hazard_manager = get_node_or_null("../HazardManager") as HazardManager
+
 	# Find camera
 	map_camera = get_tree().get_first_node_in_group("map_camera") as Camera2D
 	if map_camera == null:
@@ -153,7 +161,7 @@ func _connect_signals() -> void:
 	# Connect hex cell clicks for movement
 	if hex_grid:
 		hex_grid.hex_clicked.connect(_on_hex_clicked)
-	
+
 	# Connect player movement events
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
@@ -163,7 +171,9 @@ func _connect_signals() -> void:
 			event_bus.encounter_ui_opened.connect(_on_encounter_opened)
 		if event_bus.has_signal("encounter_ui_closed"):
 			event_bus.encounter_ui_closed.connect(_on_encounter_closed)
-	
+		if event_bus.has_signal("combat_ended"):
+			event_bus.combat_ended.connect(_on_combat_ended_cleanup)
+
 	# Connect game over screen
 	if game_over_screen:
 		game_over_screen.load_save_requested.connect(_on_load_save_requested)
@@ -203,7 +213,11 @@ func _initialize_game() -> void:
 		encounter_manager.initialize(hex_grid, survival_manager, inventory_manager)
 		if encounter_window:
 			encounter_manager.set_encounter_window(encounter_window)
-	
+
+	# Initialize hazard manager
+	if hazard_manager:
+		print("GameManager: HazardManager found and ready")
+
 	# Initialize UI panels
 	if survival_panel and survival_manager:
 		survival_panel.initialize(survival_manager)
@@ -377,6 +391,19 @@ func _on_encounter_opened() -> void:
 
 func _on_encounter_closed() -> void:
 	_encounter_active = false
+	# Clear any pending movement preview to ensure clean state
+	if movement_controller:
+		movement_controller.cancel_pending_movement()
+
+
+## Called when combat ends to ensure clean state for movement.
+func _on_combat_ended_cleanup(_victory: bool, _loot: Dictionary) -> void:
+	# Clear any pending movement to ensure player can move after combat
+	if movement_controller:
+		movement_controller.cancel_pending_movement()
+	# Ensure player isn't stuck in moving state
+	if player:
+		player.is_moving = false
 
 # =============================================================================
 # GAME OVER HANDLING

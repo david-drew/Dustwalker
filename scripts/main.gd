@@ -225,24 +225,27 @@ func _initialize_gameplay() -> void:
 	if not game_manager:
 		push_error("Main: No GameManager for gameplay")
 		return
-	
+
 	print("Main: Initializing gameplay...")
-	
+
+	# Await the game manager initialization so all systems are ready
+	# before applying character data
 	if game_manager.has_method("initialize_game"):
-		game_manager.initialize_game()
+		await game_manager.initialize_game()
 	elif game_manager.has_method("_initialize_game"):
-		game_manager._initialize_game()
-	
+		await game_manager._initialize_game()
+
 	gameplay_initialized = true
-	
+
+	# Apply character data now that player and all systems exist
 	if not pending_character_data.is_empty():
-		call_deferred("_apply_character_data", pending_character_data)
+		_apply_character_data(pending_character_data)
 
 
 func _start_gameplay_direct() -> void:
 	_show_gameplay()
 	if game_manager and game_manager.has_method("initialize_game"):
-		game_manager.initialize_game()
+		await game_manager.initialize_game()
 	gameplay_initialized = true
 	current_state = GameState.GAMEPLAY
 
@@ -308,21 +311,25 @@ func _on_player_died(cause: String) -> void:
 # =============================================================================
 
 func _apply_character_data(character_data: Dictionary) -> void:
+	print("Main: ========================================")
+	print("Main: _apply_character_data() called")
+	print("Main: Full character_data: %s" % str(character_data))
+
 	var player = get_tree().get_first_node_in_group("player")
 	if not player:
 		push_warning("Main: Player not found - cannot apply character data")
 		return
-	
+
 	print("Main: Applying character data: %s" % character_data.get("name", "Unknown"))
-	
+
 	# Name
 	if character_data.has("name"):
 		player.player_name = character_data.name
-	
+
 	# Background ID (store as metadata for UI display)
 	if character_data.has("background_id"):
 		player.set_meta("background_id", character_data.background_id)
-	
+
 	# Stats
 	if character_data.has("stats"):
 		if player.player_stats and player.player_stats.has_method("set_base_stat"):
@@ -331,7 +338,7 @@ func _apply_character_data(character_data: Dictionary) -> void:
 			print("Main: Applied %d stats" % character_data.stats.size())
 		else:
 			push_warning("Main: player.player_stats not available")
-	
+
 	# Skills
 	if character_data.has("skills"):
 		if player.skill_manager and player.skill_manager.has_method("set_skill_level"):
@@ -340,17 +347,34 @@ func _apply_character_data(character_data: Dictionary) -> void:
 			print("Main: Applied %d skills" % character_data.skills.size())
 		else:
 			push_warning("Main: player.skill_manager not available")
-	
+
 	# Starting talent
+	print("Main: About to apply starting talent...")
 	if character_data.has("starting_talent"):
 		var talent_id: String = character_data.starting_talent
+		print("Main: Talent ID: %s" % talent_id)
 		if not talent_id.is_empty():
 			if player.talent_manager and player.talent_manager.has_method("acquire_starting_talent"):
+				print("Main: Calling acquire_starting_talent()...")
 				player.talent_manager.acquire_starting_talent(talent_id)
 				print("Main: Applied starting talent: %s" % talent_id)
 			else:
 				push_warning("Main: player.talent_manager not available")
-	
+	else:
+		print("Main: No starting_talent in character_data")
+
+	print("Main: Finished talent section, moving to equipment...")
+
+	# Equipment (money, weapons, items, clothing)
+	if character_data.has("equipment"):
+		var inventory_manager = get_tree().get_first_node_in_group("inventory_manager")
+		if inventory_manager:
+			inventory_manager.apply_starting_equipment(character_data.equipment)
+		else:
+			push_warning("Main: InventoryManager not available")
+	else:
+		push_warning("Main: No equipment data in character_data")
+
 	# Emit signal for UI to update
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus and event_bus.has_signal("character_data_applied"):

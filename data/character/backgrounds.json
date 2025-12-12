@@ -23,6 +23,7 @@
 		"weapons": ["quality_revolver"],
 		"clothing": ["leather_duster"],
 		"items": [],
+		"ammo": ["pistol_rounds:24"],
 		"money": 75
 	  },
 	  "backstory": "Whether former lawman turned vigilante, notorious outlaw, or professional duelist, your reputation precedes you. The weight of a six-shooter feels like an extension of your arm, and more than a few souls have met their maker at the wrong end of your barrel.",
@@ -52,6 +53,7 @@
 		"weapons": ["rifle"],
 		"clothing": ["trail_clothes"],
 		"items": ["compass", "binoculars"],
+		"ammo": ["rifle_rounds:20"],
 		"money": 50
 	  },
 	  "backstory": "The wilderness is your home. Whether you served as an army scout, guided settlers through dangerous territory, or trapped furs in the high country, you know the land better than most know their own homes.",
@@ -109,9 +111,10 @@
 	  },
 	  "starting_talent": "wanted",
 	  "equipment": {
-		"weapons": ["revolver", "knife"],
+		"weapons": ["pistol", "knife"],
 		"clothing": ["dark_clothes", "bandana"],
 		"items": ["lockpicks"],
+		"ammo": ["pistol_rounds:18"],
 		"money": 150,
 		"mount": "stolen_horse"
 	  },
@@ -172,6 +175,7 @@
 		"weapons": ["old_revolver"],
 		"clothing": ["worn_clothes"],
 		"items": ["bedroll", "canteen"],
+		"ammo": ["pistol_rounds:24"],
 		"money": 80
 	  },
 	  "backstory": "No home, no ties, no past worth speaking of. You drift from town to town, taking work where you find it and moving on when the mood strikes. Your mysterious past is your own business - what matters is the road ahead.",
@@ -202,6 +206,7 @@
 		"weapons": ["bow", "hunting_knife"],
 		"clothing": ["traditional_garb"],
 		"items": ["medicine_pouch", "tribal_tokens"],
+		"ammo": ["arrows:18"],
 		"money": 30
 	  },
 	  "backstory": "You walk between two worlds - the ways of your people and the encroaching frontier. Whether serving as a guide, warrior, or mediator, you carry the wisdom of your ancestors while navigating the changing times.",

@@ -210,6 +210,23 @@ signal player_movement_completed(total_hexes: int, total_turns: int)
 signal player_movement_failed(reason: String)
 
 # =============================================================================
+# EQUIPMENT SIGNALS
+# =============================================================================
+
+## Emitted when a weapon is equipped to a slot.
+## @param slot: int - Equipment slot (0 or 1).
+## @param weapon_id: String - ID of the equipped weapon.
+signal weapon_equipped(slot: int, weapon_id: String)
+
+## Emitted when a weapon is unequipped from a slot.
+## @param slot: int - Equipment slot (0 or 1).
+signal weapon_unequipped(slot: int)
+
+## Emitted when the active equipment slot changes.
+## @param new_slot: int - The new active slot (0 or 1).
+signal active_slot_changed(new_slot: int)
+
+# =============================================================================
 # FOG OF WAR SIGNALS (Week 4B)
 # =============================================================================
 
@@ -346,6 +363,28 @@ signal hunger_changed(new_value: int, old_value: int)
 
 ## Emitted when thirst changes.
 signal thirst_changed(new_value: int, old_value: int)
+
+## Emitted when money changes.
+signal money_changed(new_amount: int, old_amount: int)
+
+# =============================================================================
+# HAZARD SIGNALS (Environmental Hazards)
+# =============================================================================
+
+## Emitted when a hazard is triggered.
+## @param coords: Vector2i - Location where hazard was triggered.
+## @param hazard_id: String - ID of the hazard.
+signal hazard_triggered(coords: Vector2i, hazard_id: String)
+
+## Emitted when a hazard save is rolled.
+## @param hazard_id: String - ID of the hazard.
+## @param success: bool - Whether the save was successful.
+signal hazard_save_rolled(hazard_id: String, success: bool)
+
+## Emitted when hazard effects are applied.
+## @param hazard_id: String - ID of the hazard.
+## @param effects: Dictionary - Effects that were applied (damage, status_effects, turn_cost).
+signal hazard_effects_applied(hazard_id: String, effects: Dictionary)
 
 ## Emitted when health changes.
 signal health_changed(new_value: int, old_value: int, source: String)

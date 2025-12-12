@@ -255,26 +255,31 @@ static func _do_move_toward(
 ) -> Dictionary:
 	# Get reachable hexes with current AP
 	var reachable := tactical_map.get_reachable_hexes(enemy.current_hex, enemy.current_ap)
-	
+
 	if reachable.is_empty():
 		return {}
-	
+
 	# Find the reachable hex that gets us closest to the player
 	var best_hex: Vector2i = enemy.current_hex
 	var best_distance: int = _hex_distance(enemy.current_hex, player.current_hex)
 	var best_cost: int = 0
-	
+
 	for hex in reachable.keys():
 		# Skip our current position
 		if hex == enemy.current_hex:
 			continue
-		
+
 		# Skip the player's hex (can't move onto it)
 		if hex == player.current_hex:
 			continue
-		
+
+		# Double-check cell is actually enterable (not occupied, not blocked)
+		var cell := tactical_map.get_cell(hex)
+		if cell == null or not cell.can_enter():
+			continue
+
 		var dist := _hex_distance(hex, player.current_hex)
-		
+
 		# Prefer closer hexes, or same distance but cheaper cost
 		if dist < best_distance or (dist == best_distance and reachable[hex] < best_cost):
 			best_distance = dist
@@ -306,13 +311,22 @@ static func _do_move_away(
 ) -> Dictionary:
 	# Get reachable hexes
 	var reachable := tactical_map.get_reachable_hexes(enemy.current_hex, enemy.current_ap)
-	
+
 	# Find hex that maximizes distance from player
 	var best_hex: Vector2i = enemy.current_hex
 	var best_distance: int = _hex_distance(enemy.current_hex, player.current_hex)
 	var best_cost: int = 0
-	
+
 	for hex in reachable.keys():
+		# Skip current position
+		if hex == enemy.current_hex:
+			continue
+
+		# Double-check cell is actually enterable (not occupied, not blocked)
+		var cell := tactical_map.get_cell(hex)
+		if cell == null or not cell.can_enter():
+			continue
+
 		var dist := _hex_distance(hex, player.current_hex)
 		if dist > best_distance:
 			best_distance = dist

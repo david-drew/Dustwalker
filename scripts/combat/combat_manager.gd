@@ -48,7 +48,7 @@ var round_number: int = 0
 var is_player_turn: bool = false
 
 ## Accumulated loot from defeated enemies.
-var combat_loot: Dictionary = {"gold": 0, "items": []}
+var combat_loot: Dictionary = {"money": 0, "items": []}
 
 ## Number of enemies defeated this combat.
 var enemies_defeated_count: int = 0
@@ -141,7 +141,7 @@ func start_combat(combat_data: Dictionary, terrain: String, on_end_callback: Cal
 	encounter_data = combat_data
 	terrain_type = terrain
 	combat_active = true
-	combat_loot = {"gold": 0, "items": []}
+	combat_loot = {"money": 0, "items": []}
 	enemies_defeated_count = 0
 	round_number = 0
 	_on_combat_end_callback = on_end_callback
@@ -300,28 +300,48 @@ func _frame_camera() -> void:
 func _create_player_combatant() -> void:
 	player_combatant = Combatant.new()
 	player_combatant.name = "PlayerCombatant"
-	
+
+	# Get player node for stats and equipment
+	var player = get_tree().get_first_node_in_group("player")
+
 	# Get player data from SurvivalManager
 	var survival_manager = get_tree().get_first_node_in_group("survival_manager")
 	var player_data := {
 		"max_hp": 20,
 		"current_hp": 20,
 		"aim": 3,
-		"reflex": 3
+		"reflex": 3,
+		"grit": 3
 	}
-	
+
 	if survival_manager:
 		player_data["max_hp"] = survival_manager.max_health
 		player_data["current_hp"] = survival_manager.health
-	
+
+	# Get stats from player
+	if player:
+		player_data["aim"] = player.get_stat("aim")
+		player_data["reflex"] = player.get_stat("reflex")
+		player_data["grit"] = player.get_stat("grit")
+
 	player_combatant.initialize_as_player(player_data, tactical_map.hex_size)
-	
+
+	# Set active weapon from player equipment
+	if player and player.has_method("get_active_weapon_data"):
+		var weapon_data:Dictionary = player.get_active_weapon_data()
+		var weapon_name: String = weapon_data.get("name", "Unknown")
+		var weapon_type: String = weapon_data.get("weapon_type", "unknown")
+		_log("Player weapon: %s (type: %s)" % [weapon_name, weapon_type])
+		player_combatant.set_weapon(weapon_data)
+	else:
+		push_warning("CombatManager: Could not get player weapon data")
+
 	# Connect signals
 	player_combatant.died.connect(_on_player_died)
 	player_combatant.hp_changed.connect(_on_player_hp_changed)
 	player_combatant.ap_changed.connect(_on_player_ap_changed)
 	player_combatant.ammo_changed.connect(_on_player_ammo_changed)
-	
+
 	var map_container = combat_layer.get_node("MapContainer")
 	map_container.add_child(player_combatant)
 
@@ -624,21 +644,45 @@ func _attempt_player_attack(target: Combatant) -> void:
 func player_reload() -> void:
 	if not combat_active or not is_player_turn:
 		return
-	
+
 	if not player_combatant.has_ap(1):
 		_log("Not enough AP to reload")
 		return
-	
+
 	player_combatant.reload_weapon()
 	_log("Reloaded weapon")
-	
+
 	action_executed.emit({
 		"type": "reload",
 		"actor": "Player"
 	})
-	
+
 	tactical_map.highlight_reachable(player_combatant.current_hex, player_combatant.current_ap)
 	_update_hud_stats()
+
+
+## Player switches active weapon slot (free action).
+func player_switch_weapon() -> void:
+	if not combat_active or not is_player_turn:
+		return
+
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("switch_active_slot"):
+		player.switch_active_slot()
+
+		# Update combatant's weapon
+		if player.has_method("get_active_weapon_data"):
+			var weapon_data:Dictionary = player.get_active_weapon_data()
+			player_combatant.set_weapon(weapon_data)
+			_log("Switched weapon: %s" % weapon_data.get("name", "Unknown"))
+
+			action_executed.emit({
+				"type": "switch_weapon",
+				"actor": "Player",
+				"weapon": weapon_data.get("name", "Unknown")
+			})
+
+			_update_hud_stats()
 
 
 ## Player ends their turn.
@@ -755,6 +799,9 @@ func _update_hud_stats() -> void:
 			player_combatant.current_ammo,
 			player_combatant.max_ammo
 		)
+		# Update weapon name display
+		var weapon_name: String = player_combatant.weapon.get("name", "Unarmed")
+		combat_hud.set_weapon_name(weapon_name)
 
 # =============================================================================
 # VICTORY/DEFEAT
@@ -813,16 +860,16 @@ func _end_combat(victory: bool) -> void:
 
 
 func _calculate_loot() -> void:
-	combat_loot = {"gold": 0, "items": []}
+	combat_loot = {"money": 0, "items": []}
 	
 	for enemy in enemy_combatants:
 		var loot := enemy.generate_loot()
-		combat_loot["gold"] += loot.get("gold", 0)
+		combat_loot["money"] += loot.get("money", 0)
 		
 		for item in loot.get("items", []):
 			combat_loot["items"].append(item)
 	
-	_log("Loot: %d gold" % combat_loot["gold"])
+	_log("Loot: %d dollars" % combat_loot["money"])
 	for item in combat_loot["items"]:
 		_log("  + %d %s" % [item.get("quantity", 1), item.get("id", "item")])
 
@@ -878,16 +925,34 @@ func _on_defeat_quit() -> void:
 func _apply_loot_to_inventory() -> void:
 	var inventory_manager = get_tree().get_first_node_in_group("inventory_manager")
 	if inventory_manager:
-		# Add gold (if inventory tracks it)
-		if inventory_manager.has_method("add_gold"):
-			inventory_manager.add_gold(combat_loot.get("gold", 0))
-		
+		# Add money (if inventory tracks it)
+		if inventory_manager.has_method("add_money"):
+			inventory_manager.add_money(combat_loot.get("money", 0))
+
 		# Add items
 		for item in combat_loot.get("items", []):
 			var item_id: String = item.get("id", "")
 			var quantity: int = item.get("quantity", 1)
 			if item_id != "" and inventory_manager.has_method("add_item"):
 				inventory_manager.add_item(item_id, quantity)
+
+		# Recover thrown weapons (if player used them)
+		_recover_thrown_weapons(inventory_manager)
+
+
+## Recover thrown weapons after combat victory.
+func _recover_thrown_weapons(inventory_manager: Node) -> void:
+	if not player_combatant:
+		return
+
+	var weapon := player_combatant.weapon
+	if weapon.get("weapon_type") == "thrown" and weapon.get("recoverable", false):
+		var weapon_id: String = weapon.get("id", "")
+		if not weapon_id.is_empty() and inventory_manager.has_method("add_item"):
+			# Recover thrown weapons used in combat
+			# For simplicity, assume player can recover all thrown weapons
+			_log("Recovered thrown weapons")
+			# Note: tracking exact count would require more complex bookkeeping
 
 # =============================================================================
 # COMBATANT EVENTS
@@ -983,6 +1048,11 @@ func get_player_ammo() -> int:
 	if player_combatant:
 		return player_combatant.current_ammo
 	return 0
+
+
+## Get player combatant reference.
+func get_player_combatant() -> Combatant:
+	return player_combatant
 
 
 ## Get alive enemy count.

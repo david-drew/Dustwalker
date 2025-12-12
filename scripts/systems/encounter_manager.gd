@@ -525,8 +525,8 @@ func _on_combat_ended(victory: bool, loot: Dictionary) -> void:
 		# Just show a brief outcome and close
 		if encounter_window:
 			var outcome_text := "You emerged victorious from battle."
-			if loot.get("gold", 0) > 0:
-				outcome_text += " Gained %d gold." % loot["gold"]
+			if loot.get("money", 0) > 0:
+				outcome_text += " Gained %d dollars." % loot["money"]
 			
 			encounter_window.show_outcome(outcome_text, {"combat_victory": true})
 		else:

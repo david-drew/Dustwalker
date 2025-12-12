@@ -365,10 +365,10 @@ func _create_ui() -> void:
 	margin.add_theme_constant_override("margin_bottom", 10)
 	add_child(margin)
 	
-	# Icon container
+	# Icon container - left-aligned so time icon stays on far left
 	_icon_container = HBoxContainer.new()
 	_icon_container.add_theme_constant_override("separation", icon_spacing)
-	_icon_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	_icon_container.alignment = BoxContainer.ALIGNMENT_BEGIN
 	margin.add_child(_icon_container)
 
 
@@ -635,10 +635,11 @@ func _clear_all_icons() -> void:
 
 func _create_status_icon(status_id: String, tooltip: String) -> void:
 	var def: Dictionary = STATUS_DEFINITIONS[status_id]
-	
+
 	# Container for icon (and optional label)
 	var container := VBoxContainer.new()
 	container.alignment = BoxContainer.ALIGNMENT_CENTER
+	container.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	
 	# Icon label (using emoji)
 	var icon_label := Label.new()
@@ -670,15 +671,12 @@ func _create_status_icon(status_id: String, tooltip: String) -> void:
 
 
 func _reorder_icons() -> void:
-	# Sort icons by category and priority
-	var sorted_statuses: Array = _active_statuses.keys()
-	sorted_statuses.sort_custom(_compare_status_priority)
-	
-	# Reorder children
-	for i in range(sorted_statuses.size()):
-		var status_id: String = sorted_statuses[i]
-		if _status_icons.has(status_id):
-			_icon_container.move_child(_status_icons[status_id], i)
+	# Always ensure time icon is first (index 0)
+	for status_id in _status_icons:
+		var def: Dictionary = STATUS_DEFINITIONS.get(status_id, {})
+		if def.get("category", "") == "time":
+			_icon_container.move_child(_status_icons[status_id], 0)
+			break  # Only one time icon at a time
 
 
 func _compare_status_priority(a: String, b: String) -> bool:

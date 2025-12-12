@@ -265,20 +265,25 @@ func show_encounter(encounter: Dictionary, available_choices: Array) -> void:
 ## Show the outcome after a choice was made.
 func show_outcome(outcome_text: String, effects: Dictionary) -> void:
 	_showing_outcome = true
-	
+
+	# Ensure window is visible (may have been hidden during combat)
+	if not visible:
+		show()
+		modulate.a = 1.0
+
 	# Hide choices
 	_choices_container.visible = false
-	
+
 	# Show outcome
 	_outcome_label.text = outcome_text
-	
+
 	# Format effects
 	_effects_label.text = _format_effects(effects)
-	
+
 	# Show outcome container and continue button
 	_outcome_container.visible = true
 	_continue_button.visible = true
-	
+
 	# Focus continue button
 	_continue_button.grab_focus()
 
