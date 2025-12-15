@@ -499,25 +499,28 @@ func _recalculate_modifiers(target_id: String) -> void:
 func _push_modifiers_to_player_stats(target_id: String) -> void:
 	if target_id != "player" or not _player_stats:
 		return
-	
+
 	# Clear existing effect modifiers
 	_player_stats.remove_modifiers_by_prefix("effect_")
-	
+
 	if not modifier_cache.has(target_id):
 		return
-	
+
 	# Apply stat modifiers to PlayerStats
+	# Use a counter to ensure unique source names for each modifier
+	var modifier_index: int = 0
 	for cache_key in modifier_cache[target_id]:
 		var mod_data: Dictionary = modifier_cache[target_id][cache_key]
-		
+
 		if mod_data["target"] == "stat":
-			var source:String = "effect_" + mod_data["name"]
+			var source: String = "effect_%s_%d" % [mod_data["name"], modifier_index]
 			_player_stats.add_modifier(
 				source,
 				mod_data["name"],
 				mod_data["type"],
 				int(mod_data["value"])
 			)
+			modifier_index += 1
 
 
 ## Get the total modifier value for a specific modifier.
@@ -536,10 +539,10 @@ func get_total_modifier(target_id: String, target_type: String, name: String, mo
 ## Get all modifier values of a type (e.g., all multipliers).
 func get_modifiers_of_type(target_id: String, target_type: String) -> Dictionary:
 	var result: Dictionary = {}
-	
+
 	if not modifier_cache.has(target_id):
 		return result
-	
+
 	for cache_key in modifier_cache[target_id]:
 		var mod_data: Dictionary = modifier_cache[target_id][cache_key]
 		if mod_data["target"] == target_type:
@@ -547,7 +550,107 @@ func get_modifiers_of_type(target_id: String, target_type: String) -> Dictionary
 			if not result.has(name):
 				result[name] = {"flat": 0.0, "percentage": 0.0}
 			result[name][mod_data["type"]] += mod_data["value"]
-	
+
+	return result
+
+
+## Get a specific multiplier value (e.g., "fatigue_rate", "water_consumption").
+## Returns 1.0 + flat modifier (so base multiplier of 1.0 plus any adjustments).
+func get_multiplier(target_id: String, multiplier_name: String) -> float:
+	var flat_value := get_total_modifier(target_id, "multiplier", multiplier_name, "flat")
+	return 1.0 + flat_value
+
+
+## Get all active multipliers for a target.
+func get_all_multipliers(target_id: String) -> Dictionary:
+	var result: Dictionary = {}
+	var multipliers := get_modifiers_of_type(target_id, "multiplier")
+
+	for mult_name in multipliers:
+		result[mult_name] = 1.0 + multipliers[mult_name].get("flat", 0.0)
+
+	return result
+
+
+## Update a status effect based on a state change (replaces old state effect with new one).
+## Used by SurvivalManager, DiseaseManager, etc. to update their effects.
+## @param target_id: Usually "player"
+## @param category: Effect category (e.g., "fatigue", "hunger", "weather")
+## @param new_effect_id: The new effect to apply (or empty string to just remove)
+## @param source: Source identifier for tracking
+func update_status_effect(target_id: String, category: String, new_effect_id: String, source: String = "") -> void:
+	# Remove any existing effects in this category
+	remove_effects_by_category(target_id, category)
+
+	# Apply the new effect if provided
+	if not new_effect_id.is_empty():
+		apply_effect(target_id, new_effect_id, source)
+
+
+## Check if a target has any effect in a category.
+func has_effect_in_category(target_id: String, category: String) -> bool:
+	if not active_effects.has(target_id):
+		return false
+
+	for effect_id in active_effects[target_id]:
+		var effect_data: Dictionary = active_effects[target_id][effect_id]
+		var definition: Dictionary = effect_data.get("definition", {})
+		if definition.get("category", "") == category:
+			return true
+
+	return false
+
+
+## Get all effects in a specific category for a target.
+func get_effects_in_category_for_target(target_id: String, category: String) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+
+	if not active_effects.has(target_id):
+		return result
+
+	for effect_id in active_effects[target_id]:
+		var effect_data: Dictionary = active_effects[target_id][effect_id]
+		var definition: Dictionary = effect_data.get("definition", {})
+
+		if definition.get("category", "") == category:
+			result.append({
+				"id": effect_id,
+				"name": definition.get("name", effect_id),
+				"description": definition.get("description", ""),
+				"type": definition.get("type", "unknown"),
+				"category": category,
+				"turns_remaining": effect_data.get("turns_remaining", -1),
+				"stacks": effect_data.get("stacks", 1),
+				"source": effect_data.get("source", ""),
+				"visuals": definition.get("visuals", {})
+			})
+
+	return result
+
+
+## Get all active effects for a target.
+func get_all_effects_for_target(target_id: String) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+
+	if not active_effects.has(target_id):
+		return result
+
+	for effect_id in active_effects[target_id]:
+		var effect_data: Dictionary = active_effects[target_id][effect_id]
+		var definition: Dictionary = effect_data.get("definition", {})
+
+		result.append({
+			"id": effect_id,
+			"name": definition.get("name", effect_id),
+			"description": definition.get("description", ""),
+			"type": definition.get("type", "unknown"),
+			"category": definition.get("category", ""),
+			"turns_remaining": effect_data.get("turns_remaining", -1),
+			"stacks": effect_data.get("stacks", 1),
+			"source": effect_data.get("source", ""),
+			"visuals": definition.get("visuals", {})
+		})
+
 	return result
 
 # =============================================================================

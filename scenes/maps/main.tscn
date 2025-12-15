@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bpl2v87ojracb"]
+[gd_scene load_steps=31 format=3 uid="uid://bpl2v87ojracb"]
 
 [ext_resource type="Script" uid="uid://dqlp6hsjh1tbl" path="res://scripts/maps/hex_grid.gd" id="1_hexgrid"]
 [ext_resource type="Script" uid="uid://blbqp82n433gd" path="res://scripts/main.gd" id="1_typ5x"]
@@ -24,6 +24,11 @@
 [ext_resource type="Script" uid="uid://cc2doigw161k7" path="res://scripts/ui/game_over_screen.gd" id="16_gameover"]
 [ext_resource type="Script" uid="uid://dliny77geftb2" path="res://scripts/ui/camp_panel.gd" id="17_b02sy"]
 [ext_resource type="Script" uid="uid://bge34uy2lfrvj" path="res://scripts/ui/status_effect_display.gd" id="21_h4pg4"]
+[ext_resource type="Script" uid="uid://brtqj4pklo5dq" path="res://scripts/ui/character_panel.gd" id="24_6mcao"]
+[ext_resource type="Script" uid="uid://byoypjpvrftpl" path="res://scripts/systems/npc_manager.gd" id="25_npcmgr"]
+[ext_resource type="Script" uid="uid://cs0yncm0x2df0" path="res://scripts/ui/npc_panel.gd" id="26_npcpanel"]
+[ext_resource type="Script" uid="uid://d1odr6gqsaq5u" path="res://scripts/systems/shop_manager.gd" id="27_shopmgr"]
+[ext_resource type="Script" uid="uid://dg8kixmacd0wn" path="res://scripts/ui/shop_panel.gd" id="28_shoppanel"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 3
@@ -72,6 +77,12 @@ script = ExtResource("11_7goih")
 
 [node name="HazardManager" type="Node" parent="Systems"]
 script = ExtResource("13_hhsj5")
+
+[node name="NPCManager" type="Node" parent="Systems" groups=["npc_manager"]]
+script = ExtResource("25_npcmgr")
+
+[node name="ShopManager" type="Node" parent="Systems" groups=["shop_manager"]]
+script = ExtResource("27_shopmgr")
 
 [node name="MapCamera" type="Camera2D" parent="." groups=["map_camera"]]
 position = Vector2(1720, 720)
@@ -190,6 +201,44 @@ offset_bottom = 110.0
 grow_horizontal = 2
 script = ExtResource("21_h4pg4")
 metadata/_custom_type_script = "uid://bge34uy2lfrvj"
+
+[node name="CharacterPanel" type="Control" parent="UI"]
+z_index = 300
+custom_minimum_size = Vector2(600, 750)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("24_6mcao")
+metadata/_custom_type_script = "uid://brtqj4pklo5dq"
+
+[node name="NPCPanel" type="Control" parent="UI"]
+z_index = 250
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("26_npcpanel")
+
+[node name="ShopPanel" type="Control" parent="UI"]
+z_index = 260
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("28_shoppanel")
 
 [node name="DebugDisplay" type="CanvasLayer" parent="."]
 layer = 11

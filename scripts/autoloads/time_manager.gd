@@ -208,6 +208,11 @@ func get_time_string() -> String:
 	return "Day %d, %s" % [current_day, get_time_of_day()]
 
 
+## Gets the current day number.
+func get_current_day() -> int:
+	return current_day
+
+
 ## Gets detailed time info as a dictionary.
 func get_time_data() -> Dictionary:
 	return {

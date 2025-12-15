@@ -1,0 +1,239 @@
+{
+  "items": {
+	"water": {
+	  "display_name": "Water",
+	  "base_price": 1,
+	  "stackable": true,
+	  "tags": ["food_water", "consumable"]
+	},
+	"rations": {
+	  "display_name": "Trail Rations",
+	  "base_price": 2,
+	  "stackable": true,
+	  "tags": ["food_water", "consumable"]
+	},
+	"dried_meat": {
+	  "display_name": "Dried Meat",
+	  "base_price": 3,
+	  "stackable": true,
+	  "tags": ["food_water", "consumable"]
+	},
+	"hardtack": {
+	  "display_name": "Hardtack",
+	  "base_price": 1,
+	  "stackable": true,
+	  "tags": ["food_water", "consumable"]
+	},
+	"coffee": {
+	  "display_name": "Coffee",
+	  "base_price": 2,
+	  "stackable": true,
+	  "tags": ["food_water", "consumable", "luxury"]
+	},
+
+	"ammo_revolver": {
+	  "display_name": "Revolver Ammo",
+	  "base_price": 1,
+	  "stackable": true,
+	  "tags": ["ammo"]
+	},
+	"ammo_rifle": {
+	  "display_name": "Rifle Ammo",
+	  "base_price": 2,
+	  "stackable": true,
+	  "tags": ["ammo"]
+	},
+	"ammo_shotgun": {
+	  "display_name": "Shotgun Shells",
+	  "base_price": 2,
+	  "stackable": true,
+	  "tags": ["ammo"]
+	},
+
+	"bandages": {
+	  "display_name": "Bandages",
+	  "base_price": 5,
+	  "stackable": true,
+	  "tags": ["medical", "consumable"]
+	},
+	"medicinal_salve": {
+	  "display_name": "Medicinal Salve",
+	  "base_price": 6,
+	  "stackable": true,
+	  "tags": ["medical", "consumable"]
+	},
+	"antivenom": {
+	  "display_name": "Antivenom",
+	  "base_price": 12,
+	  "stackable": true,
+	  "tags": ["medical", "consumable"]
+	},
+	"tonic": {
+	  "display_name": "Bitter Tonic",
+	  "base_price": 8,
+	  "stackable": true,
+	  "tags": ["medical", "consumable"]
+	},
+
+	"repair_kit": {
+	  "display_name": "Repair Kit",
+	  "base_price": 10,
+	  "stackable": true,
+	  "tags": ["tools_repair"]
+	},
+	"gun_oil": {
+	  "display_name": "Gun Oil",
+	  "base_price": 4,
+	  "stackable": true,
+	  "tags": ["tools_repair"]
+	},
+	"whetstone": {
+	  "display_name": "Whetstone",
+	  "base_price": 3,
+	  "stackable": true,
+	  "tags": ["tools_repair"]
+	},
+	"lockpicks": {
+	  "display_name": "Lockpicks",
+	  "base_price": 6,
+	  "stackable": true,
+	  "tags": ["tools_repair", "crime"]
+	},
+	"rope": {
+	  "display_name": "Rope",
+	  "base_price": 4,
+	  "stackable": true,
+	  "tags": ["tools_repair"]
+	},
+	"lantern_oil": {
+	  "display_name": "Lantern Oil",
+	  "base_price": 2,
+	  "stackable": true,
+	  "tags": ["tools_repair", "consumable"]
+	},
+	"shovel": {
+	  "display_name": "Shovel",
+	  "base_price": 12,
+	  "stackable": false,
+	  "tags": ["tools_repair"]
+	},
+	"pickaxe": {
+	  "display_name": "Pickaxe",
+	  "base_price": 15,
+	  "stackable": false,
+	  "tags": ["tools_repair"]
+	},
+
+	"pelts": {
+	  "display_name": "Pelts",
+	  "base_price": 3,
+	  "stackable": true,
+	  "tags": ["trade_goods"]
+	},
+	"scrap": {
+	  "display_name": "Scrap",
+	  "base_price": 1,
+	  "stackable": true,
+	  "tags": ["trade_goods"]
+	},
+	"herbs": {
+	  "display_name": "Herbs",
+	  "base_price": 2,
+	  "stackable": true,
+	  "tags": ["trade_goods"]
+	},
+	"relic_fragment": {
+	  "display_name": "Relic Fragment",
+	  "base_price": 15,
+	  "stackable": true,
+	  "tags": ["trade_goods", "oddity"]
+	},
+	"silver_nugget": {
+	  "display_name": "Silver Nugget",
+	  "base_price": 10,
+	  "stackable": true,
+	  "tags": ["trade_goods"]
+	},
+
+	"whiskey": {
+	  "display_name": "Whiskey",
+	  "base_price": 4,
+	  "stackable": true,
+	  "tags": ["luxury", "consumable", "liquor"]
+	},
+	"trinket_brass": {
+	  "display_name": "Brass Trinket",
+	  "base_price": 6,
+	  "stackable": true,
+	  "tags": ["luxury", "oddity"]
+	},
+	"charm_luck": {
+	  "display_name": "Luck Charm",
+	  "base_price": 12,
+	  "stackable": true,
+	  "tags": ["luxury", "oddity", "charm"]
+	},
+	"tarot_deck": {
+	  "display_name": "Tarot Deck",
+	  "base_price": 9,
+	  "stackable": false,
+	  "tags": ["luxury", "oddity", "occult"]
+	},
+
+	"holy_water": {
+	  "display_name": "Holy Water",
+	  "base_price": 14,
+	  "stackable": true,
+	  "tags": ["oddity", "consumable", "holy"]
+	},
+	"incense": {
+	  "display_name": "Incense",
+	  "base_price": 5,
+	  "stackable": true,
+	  "tags": ["oddity", "consumable", "holy", "occult"]
+	},
+
+	"revolver_basic": {
+	  "display_name": "Basic Revolver",
+	  "base_price": 60,
+	  "stackable": false,
+	  "tags": ["weapon", "pistol"]
+	},
+	"rifle_lever": {
+	  "display_name": "Lever-Action Rifle",
+	  "base_price": 90,
+	  "stackable": false,
+	  "tags": ["weapon", "rifle"]
+	},
+	"shotgun_sawn": {
+	  "display_name": "Sawn-Off Shotgun",
+	  "base_price": 85,
+	  "stackable": false,
+	  "tags": ["weapon", "shotgun"]
+	},
+	"knife_hunting": {
+	  "display_name": "Hunting Knife",
+	  "base_price": 18,
+	  "stackable": false,
+	  "tags": ["weapon", "knife"]
+	},
+	"axe_hand": {
+	  "display_name": "Hand Axe",
+	  "base_price": 22,
+	  "stackable": false,
+	  "tags": ["weapon", "axe"]
+	},
+	"throwing_knife": {
+	  "display_name": "Throwing Knife",
+	  "base_price": 10,
+	  "stackable": true,
+	  "tags": ["weapon", "throwable"]
+	},
+	"throwing_axe": {
+	  "display_name": "Throwing Axe",
+	  "base_price": 14,
+	  "stackable": true,
+	  "tags": ["weapon", "throwable"]
+	}
+  }
+}

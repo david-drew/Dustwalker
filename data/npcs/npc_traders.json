@@ -1,0 +1,313 @@
+{
+  "npcs": {
+	"shopkeeper_ada_dustwater": {
+	  "display_name": "Ada Wren",
+	  "title": "General Store Proprietor",
+	  "description": "Keeps a meticulous ledger and an even keener eye. Ada sells staples, gossip, and the occasional quiet warning.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.0 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "general_store_town_dustwater",
+	  "dialogue_id": "npc_shopkeeper_ada_dustwater_intro",
+	  "trade_dialogue_id": "npc_shopkeeper_ada_dustwater_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "The shop is shuttered—Ada keeps strict hours."
+	  }
+	},
+
+	"shopkeeper_len_redmesa": {
+	  "display_name": "Len Marrow",
+	  "title": "Mercantile Clerk",
+	  "description": "Speaks softly, counts twice, and never looks surprised. Len’s prices are fair—until you give them a reason otherwise.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.0 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "general_store_town_redmesa",
+	  "dialogue_id": "npc_shopkeeper_len_redmesa_intro",
+	  "trade_dialogue_id": "npc_shopkeeper_len_redmesa_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Len has stepped out to ‘settle accounts’."
+	  }
+	},
+
+	"shopkeeper_mrs_miller_crossing": {
+	  "display_name": "Mrs. Miller",
+	  "title": "Supply House Owner",
+	  "description": "Runs the supply counter like a small kingdom. If you’re polite, she’s kindly. If you’re not, she’s quick.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.0 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "general_store_town_millers_crossing",
+	  "dialogue_id": "npc_shopkeeper_mrs_miller_crossing_intro",
+	  "trade_dialogue_id": "npc_shopkeeper_mrs_miller_crossing_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "The counter is closed while Mrs. Miller takes inventory."
+	  }
+	},
+
+	"shopkeeper_silas_silversprings": {
+	  "display_name": "Silas Crowe",
+	  "title": "Dry Goods Merchant",
+	  "description": "Clean cuffs, sharp smile. Silas sells necessities, and he sells them like they’re luxury.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.0 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "general_store_town_silversprings",
+	  "dialogue_id": "npc_shopkeeper_silas_silversprings_intro",
+	  "trade_dialogue_id": "npc_shopkeeper_silas_silversprings_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Silas is away—‘private customers’."
+	  }
+	},
+
+	"quartermaster_hale_sentinel": {
+	  "display_name": "Quartermaster Hale",
+	  "title": "Fort Quartermaster",
+	  "description": "Stamped crates, clipped words. Hale sells what the fort can spare—and buys only what the fort can justify.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 1.2 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "quartermaster_fort_sentinel",
+	  "dialogue_id": "npc_quartermaster_hale_sentinel_intro",
+	  "trade_dialogue_id": "npc_quartermaster_hale_sentinel_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "The supply office is closed for inspection."
+	  }
+	},
+
+	"quartermaster_clerk_sentinel": {
+	  "display_name": "Corporal Voss",
+	  "title": "Supply Clerk",
+	  "description": "Young, exhausted, and dangerously competent with a pencil. Voss does not argue with orders—only with math.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.6 },
+	  "services": ["dialogue"],
+	  "dialogue_id": "npc_quartermaster_clerk_sentinel_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Voss is filing requisitions under lock and key."
+	  }
+	},
+
+	"quartermaster_sergeant_redoubt": {
+	  "display_name": "Sergeant Kincaid",
+	  "title": "Supply Sergeant",
+	  "description": "A straight-backed sergeant with a slanted desk. Kincaid sells the basics and pretends nothing ever goes missing.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 1.2 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "quartermaster_fort_redoubt",
+	  "dialogue_id": "npc_quartermaster_sergeant_redoubt_intro",
+	  "trade_dialogue_id": "npc_quartermaster_sergeant_redoubt_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Kincaid is on rounds—no one touches the crates."
+	  }
+	},
+
+	"quartermaster_clerk_redoubt": {
+	  "display_name": "Private Ellery",
+	  "title": "Runner",
+	  "description": "All elbows and urgency. Ellery can fetch anything—if you catch them standing still long enough to ask.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.6 },
+	  "services": ["dialogue"],
+	  "dialogue_id": "npc_quartermaster_clerk_redoubt_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Ellery’s been sent to the storeroom again."
+	  }
+	},
+
+	"outfitter_crossroads_master": {
+	  "display_name": "Dawson Pike",
+	  "title": "Outfitter",
+	  "description": "Sells packs, rope, and hard truths. Dawson knows every trail that doesn’t want you on it.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 1.3 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "trader_post_crossroads_outfitter",
+	  "dialogue_id": "npc_outfitter_crossroads_master_intro",
+	  "trade_dialogue_id": "npc_outfitter_crossroads_master_trade",
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon", "evening"],
+		"unavailable_reason": "The outfitter’s stall is closed—Dawson is checking the inbound wagons."
+	  }
+	},
+
+	"outfitter_crossroads_runner": {
+	  "display_name": "Nell “Quickhands”",
+	  "title": "Stall Runner",
+	  "description": "Fast fingers, faster grin. Nell can find what you want—sometimes before you admit you want it.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.7 },
+	  "services": ["dialogue"],
+	  "dialogue_id": "npc_outfitter_crossroads_runner_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Nell’s off running a ‘short errand’."
+	  }
+	},
+
+	"tribal_trader_matriarch": {
+	  "display_name": "Elder Seya",
+	  "title": "Trade Steward",
+	  "description": "Quiet eyes, careful hands. Seya trades fairly—so long as you do.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 1.0 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "tribal_trader_redmesa_exchange",
+	  "dialogue_id": "npc_tribal_trader_matriarch_intro",
+	  "trade_dialogue_id": "npc_tribal_trader_matriarch_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "The exchange is closed—today is for council."
+	  }
+	},
+
+	"mission_caretaker_abel": {
+	  "display_name": "Brother Abel",
+	  "title": "Mission Caretaker",
+	  "description": "Speaks gently and listens like it’s work. Abel offers supplies as ‘alms’ and accepts donations with precise gratitude.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 1.1 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "mission_abbey_supply",
+	  "dialogue_id": "npc_mission_caretaker_abel_intro",
+	  "trade_dialogue_id": "npc_mission_caretaker_abel_trade",
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "The mission doors are closed for prayer."
+	  }
+	},
+
+	"caravan_merchant_wayfarer": {
+	  "display_name": "The Wayfarer",
+	  "title": "Wagon Merchant",
+	  "description": "A smile like a coin trick. The Wayfarer sells oddities, essentials, and stories that feel too specific to be random.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 1.2 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "caravan_camp_wayfarer_goods",
+	  "dialogue_id": "npc_caravan_merchant_wayfarer_intro",
+	  "trade_dialogue_id": "npc_caravan_merchant_wayfarer_trade",
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "The wagon’s shutters are down—the merchant is ‘counting blessings’."
+	  }
+	},
+
+	"roadhouse_bartender_rook": {
+	  "display_name": "Rook",
+	  "title": "Bartender",
+	  "description": "Warm lamps, colder stares. Rook pours drinks, sells bandages, and trades in the kind of information that stains your hands.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 1.2 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "roadhouse_the_dusty_boot_bar",
+	  "dialogue_id": "npc_roadhouse_bartender_rook_intro",
+	  "trade_dialogue_id": "npc_roadhouse_bartender_rook_trade",
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "The bar is closed—someone’s cleaning up a mess."
+	  }
+	},
+
+	"roadhouse_bouncer_mara": {
+	  "display_name": "Mara Slate",
+	  "title": "Bouncer",
+	  "description": "Doesn’t smile much, doesn’t need to. Mara remembers faces and debts with equal clarity.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.7 },
+	  "services": ["dialogue"],
+	  "dialogue_id": "npc_roadhouse_bouncer_mara_intro",
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Mara is making a point—somewhere else."
+	  }
+	},
+
+	"gunsmith_ironwood": {
+	  "display_name": "Gideon Ash",
+	  "title": "Gunsmith",
+	  "description": "A workshop that smells like oil, smoke, and stubborn pride. Gideon doesn’t sell bravado—just hardware that survives it.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.8 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "gunsmith_town_ironwood_armory",
+	  "dialogue_id": "npc_gunsmith_ironwood_intro",
+	  "trade_dialogue_id": "npc_gunsmith_ironwood_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "The forge is shut—Gideon’s working on a private commission."
+	  }
+	},
+
+	"gunsmith_apprentice_ironwood": {
+	  "display_name": "Tamsin Ash",
+	  "title": "Apprentice",
+	  "description": "Smudged with soot and pride. Tamsin can strip and clean a revolver faster than most folks can blink—when they’re not daydreaming.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.4 },
+	  "services": ["dialogue"],
+	  "dialogue_id": "npc_gunsmith_apprentice_ironwood_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Tamsin is running parts across town."
+	  }
+	},
+
+	"fort_doctor_mercy": {
+	  "display_name": "Dr. Mercy Calder",
+	  "title": "Field Surgeon",
+	  "description": "A medic who has stopped flinching. Mercy sells supplies, patches wounds, and speaks with the blunt kindness of necessity.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.9 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "doctor_fort_field_surgeon",
+	  "dialogue_id": "npc_fort_doctor_mercy_intro",
+	  "trade_dialogue_id": "npc_fort_doctor_mercy_trade",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "The dispensary is closed—an emergency call took the doctor out."
+	  }
+	},
+
+	"fence_backroom_broker": {
+	  "display_name": "Mr. Grey",
+	  "title": "Backroom Broker",
+	  "description": "You don’t see a sign because there isn’t one. Grey buys the kind of objects that make other people nervous.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.35 },
+	  "services": ["dialogue", "trade", "quest"],
+	  "shop_id": "fence_roadhouse_backroom",
+	  "dialogue_id": "npc_fence_backroom_broker_intro",
+	  "trade_dialogue_id": "npc_fence_backroom_broker_trade",
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "The curtain stays closed unless Grey expects you."
+	  }
+	},
+
+	"occult_whisper_contact": {
+	  "display_name": "The Whisper",
+	  "title": "Unmarked Trade",
+	  "description": "A niche in the rock with offerings arranged like a careful argument. Sometimes you hear coins clink when no one is there.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.25 },
+	  "services": ["dialogue", "trade"],
+	  "shop_id": "occult_cave_whisper_trade",
+	  "dialogue_id": "npc_occult_whisper_contact_intro",
+	  "trade_dialogue_id": "npc_occult_whisper_contact_trade",
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "The hollow is empty—only echoes answer."
+	  }
+	}
+  }
+}

@@ -54,8 +54,10 @@ var pending_character_data: Dictionary = {}
 var launch_menu: Control = null
 var character_creation_screen: Control = null
 var settings_screen: Control = null
+var save_load_dialog: Control = null
 var menu_layer: CanvasLayer = null
 var game_manager: Node = null
+var save_manager: Node = null
 
 # =============================================================================
 # INITIALIZATION
@@ -63,29 +65,31 @@ var game_manager: Node = null
 
 func _ready() -> void:
 	add_to_group("main")
-	
+
+	save_manager = get_node_or_null("/root/SaveManager")
+
 	game_manager = get_tree().get_first_node_in_group("game_manager")
 	if not game_manager:
 		for child in get_children():
 			if child.name == "GameManager":
 				game_manager = child
 				break
-	
+
 	if game_manager:
 		print("Main: Found GameManager")
 		_hide_gameplay()
 	else:
 		push_warning("Main: GameManager not found")
-	
+
 	_create_menu_layer()
 	_connect_event_bus()
-	
+
 	if skip_menu_debug:
 		print("Main: Debug mode - skipping to gameplay")
 		call_deferred("_start_gameplay_direct")
 	else:
 		call_deferred("_change_state", GameState.LAUNCH_MENU)
-	
+
 	print("Main: Initialized")
 
 	#var text := get_tree().get_root().get_tree_string_pretty()
@@ -140,12 +144,21 @@ func _create_menu_layer() -> void:
 		_connect_settings()
 		print("Main: Loaded SettingsScreen")
 
+	# Create save/load dialog dynamically
+	save_load_dialog = SaveLoadDialog.new()
+	save_load_dialog.visible = false
+	menu_layer.add_child(save_load_dialog)
+	_connect_save_load_dialog()
+	print("Main: Created SaveLoadDialog")
+
 
 func _connect_launch_menu() -> void:
 	if launch_menu.has_signal("new_game_pressed"):
 		launch_menu.new_game_pressed.connect(_on_new_game_requested)
+	if launch_menu.has_signal("continue_pressed"):
+		launch_menu.continue_pressed.connect(_on_continue_requested)
 	if launch_menu.has_signal("load_game_pressed"):
-		launch_menu.load_game_pressed.connect(_on_load_game_requested)
+		launch_menu.load_game_pressed.connect(_on_load_game_dialog_requested)
 	if launch_menu.has_signal("settings_requested"):
 		launch_menu.settings_requested.connect(_on_settings_requested)
 	if launch_menu.has_signal("quit_pressed"):
@@ -162,6 +175,25 @@ func _connect_character_creation() -> void:
 func _connect_settings() -> void:
 	if settings_screen.has_signal("settings_closed"):
 		settings_screen.settings_closed.connect(_on_settings_closed)
+	if settings_screen.has_signal("save_game_requested"):
+		settings_screen.save_game_requested.connect(_on_pause_save_requested)
+	if settings_screen.has_signal("load_game_requested"):
+		settings_screen.load_game_requested.connect(_on_pause_load_requested)
+	if settings_screen.has_signal("main_menu_requested"):
+		settings_screen.main_menu_requested.connect(_on_pause_main_menu_requested)
+
+
+func _connect_save_load_dialog() -> void:
+	if save_load_dialog.has_signal("save_selected"):
+		save_load_dialog.save_selected.connect(_on_save_selected)
+	if save_load_dialog.has_signal("save_requested"):
+		save_load_dialog.save_requested.connect(_on_save_requested)
+	if save_load_dialog.has_signal("canceled"):
+		save_load_dialog.canceled.connect(_on_save_load_canceled)
+	if save_load_dialog.has_signal("profile_deleted"):
+		save_load_dialog.profile_deleted.connect(_on_profile_deleted)
+	if save_load_dialog.has_signal("save_deleted"):
+		save_load_dialog.save_deleted.connect(_on_save_deleted)
 
 
 func _connect_event_bus() -> void:
@@ -217,6 +249,10 @@ func _enter_state(state: GameState) -> void:
 				_initialize_gameplay()
 		GameState.SETTINGS:
 			if settings_screen:
+				# Set gameplay mode before showing (shows/hides game buttons)
+				var from_gameplay := previous_state == GameState.GAMEPLAY
+				if settings_screen.has_method("set_in_gameplay"):
+					settings_screen.set_in_gameplay(from_gameplay)
 				settings_screen.visible = true
 				if settings_screen.has_method("refresh"): settings_screen.refresh()
 
@@ -258,19 +294,53 @@ func _on_new_game_requested() -> void:
 	_change_state(GameState.CHARACTER_CREATION)
 
 
-func _on_load_game_requested(save_path: String = "") -> void:
-	print("Main: Load game requested: %s" % save_path)
-	_change_state(GameState.LOADING)
-	await get_tree().create_timer(0.3).timeout
-	_show_gameplay()
-	if not gameplay_initialized and game_manager:
-		if game_manager.has_method("initialize_game"):
-			game_manager.initialize_game()
-		gameplay_initialized = true
-	if not save_path.is_empty() and game_manager and game_manager.has_method("load_game"):
-		game_manager.load_game(save_path)
-	_change_state(GameState.GAMEPLAY)
-	game_loaded.emit(save_path)
+func _on_continue_requested() -> void:
+	print("Main: Continue requested")
+	if save_manager and save_manager.has_continue_data():
+		_load_game_from_save_manager()
+
+
+func _on_load_game_dialog_requested() -> void:
+	print("Main: Load game dialog requested")
+	if save_load_dialog:
+		save_load_dialog.open_load()
+
+
+func _on_save_selected(profile_name: String, save_name: String) -> void:
+	print("Main: Save selected - profile: %s, save: %s" % [profile_name, save_name])
+	if save_manager:
+		save_manager.set_current_profile(profile_name)
+		_load_game_from_profile(profile_name, save_name)
+
+
+func _on_save_requested(save_name: String) -> void:
+	print("Main: Save requested - name: %s" % save_name)
+	if save_manager:
+		save_manager.save_game(save_name)
+	# Return to gameplay after saving from pause menu
+	if previous_state == GameState.GAMEPLAY:
+		_change_state(GameState.GAMEPLAY)
+
+
+func _on_save_load_canceled() -> void:
+	print("Main: Save/Load dialog canceled")
+	# If we were in gameplay (opened from pause menu), return to gameplay
+	if current_state == GameState.SETTINGS or previous_state == GameState.GAMEPLAY:
+		_change_state(GameState.GAMEPLAY)
+
+
+func _on_profile_deleted(profile_name: String) -> void:
+	print("Main: Profile deleted - %s" % profile_name)
+	if save_manager:
+		save_manager.delete_profile(profile_name)
+	if launch_menu and launch_menu.has_method("refresh"):
+		launch_menu.refresh()
+
+
+func _on_save_deleted(profile_name: String, save_name: String) -> void:
+	print("Main: Save deleted - profile: %s, save: %s" % [profile_name, save_name])
+	if save_manager:
+		save_manager.delete_save(save_name, profile_name)
 
 
 func _on_settings_requested() -> void:
@@ -285,6 +355,13 @@ func _on_quit_requested() -> void:
 
 func _on_character_creation_complete(character_data: Dictionary) -> void:
 	print("Main: Character creation complete")
+
+	# Create a profile for this new character
+	if save_manager:
+		var char_name: String = character_data.get("name", "Unknown")
+		var background: String = character_data.get("background_id", "drifter")
+		save_manager.create_profile(char_name, background)
+
 	pending_character_data = character_data
 	_change_state(GameState.GAMEPLAY)
 	new_game_started.emit()
@@ -303,8 +380,82 @@ func _on_settings_closed() -> void:
 		_change_state(GameState.LAUNCH_MENU)
 
 
+func _on_pause_save_requested() -> void:
+	print("Main: Save requested from pause menu")
+	if settings_screen:
+		settings_screen.visible = false
+	if save_load_dialog:
+		save_load_dialog.open_save()
+
+
+func _on_pause_load_requested() -> void:
+	print("Main: Load requested from pause menu")
+	if settings_screen:
+		settings_screen.visible = false
+	if save_load_dialog:
+		save_load_dialog.open_load()
+
+
+func _on_pause_main_menu_requested() -> void:
+	print("Main: Main menu requested from pause menu")
+	return_to_launch_menu()
+
+
 func _on_player_died(cause: String) -> void:
 	print("Main: Player died - %s" % cause)
+
+
+# =============================================================================
+# SAVE/LOAD HELPERS
+# =============================================================================
+
+func _load_game_from_save_manager() -> void:
+	_change_state(GameState.LOADING)
+	await get_tree().create_timer(0.1).timeout
+
+	_show_gameplay()
+	if not gameplay_initialized and game_manager:
+		if game_manager.has_method("initialize_game"):
+			await game_manager.initialize_game()
+		gameplay_initialized = true
+
+	# Load via SaveManager
+	if save_manager:
+		save_manager.continue_game()
+
+	_change_state(GameState.GAMEPLAY)
+	game_loaded.emit("continue")
+
+
+func _load_game_from_profile(profile_name: String, save_name: String) -> void:
+	_change_state(GameState.LOADING)
+	await get_tree().create_timer(0.1).timeout
+
+	_show_gameplay()
+	if not gameplay_initialized and game_manager:
+		if game_manager.has_method("initialize_game"):
+			await game_manager.initialize_game()
+		gameplay_initialized = true
+
+	# Load via SaveManager
+	if save_manager:
+		save_manager.load_game(save_name, profile_name)
+
+	_change_state(GameState.GAMEPLAY)
+	game_loaded.emit(save_name)
+
+
+## Open save dialog (called from gameplay, e.g., camp menu)
+func open_save_dialog() -> void:
+	if save_load_dialog and current_state == GameState.GAMEPLAY:
+		save_load_dialog.open_save()
+
+
+## Quick save the current game
+func quick_save() -> void:
+	if save_manager and current_state == GameState.GAMEPLAY:
+		save_manager.save_game("quicksave")
+		print("Main: Quick saved")
 
 # =============================================================================
 # CHARACTER APPLICATION
@@ -405,7 +556,7 @@ func return_to_launch_menu() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed:
 		return
-	
+
 	if event.keycode == KEY_ESCAPE:
 		match current_state:
 			GameState.GAMEPLAY:
@@ -414,3 +565,17 @@ func _unhandled_input(event: InputEvent) -> void:
 				_on_settings_closed()
 			GameState.CHARACTER_CREATION:
 				_on_character_creation_cancelled()
+
+	# Quick save (F5) - only during gameplay
+	if event.keycode == KEY_F5 and current_state == GameState.GAMEPLAY:
+		quick_save()
+
+	# Quick load (F9) - only during gameplay if there's a save
+	if event.keycode == KEY_F9 and current_state == GameState.GAMEPLAY:
+		if save_manager and save_manager.current_profile and save_manager.save_exists("quicksave"):
+			print("Main: Quick loading...")
+			save_manager.load_game("quicksave")
+
+	# Open save dialog (F6) - during gameplay
+	if event.keycode == KEY_F6 and current_state == GameState.GAMEPLAY:
+		open_save_dialog()

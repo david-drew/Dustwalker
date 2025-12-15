@@ -483,3 +483,71 @@ signal combat_victory(loot: Dictionary)
 
 ## Emitted when player loses combat.
 signal combat_defeat()
+
+# =============================================================================
+# CHARACTER STAT/SKILL/TALENT SIGNALS
+# =============================================================================
+
+## Emitted when a player stat changes.
+## @param stat_name: String - Name of the stat.
+## @param new_value: int - New stat value.
+## @param old_value: int - Previous stat value.
+signal stat_changed(stat_name: String, new_value: int, old_value: int)
+
+## Emitted when a skill level changes.
+## @param skill_name: String - Name of the skill.
+## @param new_level: int - New skill level.
+## @param old_level: int - Previous skill level.
+signal skill_level_changed(skill_name: String, new_level: int, old_level: int)
+
+## Emitted when a talent is acquired.
+## @param talent_id: String - ID of the acquired talent.
+## @param acquisition_type: String - How it was acquired (starting, purchased, story, supernatural).
+signal player_talent_acquired(talent_id: String, acquisition_type: String)
+
+## Emitted when a talent is removed.
+## @param talent_id: String - ID of the removed talent.
+## @param reason: String - Reason for removal.
+signal player_talent_removed(talent_id: String, reason: String)
+
+## Emitted when character data is applied after creation.
+## @param character_data: Dictionary - The applied character data.
+signal character_data_applied(character_data: Dictionary)
+
+# =============================================================================
+# NPC SIGNALS
+# =============================================================================
+
+## Emitted when player enters a location (town, fort, etc.).
+## @param location_data: Dictionary - Data about the location entered.
+signal location_entered(location_data: Dictionary)
+
+## Emitted when player leaves a location.
+## @param location_id: String - ID of the location exited.
+signal location_exited(location_id: String)
+
+## Emitted when player starts interacting with an NPC.
+## @param npc_id: String - ID of the NPC.
+## @param npc_data: Dictionary - Full NPC data for UI.
+signal npc_interaction_started(npc_id: String, npc_data: Dictionary)
+
+## Emitted when NPC interaction ends.
+## @param npc_id: String - ID of the NPC.
+signal npc_interaction_ended(npc_id: String)
+
+# =============================================================================
+# SHOP SIGNALS
+# =============================================================================
+
+## Emitted when a shop is opened.
+## @param shop_id: String - ID of the shop.
+signal shop_opened(shop_id: String)
+
+## Emitted when a shop is closed.
+## @param shop_id: String - ID of the shop.
+signal shop_closed(shop_id: String)
+
+## Emitted when a shop transaction completes.
+## @param shop_id: String - ID of the shop.
+## @param transaction: Dictionary - Transaction details (type, item_id, quantity, total, success).
+signal shop_transaction_completed(shop_id: String, transaction: Dictionary)

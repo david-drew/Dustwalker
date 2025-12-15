@@ -630,22 +630,29 @@ func _trigger_sleep_encounter() -> void:
 
 func _show_results(result: Dictionary) -> void:
 	_title_label.text = "Rested"
-	
+
 	var hp_recovered: int = result.get("hp_recovered", 0)
 	var fatigue_percent: int = result.get("fatigue_percent_recovered", 0)
 	var tier: String = result.get("tier", "adequate")
 	var interrupted: bool = result.get("interrupted", false)
-	
+
 	var result_text := ""
 	if interrupted:
 		result_text = "Sleep interrupted!\n\n"
-	
+
 	result_text += "Sleep Quality: %s\n" % tier.capitalize()
 	result_text += "HP Recovered: +%d\n" % hp_recovered
 	result_text += "Fatigue Recovered: %d%%" % fatigue_percent
-	
+
+	# Autosave after resting (unless interrupted)
+	if not interrupted:
+		var save_manager = get_node_or_null("/root/SaveManager")
+		if save_manager and save_manager.has_method("autosave"):
+			save_manager.autosave()
+			result_text += "\n\n[Game autosaved]"
+
 	_results_label.text = result_text
-	
+
 	# Show results, hide setup
 	_quality_container.visible = false
 	_duration_container.visible = false
@@ -653,7 +660,7 @@ func _show_results(result: Dictionary) -> void:
 	_cancel_button.visible = false
 	_warning_label.visible = false
 	_results_container.visible = true
-	
+
 	camp_completed.emit(result)
 
 # =============================================================================

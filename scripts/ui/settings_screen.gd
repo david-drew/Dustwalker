@@ -45,6 +45,9 @@ class_name SettingsScreen
 
 signal settings_closed()
 signal settings_changed(setting_name: String, value: Variant)
+signal save_game_requested()
+signal load_game_requested()
+signal main_menu_requested()
 
 # =============================================================================
 # NODE REFERENCES
@@ -60,7 +63,20 @@ signal settings_changed(setting_name: String, value: Variant)
 @onready var _fullscreen_check: CheckButton = $PanelContainer/MarginContainer/MainVBox/FullscreenRow/FullscreenCheck
 @onready var _vsync_check: CheckButton = $PanelContainer/MarginContainer/MainVBox/VSyncRow/VSyncCheck
 @onready var _camera_follow_check: CheckButton = $PanelContainer/MarginContainer/MainVBox/CameraFollowRow/CameraFollowCheck
+@onready var _game_section: Label = $PanelContainer/MarginContainer/MainVBox/GameSection
+@onready var _game_buttons_row: HBoxContainer = $PanelContainer/MarginContainer/MainVBox/GameButtonsRow
+@onready var _save_game_button: Button = $PanelContainer/MarginContainer/MainVBox/GameButtonsRow/SaveGameButton
+@onready var _load_game_button: Button = $PanelContainer/MarginContainer/MainVBox/GameButtonsRow/LoadGameButton
+@onready var _main_menu_button: Button = $PanelContainer/MarginContainer/MainVBox/GameButtonsRow/MainMenuButton
+@onready var _resume_button: Button = $PanelContainer/MarginContainer/MainVBox/ResumeButton
 @onready var _close_button: Button = $PanelContainer/MarginContainer/MainVBox/CloseButton
+
+# =============================================================================
+# STATE
+# =============================================================================
+
+## Whether opened from gameplay (shows game buttons) or launch menu (hides them)
+var _in_gameplay: bool = false
 
 # =============================================================================
 # SETTINGS STATE
@@ -87,7 +103,8 @@ func _ready() -> void:
 	_apply_settings_to_ui()
 	_apply_settings_to_game()
 	_style_panel()
-	_style_close_button()
+	_style_buttons()
+	_update_game_section_visibility()
 
 
 func _connect_controls() -> void:
@@ -103,6 +120,14 @@ func _connect_controls() -> void:
 		_vsync_check.toggled.connect(_on_vsync_toggled)
 	if _camera_follow_check:
 		_camera_follow_check.toggled.connect(_on_camera_follow_toggled)
+	if _save_game_button:
+		_save_game_button.pressed.connect(_on_save_game_pressed)
+	if _load_game_button:
+		_load_game_button.pressed.connect(_on_load_game_pressed)
+	if _main_menu_button:
+		_main_menu_button.pressed.connect(_on_main_menu_pressed)
+	if _resume_button:
+		_resume_button.pressed.connect(_on_resume_pressed)
 	if _close_button:
 		_close_button.pressed.connect(_on_close_pressed)
 
@@ -122,20 +147,40 @@ func _style_panel() -> void:
 func _style_close_button() -> void:
 	if not _close_button:
 		return
-	
+
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.425, 0.375, 0.275)
 	style.set_corner_radius_all(4)
 	style.set_border_width_all(2)
 	style.border_color = Color(0.595, 0.525, 0.385)
-	
+
 	var hover := style.duplicate()
 	hover.bg_color = Color(0.525, 0.475, 0.375)
-	
+
 	_close_button.add_theme_stylebox_override("normal", style)
 	_close_button.add_theme_stylebox_override("hover", hover)
 	_close_button.add_theme_stylebox_override("pressed", style)
 	_close_button.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
+
+
+func _style_buttons() -> void:
+	# Style for game action buttons
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.425, 0.375, 0.275)
+	style.set_corner_radius_all(4)
+	style.set_border_width_all(2)
+	style.border_color = Color(0.595, 0.525, 0.385)
+
+	var hover := style.duplicate()
+	hover.bg_color = Color(0.525, 0.475, 0.375)
+
+	var buttons := [_save_game_button, _load_game_button, _main_menu_button, _resume_button, _close_button]
+	for button in buttons:
+		if button:
+			button.add_theme_stylebox_override("normal", style.duplicate())
+			button.add_theme_stylebox_override("hover", hover.duplicate())
+			button.add_theme_stylebox_override("pressed", style.duplicate())
+			button.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
 
 # =============================================================================
 # SETTINGS HANDLERS
@@ -183,6 +228,24 @@ func _on_camera_follow_toggled(pressed: bool) -> void:
 
 
 func _on_close_pressed() -> void:
+	_save_settings()
+	settings_closed.emit()
+	_emit_to_event_bus("settings_closed", [])
+
+
+func _on_save_game_pressed() -> void:
+	save_game_requested.emit()
+
+
+func _on_load_game_pressed() -> void:
+	load_game_requested.emit()
+
+
+func _on_main_menu_pressed() -> void:
+	main_menu_requested.emit()
+
+
+func _on_resume_pressed() -> void:
 	_save_settings()
 	settings_closed.emit()
 	_emit_to_event_bus("settings_closed", [])
@@ -277,6 +340,25 @@ func _load_settings() -> void:
 ## Refresh UI to match current settings.
 func refresh() -> void:
 	_apply_settings_to_ui()
+
+
+## Set whether opened from gameplay (shows game buttons) or launch menu (hides them).
+func set_in_gameplay(in_gameplay: bool) -> void:
+	_in_gameplay = in_gameplay
+	_update_game_section_visibility()
+
+
+func _update_game_section_visibility() -> void:
+	# Show game section and resume button only when in gameplay
+	if _game_section:
+		_game_section.visible = _in_gameplay
+	if _game_buttons_row:
+		_game_buttons_row.visible = _in_gameplay
+	if _resume_button:
+		_resume_button.visible = _in_gameplay
+	# Close button shows when NOT in gameplay (launch menu settings)
+	if _close_button:
+		_close_button.visible = not _in_gameplay
 
 # =============================================================================
 # UTILITY

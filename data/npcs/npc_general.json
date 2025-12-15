@@ -1,0 +1,1195 @@
+{
+  "npcs": {
+	"town_gossip_barber": {
+	  "display_name": "Harlan Snip",
+	  "title": "Barber & Listener",
+	  "description": "A cheerful barber who remembers every face, every feud, and every secret that walks through town—whether you meant to share it or not.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.2 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_town_gossip_barber_intro",
+	  "rumor_dialogue_id": "npc_town_gossip_barber_rumors",
+	  "rumor_topics": ["town_politics", "outlaws", "lost_goods", "local_drama"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "The barber shop is dark—Harlan’s gone ‘for supplies’."
+	  }
+	},
+
+	"town_deputy_green": {
+	  "display_name": "Deputy Green",
+	  "title": "Deputy",
+	  "description": "New badge, old bruises. Green is earnest, underpaid, and desperately trying to keep a lid on a town that keeps boiling over.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.0 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_town_deputy_green_intro",
+	  "rumor_dialogue_id": "npc_town_deputy_green_rumors",
+	  "quest_tags": ["law", "bounty", "escort", "investigation"],
+	  "rumor_topics": ["crime", "bounties", "missing_persons"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Deputy Green is out chasing a lead."
+	  }
+	},
+
+	"town_stablehand_tess": {
+	  "display_name": "Tess Rill",
+	  "title": "Stablehand",
+	  "description": "Smells like hay and honest work. Tess sees who arrives, who leaves, and who lies about where they’ve been.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.9 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_town_stablehand_tess_intro",
+	  "rumor_dialogue_id": "npc_town_stablehand_tess_rumors",
+	  "rumor_topics": ["arrivals", "departures", "caravans", "bandits"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "The stables are quiet—Tess is out chasing a runaway."
+	  }
+	},
+
+	"town_prospector_old_jed": {
+	  "display_name": "Old Jed",
+	  "title": "Retired Prospector",
+	  "description": "Gold fever burned out years ago, but Jed still talks like the next ridge holds salvation. Sometimes he’s even right.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.7 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_town_prospector_old_jed_intro",
+	  "rumor_dialogue_id": "npc_town_prospector_old_jed_rumors",
+	  "quest_tags": ["treasure_map", "cave", "relics", "scavenging"],
+	  "rumor_topics": ["lost_mines", "strange_caves", "relics"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Jed wandered off toward the hills again."
+	  }
+	},
+
+	"town_schoolmarm_ivy": {
+	  "display_name": "Ivy Marlane",
+	  "title": "Schoolmarm",
+	  "description": "Writes like a blade and speaks like a sermon. Ivy collects books, debts, and the names of people who ‘owe the town better.’",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.6 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_town_schoolmarm_ivy_intro",
+	  "quest_tags": ["delivery", "investigation", "community_help"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Class is in session; Ivy does not like interruptions."
+	  }
+	},
+
+	"town_map_surveyor_oneeye": {
+	  "display_name": "Oren One-Eye",
+	  "title": "Surveyor",
+	  "description": "Obsessed with maps and angles. Oren claims the land is shifting—subtly, slowly, and with intent.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.45 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_town_map_surveyor_oneeye_intro",
+	  "rumor_dialogue_id": "npc_town_map_surveyor_oneeye_rumors",
+	  "quest_tags": ["scouting", "mapping", "anomaly", "cave"],
+	  "rumor_topics": ["terrain_anomalies", "hidden_routes", "caves"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Oren is out measuring something that ‘shouldn’t be there.’"
+	  }
+	},
+
+	"town_widow_emberhouse": {
+	  "display_name": "Maris Lorne",
+	  "title": "Widow of Emberhouse",
+	  "description": "Lives beside a burned ruin she refuses to abandon. Maris speaks softly, but her grief has teeth.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.35 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_town_widow_emberhouse_intro",
+	  "quest_tags": ["revenge", "investigation", "family", "arson"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Maris won’t open the door tonight."
+	  }
+	},
+
+	"town_drunk_poet": {
+	  "display_name": "Calder Quill",
+	  "title": "Drunk Poet",
+	  "description": "Recites prophecy between insults and apologies. Calder’s words are mostly nonsense—until they aren’t.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.4 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_town_drunk_poet_intro",
+	  "rumor_dialogue_id": "npc_town_drunk_poet_rumors",
+	  "rumor_topics": ["omens", "outlaws", "strange_lights"],
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Calder’s asleep somewhere inconvenient."
+	  }
+	},
+
+	"town_midwife_sable": {
+	  "display_name": "Sable Hart",
+	  "title": "Midwife",
+	  "description": "A steady hand in desperate moments. Sable knows everyone’s family business—because she helped bring it into the world.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.5 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_town_midwife_sable_intro",
+	  "rumor_dialogue_id": "npc_town_midwife_sable_rumors",
+	  "quest_tags": ["medical", "rescue", "delivery"],
+	  "rumor_topics": ["missing_people", "illness", "local_drama"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Sable is out on a house call."
+	  }
+	},
+
+	"fort_sentry_bored": {
+	  "display_name": "Sentry Wills",
+	  "title": "Sentry",
+	  "description": "Bored enough to talk, disciplined enough to stop when it matters. Wills knows what goes in and out of the fort—officially and otherwise.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 1.0 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_fort_sentry_bored_intro",
+	  "rumor_dialogue_id": "npc_fort_sentry_bored_rumors",
+	  "rumor_topics": ["patrols", "contraband", "orders"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Wills has been rotated to the outer watch."
+	  }
+	},
+
+	"fort_drill_instructor": {
+	  "display_name": "Instructor Brant",
+	  "title": "Drill Instructor",
+	  "description": "A voice like gravel in a tin can. Brant has a talent for finding weakness and calling it by name.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.8 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_fort_drill_instructor_intro",
+	  "quest_tags": ["training_run", "errand", "discipline"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Brant is drilling recruits until sundown."
+	  }
+	},
+
+	"fort_veteran_missing_records": {
+	  "display_name": "Corin Vale",
+	  "title": "Veteran",
+	  "description": "Wears the uniform like a question. Corin’s unit records are ‘lost,’ and they’d very much like them found.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.45 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_fort_veteran_missing_records_intro",
+	  "rumor_dialogue_id": "npc_fort_veteran_missing_records_rumors",
+	  "quest_tags": ["investigation", "bureaucracy", "conspiracy"],
+	  "rumor_topics": ["coverups", "missing_crates", "officers"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Corin’s been called in for ‘questions’ again."
+	  }
+	},
+
+	"fort_chaplain_doubt": {
+	  "display_name": "Chaplain Rowe",
+	  "title": "Chaplain",
+	  "description": "Offers comfort with a steady voice—and carries doubts like contraband. Rowe hears confessions people don’t want to admit they made.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.4 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_fort_chaplain_doubt_intro",
+	  "rumor_dialogue_id": "npc_fort_chaplain_doubt_rumors",
+	  "quest_tags": ["mercy", "escort", "reconciliation"],
+	  "rumor_topics": ["secrets", "desertions", "fear"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Rowe is tending to someone who needs it more."
+	  }
+	},
+
+	"fort_intel_officer": {
+	  "display_name": "Lt. Varren",
+	  "title": "Intelligence Officer",
+	  "description": "Collects details the way others collect coins. Varren is polite, precise, and never tells you what they already know.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.35 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_fort_intel_officer_intro",
+	  "quest_tags": ["recon", "espionage", "interrogation", "delivery"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "The lieutenant is in briefing."
+	  }
+	},
+
+	"trading_post_freight_clerk": {
+	  "display_name": "Mina Ledger",
+	  "title": "Freight Clerk",
+	  "description": "Ink-stained fingers and iron patience. Mina can tell you what’s missing before you know it’s gone.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 1.1 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_trading_post_freight_clerk_intro",
+	  "rumor_dialogue_id": "npc_trading_post_freight_clerk_rumors",
+	  "quest_tags": ["missing_shipment", "delivery", "escort"],
+	  "rumor_topics": ["routes", "bandits", "prices"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Mina is reconciling a manifest and will not be rushed."
+	  }
+	},
+
+	"trading_post_route_planner": {
+	  "display_name": "Kerris Pike",
+	  "title": "Route Planner",
+	  "description": "Knows which trails are safe, which are fast, and which are lying. Kerris sells information in ‘friendly advice.’",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.75 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_trading_post_route_planner_intro",
+	  "rumor_dialogue_id": "npc_trading_post_route_planner_rumors",
+	  "quest_tags": ["scouting", "map", "escort"],
+	  "rumor_topics": ["safe_routes", "ambushes", "weather_signs"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Kerris is meeting with a caravan captain."
+	  }
+	},
+
+	"trading_post_caravan_guard": {
+	  "display_name": "Rusk Tanner",
+	  "title": "Caravan Guard",
+	  "description": "Stands where trouble is most likely to arrive. Rusk gives short answers—unless you mention pay.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.85 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_trading_post_caravan_guard_intro",
+	  "quest_tags": ["escort", "combat", "retrieval"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Rusk has taken a contract and is already on the trail."
+	  }
+	},
+
+	"trading_post_interpreter": {
+	  "display_name": "Sera Vell",
+	  "title": "Interpreter",
+	  "description": "Speaks too many languages and trusts too few people. Sera can smooth a deal—or sharpen it into a weapon.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.4 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_trading_post_interpreter_intro",
+	  "rumor_dialogue_id": "npc_trading_post_interpreter_rumors",
+	  "quest_tags": ["negotiation", "escort", "diplomacy"],
+	  "rumor_topics": ["tribes", "forts", "smugglers"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Sera is translating for someone who pays better."
+	  }
+	},
+
+	"trading_post_disgraced_merchant": {
+	  "display_name": "Bram Hallow",
+	  "title": "Disgraced Merchant",
+	  "description": "Once rich, now bitter. Bram knows who cheats on the trail—because he used to.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.3 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_trading_post_disgraced_merchant_intro",
+	  "rumor_dialogue_id": "npc_trading_post_disgraced_merchant_rumors",
+	  "quest_tags": ["smuggling", "revenge", "investigation"],
+	  "rumor_topics": ["black_market", "stolen_goods", "fake_maps"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Bram is ‘busy’ with the wrong crowd."
+	  }
+	},
+
+	"mission_abbess": {
+	  "display_name": "Mother Ysabel",
+	  "title": "Abbess",
+	  "description": "Kind voice, uncompromising gaze. Mother Ysabel offers forgiveness freely—but expects effort in return.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.7 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_mission_abbess_intro",
+	  "rumor_dialogue_id": "npc_mission_abbess_rumors",
+	  "quest_tags": ["pilgrimage", "relics", "mercy", "investigation"],
+	  "rumor_topics": ["omens", "relics", "lost_travelers"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "The abbess is in prayer with the congregation."
+	  }
+	},
+
+	"mission_archivist": {
+	  "display_name": "Brother Carden",
+	  "title": "Archivist",
+	  "description": "Guards old papers like they’re loaded guns. Carden says some truths were buried for good reasons.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.45 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_mission_archivist_intro",
+	  "quest_tags": ["lore", "relics", "anomaly", "research"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "The archive is closed—Carden is cataloging something delicate."
+	  }
+	},
+
+	"mission_penitent_outlaw": {
+	  "display_name": "Joss ‘Ash’ Merrin",
+	  "title": "Penitent",
+	  "description": "Former outlaw, current ghost of a person. Joss wants absolution—but keeps looking over their shoulder like it has a price.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.4 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_mission_penitent_outlaw_intro",
+	  "rumor_dialogue_id": "npc_mission_penitent_outlaw_rumors",
+	  "quest_tags": ["redemption", "bounty", "escort", "revenge"],
+	  "rumor_topics": ["outlaws", "safehouses", "hidden_stashes"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Joss has slipped away to be alone."
+	  }
+	},
+
+	"mission_visionary_mystic": {
+	  "display_name": "Sister Lume",
+	  "title": "Visionary",
+	  "description": "Speaks in symbols and sleeps in daylight. Lume’s ‘visions’ are unsettlingly specific for pure faith.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.25 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_mission_visionary_mystic_intro",
+	  "rumor_dialogue_id": "npc_mission_visionary_mystic_rumors",
+	  "quest_tags": ["omens", "relics", "cave", "occult"],
+	  "rumor_topics": ["prophecy", "strange_lights", "whispers"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Lume won’t speak until the candles are lit."
+	  }
+	},
+
+	"caravan_leader": {
+	  "display_name": "Captain Rell",
+	  "title": "Caravan Leader",
+	  "description": "Keeps people alive with ruthless logistics. Rell hires help reluctantly—and fires it without hesitation.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.9 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_caravan_leader_intro",
+	  "rumor_dialogue_id": "npc_caravan_leader_rumors",
+	  "quest_tags": ["escort", "delivery", "rescue", "ambush"],
+	  "rumor_topics": ["routes", "rival_caravans", "bandits"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Captain Rell is negotiating with another crew."
+	  }
+	},
+
+	"caravan_cook": {
+	  "display_name": "Poppy Stove",
+	  "title": "Camp Cook",
+	  "description": "Feeds a dozen tempers a day and calls it love. Poppy hears everything around the fire.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 1.0 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_caravan_cook_intro",
+	  "rumor_dialogue_id": "npc_caravan_cook_rumors",
+	  "rumor_topics": ["camp_stories", "routes", "missing_goods"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "The cookfire is out—Poppy’s asleep."
+	  }
+	},
+
+	"caravan_animal_handler": {
+	  "display_name": "Bramble Finch",
+	  "title": "Animal Handler",
+	  "description": "Speaks to beasts better than people. Bramble can tell if trouble’s near by how the animals breathe.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.7 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_caravan_animal_handler_intro",
+	  "rumor_dialogue_id": "npc_caravan_animal_handler_rumors",
+	  "quest_tags": ["lost_animal", "tracking", "rescue"],
+	  "rumor_topics": ["tracks", "predators", "ambush_signs"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Bramble’s out checking the herd."
+	  }
+	},
+
+	"caravan_star_reader": {
+	  "display_name": "Moth Haze",
+	  "title": "Star-Reader",
+	  "description": "Reads the sky like a ledger and smiles like it’s a joke. Moth’s ‘predictions’ have a habit of being right in the worst ways.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.35 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_caravan_star_reader_intro",
+	  "rumor_dialogue_id": "npc_caravan_star_reader_rumors",
+	  "quest_tags": ["omens", "relics", "occult", "scouting"],
+	  "rumor_topics": ["omens", "strange_lights", "whispers"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Moth won’t read the sky while it’s bright."
+	  }
+	},
+
+	"roadhouse_gambler": {
+	  "display_name": "Juno Dice",
+	  "title": "Gambler",
+	  "description": "Wins with charm, loses with grace, and lies with artistry. Juno’s rumors are expensive—if not in coin, then in consequence.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.9 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_roadhouse_gambler_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_gambler_rumors",
+	  "quest_tags": ["debt", "retrieval", "smuggling"],
+	  "rumor_topics": ["black_market", "bounties", "hidden_rooms"],
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Juno is at a private table."
+	  }
+	},
+
+	"roadhouse_musician": {
+	  "display_name": "Lark Hollis",
+	  "title": "Musician",
+	  "description": "Plays songs that feel like they’re about you—until you realize they’re about everyone. Lark trades gossip like chords.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.8 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_roadhouse_musician_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_musician_rumors",
+	  "rumor_topics": ["travelers", "outlaws", "local_drama"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Lark’s voice is gone—no songs tonight."
+	  }
+	},
+
+	"roadhouse_fixer": {
+	  "display_name": "Etta Vane",
+	  "title": "Fixer",
+	  "description": "Arranges meetings, solves problems, creates new ones. Etta smiles like a contract and never stops working.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.45 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_roadhouse_fixer_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_fixer_rumors",
+	  "quest_tags": ["smuggling", "delivery", "intimidation", "investigation"],
+	  "rumor_topics": ["black_market", "debts", "secrets"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Etta is in a back room with someone important."
+	  }
+	},
+
+	"roadhouse_drifter": {
+	  "display_name": "Pale Sam",
+	  "title": "Drifter",
+	  "description": "Looks like he’s been walking since before the road existed. Sam knows places the map refuses to admit.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.55 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_roadhouse_drifter_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_drifter_rumors",
+	  "quest_tags": ["lost_place", "cave", "relics", "escort"],
+	  "rumor_topics": ["hidden_routes", "strange_caves", "omens"],
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Sam’s vanished—like he does."
+	  }
+	},
+
+	"roadhouse_debt_collector": {
+	  "display_name": "Kade Flint",
+	  "title": "Debt Collector",
+	  "description": "Polite, patient, and terrifyingly reasonable. Kade never raises his voice—he doesn’t need to.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.3 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_roadhouse_debt_collector_intro",
+	  "quest_tags": ["debt", "intimidation", "retrieval"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Kade is ‘handling business’ elsewhere."
+	  }
+	},
+
+	"cave_hermit": {
+	  "display_name": "Hush",
+	  "title": "Hermit",
+	  "description": "A person who has decided the world is too loud. Hush knows the cave’s moods and the things that shouldn’t be waking inside it.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.35 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_cave_hermit_intro",
+	  "rumor_dialogue_id": "npc_cave_hermit_rumors",
+	  "quest_tags": ["cave", "survival", "relics", "occult"],
+	  "rumor_topics": ["whispers", "strange_lights", "relics"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Hush won’t show himself tonight."
+	  }
+	},
+
+	"cave_trapped_explorer": {
+	  "display_name": "Nora Pike",
+	  "title": "Trapped Explorer",
+	  "description": "Scraped, stubborn, and running out of light. Nora swears there’s a second way out—if you can find it.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.45 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_cave_trapped_explorer_intro",
+	  "quest_tags": ["rescue", "escape", "cave"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon", "evening", "night", "late night"],
+		"unavailable_reason": "No sign of life—only dripping stone."
+	  }
+	},
+
+	"cave_relic_guardian": {
+	  "display_name": "The Warden of Salt",
+	  "title": "Relic Guardian",
+	  "description": "A presence more than a person. It offers bargains in silence and punishes impatience with certainty.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.2 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_cave_relic_guardian_intro",
+	  "rumor_dialogue_id": "npc_cave_relic_guardian_rumors",
+	  "quest_tags": ["relics", "occult", "trial", "offering"],
+	  "rumor_topics": ["relics", "omens", "whispers"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "The cave is quiet—too quiet."
+	  }
+	},
+
+	"cave_cult_remnant": {
+	  "display_name": "Sable Thread",
+	  "title": "Cult Remnant",
+	  "description": "A survivor with ash under their nails. Sable Thread speaks in half-truths and watches your shadow more than your face.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.25 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_cave_cult_remnant_intro",
+	  "rumor_dialogue_id": "npc_cave_cult_remnant_rumors",
+	  "quest_tags": ["occult", "investigation", "relics"],
+	  "rumor_topics": ["cult", "whispers", "strange_lights"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Only footprints—no person."
+	  }
+	},
+
+	"town_common_laborer": {
+	  "display_name": "Moss Calder",
+	  "title": "Laborer",
+	  "description": "Works hard, laughs harder. Moss has seen every kind of traveler, and he judges them by how they treat people who can’t fight back.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 1.2 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_town_common_laborer_intro",
+	  "rumor_dialogue_id": "npc_town_common_laborer_rumors",
+	  "rumor_topics": ["work", "prices", "outlaws"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Moss is out on a job."
+	  }
+	},
+
+	"town_courier": {
+	  "display_name": "Rin Swift",
+	  "title": "Courier",
+	  "description": "Always in a hurry, always listening. Rin knows which roads are ‘safe’ and which are merely unclaimed.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.8 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_town_courier_intro",
+	  "rumor_dialogue_id": "npc_town_courier_rumors",
+	  "quest_tags": ["delivery", "escort", "urgent"],
+	  "rumor_topics": ["routes", "ambushes", "weather_signs"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Rin is already on the road."
+	  }
+	},
+
+	"town_land_agent": {
+	  "display_name": "Cyrus Vale",
+	  "title": "Land Agent",
+	  "description": "Sells deeds, sells futures, sells lies. Cyrus speaks politely while stealing the ground from under your feet.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.35 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_town_land_agent_intro",
+	  "rumor_dialogue_id": "npc_town_land_agent_rumors",
+	  "quest_tags": ["politics", "investigation", "contracts"],
+	  "rumor_topics": ["town_politics", "land_disputes"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Cyrus is meeting ‘investors’."
+	  }
+	},
+
+	"fort_card_table_rumors": {
+	  "display_name": "Pvt. Senn",
+	  "title": "Card Player",
+	  "description": "A soldier who talks too much when the cards go bad. Senn’s rumors are half true and fully contagious.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.9 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_fort_card_table_rumors_intro",
+	  "rumor_dialogue_id": "npc_fort_card_table_rumors_rumors",
+	  "rumor_topics": ["orders", "patrols", "contraband"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "The card table is empty tonight."
+	  }
+	},
+
+	"fort_scout_captain": {
+	  "display_name": "Captain Nix",
+	  "title": "Scout Captain",
+	  "description": "Leads patrols into places maps don’t like. Nix hires capable people and watches them like a hawk.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.5 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_fort_scout_captain_intro",
+	  "quest_tags": ["recon", "tracking", "ambush", "escort"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Captain Nix is out beyond the wire."
+	  }
+	},
+
+	"trading_post_smuggling_investigator": {
+	  "display_name": "Agent Kess",
+	  "title": "Inspector",
+	  "description": "Wears plain clothes and a sharper suspicion. Kess asks questions until the answers start sweating.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.35 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_trading_post_smuggling_investigator_intro",
+	  "rumor_dialogue_id": "npc_trading_post_smuggling_investigator_rumors",
+	  "quest_tags": ["investigation", "smuggling", "law"],
+	  "rumor_topics": ["black_market", "fake_goods", "corruption"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Kess is tailing someone."
+	  }
+	},
+
+	"mission_pilgrim_guide": {
+	  "display_name": "Toma Reed",
+	  "title": "Pilgrim Guide",
+	  "description": "Knows the old paths and the old prayers. Toma can get you to holy ground—if you can survive the walk.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.55 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_mission_pilgrim_guide_intro",
+	  "quest_tags": ["pilgrimage", "escort", "survival"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Toma is leading a small group today."
+	  }
+	},
+
+	"caravan_storyteller": {
+	  "display_name": "Uncle Brine",
+	  "title": "Storyteller",
+	  "description": "Tells tales like he’s paying rent with them. Brine’s rumors arrive wrapped in jokes and leave wrapped in dread.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.85 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_caravan_storyteller_intro",
+	  "rumor_dialogue_id": "npc_caravan_storyteller_rumors",
+	  "rumor_topics": ["legends", "relics", "omens"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "No one’s telling stories tonight."
+	  }
+	},
+
+	"roadhouse_silent_cardsharp": {
+	  "display_name": "Mira ‘No-Look’",
+	  "title": "Cardsharp",
+	  "description": "Plays without looking at her hand. People say she cheats. People also say she doesn’t need to.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.4 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_roadhouse_silent_cardsharp_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_silent_cardsharp_rumors",
+	  "quest_tags": ["debt", "retrieval", "smuggling"],
+	  "rumor_topics": ["black_market", "secrets", "debts"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Mira isn’t playing tonight."
+	  }
+	},
+
+	"roadhouse_ex_lawman": {
+	  "display_name": "Marshal Grady",
+	  "title": "Ex-Lawman",
+	  "description": "A badge-shaped scar in the way he stands. Grady keeps to the corner and notices everything.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.35 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_roadhouse_ex_lawman_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_ex_lawman_rumors",
+	  "quest_tags": ["bounty", "investigation", "justice"],
+	  "rumor_topics": ["outlaws", "corruption", "bounties"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Grady’s gone for a walk."
+	  }
+	},
+
+	"town_unusual_former_outlaw": {
+	  "display_name": "Vera Knox",
+	  "title": "Reformed Outlaw",
+	  "description": "Trying to live straight in a world that bends. Vera offers help the way she used to offer trouble: directly.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.25 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_town_unusual_former_outlaw_intro",
+	  "rumor_dialogue_id": "npc_town_unusual_former_outlaw_rumors",
+	  "quest_tags": ["outlaws", "redemption", "escort"],
+	  "rumor_topics": ["outlaws", "safehouses", "hidden_stashes"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Vera won’t be seen tonight."
+	  }
+	},
+
+	"trading_post_trader_refuses_coin": {
+	  "display_name": "Hobb the Barterman",
+	  "title": "Barter Traditionalist",
+	  "description": "Refuses coin on principle—then sells you the principle for coin. Hobb’s logic is a maze with a smile at the center.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.2 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_trading_post_trader_refuses_coin_intro",
+	  "rumor_dialogue_id": "npc_trading_post_trader_refuses_coin_rumors",
+	  "quest_tags": ["odd_jobs", "delivery", "social"],
+	  "rumor_topics": ["prices", "rival_caravans", "weird_requests"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Hobb is ‘negotiating’ with someone stubborn."
+	  }
+	},
+
+	"fort_courtmartial_officer": {
+	  "display_name": "Major Orlov",
+	  "title": "Disgraced Officer",
+	  "description": "Stripped of command but not of pride. Orlov wants redemption—on his terms, and with someone else taking the risk.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.2 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_fort_courtmartial_officer_intro",
+	  "quest_tags": ["conspiracy", "retrieval", "revenge"],
+	  "schedule": {
+		"available_times": ["evening", "night"],
+		"unavailable_reason": "Orlov refuses visitors right now."
+	  }
+	},
+
+	"mission_confessor": {
+	  "display_name": "Sister Mave",
+	  "title": "Confessor",
+	  "description": "Hears sins like weather and never looks shocked. Mave offers gentle words and sharp questions in equal measure.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.6 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_mission_confessor_intro",
+	  "rumor_dialogue_id": "npc_mission_confessor_rumors",
+	  "rumor_topics": ["secrets", "omens", "lost_travelers"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Confession is closed for now."
+	  }
+	},
+
+	"caravan_rival_envoy": {
+	  "display_name": "Venn Sable",
+	  "title": "Rival Envoy",
+	  "description": "Smiles like a knife being sheathed. Venn offers deals that always have a second meaning.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.25 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_caravan_rival_envoy_intro",
+	  "rumor_dialogue_id": "npc_caravan_rival_envoy_rumors",
+	  "quest_tags": ["rivalry", "smuggling", "escort"],
+	  "rumor_topics": ["rival_caravans", "black_market", "prices"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Venn has moved on to another campfire."
+	  }
+	},
+
+	"roadhouse_performer_occult": {
+	  "display_name": "Saint Liora",
+	  "title": "Performer",
+	  "description": "Sings hymns that don’t belong to any church you’ve heard of. People leave her shows with tears, coins, or both.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.2 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_roadhouse_performer_occult_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_performer_occult_rumors",
+	  "quest_tags": ["occult", "omens", "relics"],
+	  "rumor_topics": ["whispers", "omens", "strange_lights"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "No performance tonight—only silence."
+	  }
+	},
+
+	"town_ranch_hand": {
+	  "display_name": "Pax Holden",
+	  "title": "Ranch Hand",
+	  "description": "Knows animals, weather, and which fences were cut on purpose. Pax speaks slow, thinks fast.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.85 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_town_ranch_hand_intro",
+	  "rumor_dialogue_id": "npc_town_ranch_hand_rumors",
+	  "quest_tags": ["tracking", "predators", "missing_livestock"],
+	  "rumor_topics": ["tracks", "predators", "bandits"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Pax is out mending fences."
+	  }
+	},
+
+	"fort_prisoner_liaison": {
+	  "display_name": "Warden Sloane",
+	  "title": "Prisoner Liaison",
+	  "description": "Handles prisoners and paperwork with the same cold efficiency. Sloane can make problems disappear—if you can afford the moral cost.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.25 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_fort_prisoner_liaison_intro",
+	  "quest_tags": ["prisoner", "escort", "investigation"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Sloane is dealing with ‘an incident’."
+	  }
+	},
+
+	"trading_post_drover": {
+	  "display_name": "Kip Rangle",
+	  "title": "Drover",
+	  "description": "Smells like dust and determination. Kip knows where the herds move and why the trails sometimes go quiet.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.7 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_trading_post_drover_intro",
+	  "rumor_dialogue_id": "npc_trading_post_drover_rumors",
+	  "rumor_topics": ["routes", "predators", "bandits"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Kip is out with the animals."
+	  }
+	},
+
+	"mission_groundkeeper": {
+	  "display_name": "Old Rowan",
+	  "title": "Groundskeeper",
+	  "description": "Tends the garden like it’s a battlefield. Rowan has seen miracles, and he doesn’t trust most of them.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.6 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_mission_groundkeeper_intro",
+	  "rumor_dialogue_id": "npc_mission_groundkeeper_rumors",
+	  "rumor_topics": ["omens", "relics", "strange_visitors"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Rowan is out tending the grounds."
+	  }
+	},
+
+	"caravan_night_watch": {
+	  "display_name": "Sparrow Rake",
+	  "title": "Night Watch",
+	  "description": "Eyes like lanterns in the dark. Sparrow hears the desert talk—footsteps, whispers, and the silence between them.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.7 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_caravan_night_watch_intro",
+	  "rumor_dialogue_id": "npc_caravan_night_watch_rumors",
+	  "quest_tags": ["ambush", "tracking", "escort"],
+	  "rumor_topics": ["ambushes", "tracks", "strange_lights"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Sparrow is making rounds beyond the firelight."
+	  }
+	},
+
+	"roadhouse_dice_runner": {
+	  "display_name": "Tink Bell",
+	  "title": "Dice Runner",
+	  "description": "Moves between tables like a rumor with legs. Tink can introduce you to anyone—if you pay in favors.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.6 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_roadhouse_dice_runner_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_dice_runner_rumors",
+	  "quest_tags": ["debt", "delivery", "social"],
+	  "rumor_topics": ["debts", "secrets", "black_market"],
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Tink is busy running a game."
+	  }
+	},
+
+	"town_rumor_laundress": {
+	  "display_name": "Mara Lin",
+	  "title": "Laundress",
+	  "description": "Washes blood out of cloth and lies out of people. Mara hears more than anyone suspects—and forgets nothing important.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.75 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_town_rumor_laundress_intro",
+	  "rumor_dialogue_id": "npc_town_rumor_laundress_rumors",
+	  "rumor_topics": ["local_drama", "crime", "arrivals"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Mara’s closed up for the day."
+	  }
+	},
+
+	"fort_bureaucrat": {
+	  "display_name": "Clerk Danton",
+	  "title": "Records Clerk",
+	  "description": "Paperwork given human form. Danton can solve problems instantly—as long as you have the right stamp, the right signature, and the right patience.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.55 },
+	  "services": ["dialogue", "quest"],
+	  "dialogue_id": "npc_fort_bureaucrat_intro",
+	  "quest_tags": ["paperwork", "delivery", "investigation"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "The clerk’s window is closed."
+	  }
+	},
+
+	"trading_post_rumor_caravanner": {
+	  "display_name": "Gwen Spoke",
+	  "title": "Caravanner",
+	  "description": "Lives on the road and talks like it. Gwen’s rumors come with mileage and a warning label.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.7 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_trading_post_rumor_caravanner_intro",
+	  "rumor_dialogue_id": "npc_trading_post_rumor_caravanner_rumors",
+	  "rumor_topics": ["routes", "prices", "rival_caravans"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Gwen’s caravan has already rolled out."
+	  }
+	},
+
+	"mission_relic_seeker": {
+	  "display_name": "Santos Vell",
+	  "title": "Relic Seeker",
+	  "description": "Believes the old world left gifts behind—if you’re worthy, or desperate. Santos hires muscle and prays it won’t be needed.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.35 },
+	  "services": ["dialogue", "quest", "rumor"],
+	  "dialogue_id": "npc_mission_relic_seeker_intro",
+	  "rumor_dialogue_id": "npc_mission_relic_seeker_rumors",
+	  "quest_tags": ["relics", "cave", "escort", "anomaly"],
+	  "rumor_topics": ["relics", "caves", "omens"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Santos is preparing for a pilgrimage."
+	  }
+	},
+
+	"caravan_wheel_chronicler": {
+	  "display_name": "Glyph",
+	  "title": "Chronicler",
+	  "description": "Carves symbols into wagon wheels and claims they keep the bad luck moving. Glyph records everything—especially what others omit.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.25 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_caravan_wheel_chronicler_intro",
+	  "rumor_dialogue_id": "npc_caravan_wheel_chronicler_rumors",
+	  "quest_tags": ["lore", "omens", "investigation"],
+	  "rumor_topics": ["legends", "omens", "strange_visitors"],
+	  "schedule": {
+		"available_times": ["afternoon", "evening"],
+		"unavailable_reason": "Glyph has gone to carve somewhere quieter."
+	  }
+	},
+
+	"roadhouse_rumor_waitress": {
+	  "display_name": "Nia Shaw",
+	  "title": "Server",
+	  "description": "Carries drinks, collects stories. Nia knows who’s lying because she hears them repeat the lie twice.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.8 },
+	  "services": ["dialogue", "rumor"],
+	  "dialogue_id": "npc_roadhouse_rumor_waitress_intro",
+	  "rumor_dialogue_id": "npc_roadhouse_rumor_waitress_rumors",
+	  "rumor_topics": ["travelers", "debts", "secrets"],
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Nia’s off shift."
+	  }
+	},
+
+	"cave_survivor_prisoner": {
+	  "display_name": "Eli Thorn",
+	  "title": "Survivor",
+	  "description": "Looks like he crawled out of the dark with it still inside him. Eli will talk—if you keep your voice low and your light lower.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.3 },
+	  "services": ["dialogue", "rumor", "quest"],
+	  "dialogue_id": "npc_cave_survivor_prisoner_intro",
+	  "rumor_dialogue_id": "npc_cave_survivor_prisoner_rumors",
+	  "quest_tags": ["rescue", "escape", "investigation"],
+	  "rumor_topics": ["whispers", "predators", "strange_lights"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "No sign of Eli—only scuffed stone."
+	  }
+	},
+
+	"trainer_old_pete": {
+	  "display_name": "Old Pete",
+	  "title": "Master Gunsmith",
+	  "description": "A legendary gunfighter turned gunsmith. His hands shake now, but his eye is still sharp. He teaches those with coin and patience.",
+	  "location_id": "town",
+	  "placement": { "location_type": "town", "weight": 0.6 },
+	  "services": ["dialogue", "trainer"],
+	  "trainer_id": "gunsmith_tombstone",
+	  "dialogue_id": "npc_trainer_old_pete_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Pete's working on a commission—come back later."
+	  }
+	},
+
+	"trainer_sgt_morrison": {
+	  "display_name": "Sergeant Morrison",
+	  "title": "Cavalry Instructor",
+	  "description": "A grizzled cavalry veteran who's survived more battles than he can count. He trains soldiers—and the occasional civilian who proves their worth.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.5 },
+	  "services": ["dialogue", "trainer"],
+	  "trainer_id": "cavalry_fort",
+	  "dialogue_id": "npc_trainer_sgt_morrison_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "The Sergeant is drilling recruits."
+	  }
+	},
+
+	"trainer_silent_fox": {
+	  "display_name": "Silent Fox",
+	  "title": "Wilderness Guide",
+	  "description": "A native scout who knows every trail and trick for surviving the frontier. She takes on students when the mood strikes—and the price is right.",
+	  "location_id": "trading_post",
+	  "placement": { "location_type": "trading_post", "weight": 0.5 },
+	  "services": ["dialogue", "trainer", "rumor"],
+	  "trainer_id": "wilderness_guide",
+	  "dialogue_id": "npc_trainer_silent_fox_intro",
+	  "rumor_dialogue_id": "npc_trainer_silent_fox_rumors",
+	  "rumor_topics": ["tracks", "predators", "safe_routes"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "Silent Fox has left for the hills."
+	  }
+	},
+
+	"trainer_diamond_dan": {
+	  "display_name": "Diamond Dan",
+	  "title": "Professional Gambler",
+	  "description": "A sharply dressed card shark who's been run out of every major city. He'll teach you his tricks—for the right price.",
+	  "location_id": "roadhouse",
+	  "placement": { "location_type": "roadhouse", "weight": 0.45 },
+	  "services": ["dialogue", "trainer", "rumor"],
+	  "trainer_id": "gambler_saloon",
+	  "dialogue_id": "npc_trainer_diamond_dan_intro",
+	  "rumor_dialogue_id": "npc_trainer_diamond_dan_rumors",
+	  "rumor_topics": ["debts", "black_market", "secrets"],
+	  "schedule": {
+		"available_times": ["evening", "night", "late night"],
+		"unavailable_reason": "Dan's in a private game—don't interrupt."
+	  }
+	},
+
+	"trainer_dr_cross": {
+	  "display_name": "Dr. Helena Cross",
+	  "title": "Army Surgeon",
+	  "description": "A skilled surgeon who's patched up more gunshot wounds than she'd like to remember. She teaches field medicine to those with steady hands.",
+	  "location_id": "fort",
+	  "placement": { "location_type": "fort", "weight": 0.4 },
+	  "services": ["dialogue", "trainer"],
+	  "trainer_id": "army_doctor",
+	  "dialogue_id": "npc_trainer_dr_cross_intro",
+	  "schedule": {
+		"available_times": ["morning", "afternoon"],
+		"unavailable_reason": "Dr. Cross is in surgery."
+	  }
+	},
+
+	"trainer_mama_eulalia": {
+	  "display_name": "Mama Eulalia",
+	  "title": "Swamp Witch",
+	  "description": "An ancient woman of mysterious origins. Some say she's been here since before the war. She only teaches those who've proven themselves.",
+	  "location_id": "cave",
+	  "placement": { "location_type": "cave", "weight": 0.15 },
+	  "services": ["dialogue", "trainer", "quest"],
+	  "trainer_id": "witch_swamp",
+	  "dialogue_id": "npc_trainer_mama_eulalia_intro",
+	  "quest_tags": ["occult", "trial", "offering"],
+	  "schedule": {
+		"available_times": ["night", "late night"],
+		"unavailable_reason": "Only echoes answer your call."
+	  }
+	},
+
+	"trainer_mission_padre": {
+	  "display_name": "Padre Ignacio",
+	  "title": "Mission Elder",
+	  "description": "An old priest who has walked with saints and sinners alike. He teaches inner peace and the strength that comes from it.",
+	  "location_id": "mission",
+	  "placement": { "location_type": "mission", "weight": 0.45 },
+	  "services": ["dialogue", "trainer", "rumor"],
+	  "trainer_id": "mission_elder",
+	  "dialogue_id": "npc_trainer_padre_ignacio_intro",
+	  "rumor_dialogue_id": "npc_trainer_padre_ignacio_rumors",
+	  "rumor_topics": ["omens", "lost_travelers", "relics"],
+	  "schedule": {
+		"available_times": ["dawn", "morning", "afternoon"],
+		"unavailable_reason": "The Padre is in silent prayer."
+	  }
+	},
+
+	"trainer_caravan_master": {
+	  "display_name": "Wagonmaster Hicks",
+	  "title": "Caravan Veteran",
+	  "description": "Twenty years on the trails have taught him everything about surviving the long haul. He shares his knowledge with those who can keep up.",
+	  "location_id": "caravan_camp",
+	  "placement": { "location_type": "caravan_camp", "weight": 0.4 },
+	  "services": ["dialogue", "trainer", "quest"],
+	  "trainer_id": "caravan_veteran",
+	  "dialogue_id": "npc_trainer_wagonmaster_hicks_intro",
+	  "quest_tags": ["escort", "delivery", "survival"],
+	  "schedule": {
+		"available_times": ["morning", "afternoon", "evening"],
+		"unavailable_reason": "Hicks is inspecting the wagons."
+	  }
+	}
+  }
+}

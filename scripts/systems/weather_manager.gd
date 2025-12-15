@@ -174,6 +174,7 @@ var weather_intensity: float = 1.0  # For future gradual weather
 ## Cached references
 var _environment_manager: EnvironmentManager = null
 var _survival_manager: SurvivalManager = null
+var _effect_manager: Node = null
 var _current_terrain: String = "plains"
 var _current_period: String = "day"
 
@@ -253,7 +254,8 @@ func _connect_signals() -> void:
 func _find_references() -> void:
 	_environment_manager = get_tree().get_first_node_in_group("environment_manager")
 	_survival_manager = get_tree().get_first_node_in_group("survival_manager")
-	
+	_effect_manager = get_node_or_null("/root/EffectManager")
+
 	if _survival_manager:
 		_current_terrain = _survival_manager.current_terrain
 
@@ -350,22 +352,25 @@ func _roll_weather_type() -> String:
 func _start_weather(weather_type: String) -> void:
 	if not weather_definitions.has(weather_type):
 		return
-	
+
 	var weather_data: Dictionary = weather_definitions[weather_type]
-	
+
 	# Calculate duration
 	var min_duration: int = weather_data.get("duration_min", 2)
 	var max_duration: int = weather_data.get("duration_max", 6)
 	weather_turns_remaining = randi_range(min_duration, max_duration)
-	
+
 	current_weather = weather_type
 	weather_intensity = 1.0
-	
+
 	print("WeatherManager: %s started (duration: %d turns)" % [weather_data.get("name", weather_type), weather_turns_remaining])
-	
+
+	# Apply weather effect through EffectManager
+	_apply_weather_effect(weather_type)
+
 	# Update visual overlay
 	_update_visual_overlay()
-	
+
 	# Emit signals
 	weather_started.emit(weather_type, weather_turns_remaining)
 	_emit_to_event_bus("weather_started", [weather_type, weather_turns_remaining])
@@ -387,31 +392,53 @@ func _process_active_weather() -> void:
 
 func _end_weather() -> void:
 	var ended_weather := current_weather
+
+	# Remove weather effect through EffectManager
+	_remove_weather_effect(ended_weather)
+
 	current_weather = "clear"
 	weather_turns_remaining = 0
 	weather_intensity = 1.0
-	
+
 	print("WeatherManager: %s ended" % ended_weather)
-	
+
 	# Update visual overlay
 	_update_visual_overlay()
-	
+
 	# Emit signals
 	weather_ended.emit(ended_weather)
 	_emit_to_event_bus("weather_ended", [ended_weather])
 
 
 func _apply_weather_effects() -> void:
-	if not weather_definitions.has(current_weather):
-		return
-	
-	var weather_data: Dictionary = weather_definitions[current_weather]
-	
-	# Damage per turn (dust storm, etc.)
-	var damage: int = weather_data.get("damage_per_turn", 0)
-	if damage > 0 and _survival_manager:
-		_survival_manager.modify_health(-damage, "weather_%s" % current_weather)
-		print("WeatherManager: %s deals %d damage" % [current_weather, damage])
+	# Weather effects are now handled through EffectManager
+	# The effect triggers (damage per turn, etc.) are defined in status.json
+	# This method is kept for backwards compatibility but most logic is in EffectManager
+	pass
+
+
+func _apply_weather_effect(weather_type: String) -> void:
+	# Apply weather effect through EffectManager
+	if _effect_manager:
+		# Map weather type to effect ID (convention: "weather_" + type)
+		var effect_id := "weather_" + weather_type
+
+		# Check if effect exists in EffectManager
+		if _effect_manager.effect_definitions.has(effect_id):
+			# Remove any existing weather effects first
+			_effect_manager.remove_effects_by_category("player", "weather")
+			_effect_manager.apply_effect("player", effect_id, "weather_manager")
+		else:
+			print("WeatherManager: No EffectManager definition for '%s'" % effect_id)
+
+
+func _remove_weather_effect(weather_type: String) -> void:
+	# Remove weather effect through EffectManager
+	if _effect_manager:
+		var effect_id := "weather_" + weather_type
+		_effect_manager.remove_effect("player", effect_id)
+		# Also clear all weather effects from EffectManager
+		_effect_manager.remove_effects_by_category("player", "weather")
 
 
 func _update_visual_overlay() -> void:
@@ -472,13 +499,19 @@ func get_travel_modifier() -> float:
 
 
 ## Get fatigue modifier from current weather.
+## Note: With EffectManager integration, this queries the central multiplier.
 func get_fatigue_modifier() -> float:
+	if _effect_manager:
+		return _effect_manager.get_multiplier("player", "fatigue_rate")
 	var data := get_current_weather_data()
 	return data.get("fatigue_modifier", 1.0)
 
 
 ## Get thirst modifier from current weather.
+## Note: With EffectManager integration, this queries the central multiplier.
 func get_thirst_modifier() -> float:
+	if _effect_manager:
+		return _effect_manager.get_multiplier("player", "water_consumption")
 	var data := get_current_weather_data()
 	return data.get("thirst_modifier", 1.0)
 
@@ -507,30 +540,33 @@ func force_weather(weather_type: String, duration: int = -1) -> void:
 	if not weather_definitions.has(weather_type):
 		push_warning("WeatherManager: Unknown weather type '%s'" % weather_type)
 		return
-	
+
 	# End current weather first
 	if current_weather != "clear":
 		_end_weather()
-	
+
 	if weather_type == "clear":
 		return
-	
+
 	var weather_data: Dictionary = weather_definitions[weather_type]
-	
+
 	if duration < 0:
 		var min_d: int = weather_data.get("duration_min", 2)
 		var max_d: int = weather_data.get("duration_max", 6)
 		duration = randi_range(min_d, max_d)
-	
+
 	current_weather = weather_type
 	weather_turns_remaining = duration
 	weather_intensity = 1.0
-	
+
+	# Apply weather effect through EffectManager
+	_apply_weather_effect(weather_type)
+
 	_update_visual_overlay()
-	
+
 	weather_started.emit(weather_type, duration)
 	_emit_to_event_bus("weather_started", [weather_type, duration])
-	
+
 	print("WeatherManager: Forced %s for %d turns" % [weather_type, duration])
 
 
@@ -557,10 +593,14 @@ func from_dict(data: Dictionary) -> void:
 	weather_turns_remaining = data.get("weather_turns_remaining", 0)
 	weather_intensity = data.get("weather_intensity", 1.0)
 	_current_terrain = data.get("current_terrain", "plains")
-	
+
+	# Re-apply weather effect through EffectManager if weather is active
+	if current_weather != "clear":
+		_apply_weather_effect(current_weather)
+
 	# Update visual
 	_update_visual_overlay()
-	
+
 	print("WeatherManager: Loaded from save - %s (%d turns remaining)" % [current_weather, weather_turns_remaining])
 
 # =============================================================================

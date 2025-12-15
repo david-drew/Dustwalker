@@ -1,6 +1,6 @@
 # launch_menu.gd
 # Main menu screen shown at game start.
-# Provides options for New Game, Load Game, Settings, and Quit.
+# Provides options for New Game, Continue, Load Game, Settings, and Quit.
 #
 # REQUIRED SCENE STRUCTURE (launch_menu.tscn):
 # LaunchMenu (Control) - this script
@@ -13,6 +13,7 @@
 # │       └── ButtonContainer (VBoxContainer)
 # │           ├── NewGameButton (Button)
 # │           ├── ContinueButton (Button)
+# │           ├── LoadGameButton (Button)
 # │           ├── SettingsButton (Button)
 # │           └── QuitButton (Button)
 # └── VersionLabel (Label)
@@ -25,7 +26,8 @@ class_name LaunchMenu
 # =============================================================================
 
 signal new_game_pressed()
-signal load_game_pressed(save_path: String)
+signal continue_pressed()
+signal load_game_pressed()
 signal settings_requested()
 signal quit_pressed()
 
@@ -38,9 +40,12 @@ signal quit_pressed()
 @onready var _subtitle: Label = $CenterContainer/MainVBox/Subtitle
 @onready var _new_game_button: Button = $CenterContainer/MainVBox/ButtonContainer/NewGameButton
 @onready var _continue_button: Button = $CenterContainer/MainVBox/ButtonContainer/ContinueButton
+@onready var _load_game_button: Button = $CenterContainer/MainVBox/ButtonContainer/LoadGameButton
 @onready var _settings_button: Button = $CenterContainer/MainVBox/ButtonContainer/SettingsButton
 @onready var _quit_button: Button = $CenterContainer/MainVBox/ButtonContainer/QuitButton
 @onready var _version_label: Label = $VersionLabel
+
+var _save_manager: Node = null
 
 # =============================================================================
 # CONFIGURATION
@@ -61,6 +66,7 @@ var has_saves: bool = false
 # =============================================================================
 
 func _ready() -> void:
+	_save_manager = get_node_or_null("/root/SaveManager")
 	_apply_configuration()
 	_connect_buttons()
 	_check_for_saves()
@@ -81,6 +87,8 @@ func _connect_buttons() -> void:
 		_new_game_button.pressed.connect(_on_new_game_pressed)
 	if _continue_button:
 		_continue_button.pressed.connect(_on_continue_pressed)
+	if _load_game_button:
+		_load_game_button.pressed.connect(_on_load_game_pressed)
 	if _settings_button:
 		_settings_button.pressed.connect(_on_settings_pressed)
 	if _quit_button:
@@ -89,7 +97,7 @@ func _connect_buttons() -> void:
 
 func _style_buttons() -> void:
 	# Apply western-themed styling to all buttons
-	var buttons := [_new_game_button, _continue_button, _settings_button, _quit_button]
+	var buttons := [_new_game_button, _continue_button, _load_game_button, _settings_button, _quit_button]
 	
 	var style_normal := StyleBoxFlat.new()
 	style_normal.bg_color = Color(0.25, 0.22, 0.18)
@@ -129,26 +137,35 @@ func _style_buttons() -> void:
 
 func _check_for_saves() -> void:
 	has_saves = false
-	
-	var save_dir := DirAccess.open("user://saves/")
-	if save_dir:
-		save_dir.list_dir_begin()
-		var file_name := save_dir.get_next()
-		while file_name != "":
-			if file_name.ends_with(".json") or file_name.ends_with(".save"):
-				has_saves = true
-				break
-			file_name = save_dir.get_next()
-		save_dir.list_dir_end()
-	
+	var has_profiles := false
+
+	if _save_manager:
+		# Check if we can continue (has last profile with saves)
+		has_saves = _save_manager.has_continue_data()
+		# Check if any profiles exist (for Load Game button)
+		var profiles: Array = _save_manager.get_profiles()
+		has_profiles = not profiles.is_empty()
+
 	# Update continue button state
 	if _continue_button:
 		_continue_button.disabled = not has_saves
-		_continue_button.text = "Continue" if has_saves else "Continue (No Saves)"
+		if has_saves and _save_manager:
+			var info: Dictionary = _save_manager.get_continue_info()
+			var char_name: String = info.get("character_name", "Unknown")
+			var day: int = info.get("day", 1)
+			_continue_button.text = "Continue (%s - Day %d)" % [char_name, day]
+		else:
+			_continue_button.text = "Continue"
+
+	# Update load game button state
+	if _load_game_button:
+		_load_game_button.disabled = not has_profiles
+		_load_game_button.text = "Load Game"
 
 
 ## Refresh the menu state.
 func refresh() -> void:
+	_save_manager = get_node_or_null("/root/SaveManager")
 	_check_for_saves()
 
 # =============================================================================
@@ -164,11 +181,16 @@ func _on_new_game_pressed() -> void:
 func _on_continue_pressed() -> void:
 	if not has_saves:
 		return
-	
+
 	print("LaunchMenu: Continue pressed")
-	var most_recent := _find_most_recent_save()
-	load_game_pressed.emit(most_recent)
-	_emit_to_event_bus("load_game_requested", [most_recent])
+	continue_pressed.emit()
+	_emit_to_event_bus("continue_game_requested", [])
+
+
+func _on_load_game_pressed() -> void:
+	print("LaunchMenu: Load Game pressed")
+	load_game_pressed.emit()
+	_emit_to_event_bus("load_game_dialog_requested", [])
 
 
 func _on_settings_pressed() -> void:
@@ -181,27 +203,6 @@ func _on_quit_pressed() -> void:
 	print("LaunchMenu: Quit pressed")
 	quit_pressed.emit()
 	_emit_to_event_bus("quit_requested", [])
-
-
-func _find_most_recent_save() -> String:
-	var most_recent_path := ""
-	var most_recent_time := 0
-	
-	var save_dir := DirAccess.open("user://saves/")
-	if save_dir:
-		save_dir.list_dir_begin()
-		var file_name := save_dir.get_next()
-		while file_name != "":
-			if file_name.ends_with(".json") or file_name.ends_with(".save"):
-				var full_path := "user://saves/" + file_name
-				var mod_time := FileAccess.get_modified_time(full_path)
-				if mod_time > most_recent_time:
-					most_recent_time = mod_time
-					most_recent_path = full_path
-			file_name = save_dir.get_next()
-		save_dir.list_dir_end()
-	
-	return most_recent_path
 
 # =============================================================================
 # UTILITY

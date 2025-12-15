@@ -57,8 +57,8 @@ func _ready() -> void:
 
 func _create_ui() -> void:
 	# Position on left side of screen
-	set_anchors_preset(Control.PRESET_TOP_LEFT)
-	position = Vector2(10, 10)
+	set_anchors_preset(Control.PRESET_CENTER)
+	#position = Vector2(10, 10)
 	
 	# Main panel
 	_panel = PanelContainer.new()

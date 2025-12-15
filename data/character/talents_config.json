@@ -80,6 +80,24 @@
       "stat_requirements": {"spirit": 5},
       "reputation_required": "trusted",
       "special_requirements": ["completed_supernatural_quest"]
+    },
+    "mission_elder": {
+      "name": "Padre Ignacio",
+      "title": "Mission Elder",
+      "location": "Mission",
+      "description": "An old priest who has walked with saints and sinners alike. He teaches inner peace and the strength that comes from it.",
+      "teaches": ["iron_will", "steady_hand"],
+      "stat_requirements": {"spirit": 3},
+      "reputation_required": "neutral"
+    },
+    "caravan_veteran": {
+      "name": "Wagonmaster Hicks",
+      "title": "Caravan Veteran",
+      "location": "Caravan Camp",
+      "description": "Twenty years on the trails have taught him everything about surviving the long haul.",
+      "teaches": ["desert_rat", "iron_stomach", "pack_mule"],
+      "stat_requirements": {},
+      "reputation_required": "neutral"
     }
   },
   "slot_limits": {

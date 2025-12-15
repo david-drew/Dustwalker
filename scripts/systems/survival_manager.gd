@@ -134,6 +134,7 @@ var water_consumption_multiplier: float = 1.0
 
 var _player_stats: Node = null
 var _time_manager: Node = null
+var _effect_manager: Node = null
 
 # =============================================================================
 # INITIALIZATION
@@ -207,6 +208,9 @@ func _find_player_stats() -> void:
 
 	if _player_stats:
 		_sync_max_hp()
+
+	# Find EffectManager
+	_effect_manager = get_node_or_null("/root/EffectManager")
 
 
 func _sync_max_hp() -> void:
@@ -319,6 +323,7 @@ func _calculate_temperature() -> void:
 	current_temperature_zone = _get_temperature_zone(feels_like_temperature)
 
 	if old_zone != current_temperature_zone:
+		_apply_temperature_effects()
 		temperature_changed.emit(feels_like_temperature, current_temperature_zone)
 		_emit_to_event_bus("temperature_changed", [feels_like_temperature, current_temperature_zone])
 
@@ -345,6 +350,29 @@ func _get_zone_data(zone_name: String) -> Dictionary:
 		if zone.get("name", "") == zone_name:
 			return zone
 	return {}
+
+
+func _apply_temperature_effects() -> void:
+	# Use EffectManager for temperature effects
+	if _effect_manager:
+		# Map temperature zone to effect ID
+		var effect_id := ""
+		match current_temperature_zone:
+			"warm":
+				effect_id = "temp_warm"
+			"hot":
+				effect_id = "temp_hot"
+			"extreme_heat":
+				effect_id = "temp_extreme_heat"
+			"cool":
+				effect_id = "temp_cool"
+			"cold":
+				effect_id = "temp_cold"
+			"extreme_cold":
+				effect_id = "temp_extreme_cold"
+			# "comfortable" has no effect
+
+		_effect_manager.update_status_effect("player", "temperature", effect_id, "survival_manager")
 
 
 func _process_temperature() -> void:
@@ -386,8 +414,11 @@ func _process_temperature() -> void:
 	if temp_fatigue > 0:
 		add_fatigue(temp_fatigue, "temperature")
 
-	# Update water consumption multiplier
-	water_consumption_multiplier = zone_data.get("water_multiplier", 1.0)
+	# Update water consumption multiplier from EffectManager
+	if _effect_manager:
+		water_consumption_multiplier = _effect_manager.get_multiplier("player", "water_consumption")
+	else:
+		water_consumption_multiplier = zone_data.get("water_multiplier", 1.0)
 
 # =============================================================================
 # FATIGUE SYSTEM
@@ -477,13 +508,12 @@ func _process_fatigue_per_turn() -> void:
 	# Base fatigue gain per turn (if awake and not resting)
 	if not is_sleeping:
 		var base_gain: int = config.get("fatigue", {}).get("sources", {}).get("turn_base", 3)
-		
-		# Apply weather fatigue modifier
-		var weather_manager = get_tree().get_first_node_in_group("weather_manager")
-		if weather_manager and weather_manager.has_method("get_fatigue_modifier"):
-			var modifier: float = weather_manager.get_fatigue_modifier()
-			base_gain = int(ceil(float(base_gain) * modifier))
-		
+
+		# Apply fatigue rate multiplier from EffectManager (includes weather, temperature, etc.)
+		if _effect_manager:
+			var fatigue_multiplier:float = _effect_manager.get_multiplier("player", "fatigue_rate")
+			base_gain = int(ceil(float(base_gain) * fatigue_multiplier))
+
 		add_fatigue(base_gain, "time")
 
 	# Check for collapse
@@ -554,25 +584,22 @@ func _get_fatigue_level_data(level_name: String) -> Dictionary:
 
 
 func _apply_fatigue_modifiers() -> void:
-	if not _player_stats:
-		return
+	# Use EffectManager for fatigue effects
+	if _effect_manager:
+		# Map fatigue level to effect ID
+		var effect_id := ""
+		match fatigue_level:
+			"tired":
+				effect_id = "fatigue_tired"
+			"weary":
+				effect_id = "fatigue_weary"
+			"exhausted":
+				effect_id = "fatigue_exhausted"
+			"collapsing":
+				effect_id = "fatigue_collapsing"
+			# "rested" has no effect
 
-	# Remove old fatigue modifiers
-	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_FATIGUE)
-
-	# Apply new modifiers
-	var level_data := _get_fatigue_level_data(fatigue_level)
-	var modifiers: Array = level_data.get("modifiers", [])
-
-	for i in range(modifiers.size()):
-		var mod: Dictionary = modifiers[i]
-		var source := "%s%s_%d" % [MODIFIER_PREFIX_FATIGUE, fatigue_level, i]
-		_player_stats.add_modifier(
-			source,
-			mod.get("stat", "all"),
-			mod.get("type", "percentage"),
-			mod.get("value", 0)
-		)
+		_effect_manager.update_status_effect("player", "fatigue", effect_id, "survival_manager")
 
 # =============================================================================
 # SLEEP SYSTEM
@@ -922,23 +949,18 @@ func _get_hunger_stage_data(stage_name: String) -> Dictionary:
 
 
 func _apply_hunger_modifiers() -> void:
-	if not _player_stats:
-		return
+	# Use EffectManager for hunger effects
+	if _effect_manager:
+		# Map hunger stage to effect ID
+		var effect_id := ""
+		match hunger_stage:
+			"hungry":
+				effect_id = "hunger_hungry"
+			"starving", "near_death":
+				effect_id = "hunger_starving"
+			# "well_fed", "satisfied" have no negative effects
 
-	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_HUNGER)
-
-	var stage_data := _get_hunger_stage_data(hunger_stage)
-	var modifiers: Array = stage_data.get("modifiers", [])
-
-	for i in range(modifiers.size()):
-		var mod: Dictionary = modifiers[i]
-		var source := "%s%s_%d" % [MODIFIER_PREFIX_HUNGER, hunger_stage, i]
-		_player_stats.add_modifier(
-			source,
-			mod.get("stat", "all"),
-			mod.get("type", "percentage"),
-			mod.get("value", 0)
-		)
+		_effect_manager.update_status_effect("player", "hunger", effect_id, "survival_manager")
 
 # =============================================================================
 # THIRST SYSTEM
@@ -969,15 +991,12 @@ func _process_thirst_period() -> void:
 	# Pause thirst while sleeping
 	if is_sleeping:
 		return
-	
-	# Apply water consumption multiplier (from temperature)
-	var consumption := water_consumption_multiplier
-	
-	# Apply weather thirst modifier
-	var weather_manager = get_tree().get_first_node_in_group("weather_manager")
-	if weather_manager and weather_manager.has_method("get_thirst_modifier"):
-		consumption *= weather_manager.get_thirst_modifier()
-	
+
+	# Get water consumption multiplier from EffectManager (includes temperature, weather, diseases)
+	var consumption := 1.0
+	if _effect_manager:
+		consumption = _effect_manager.get_multiplier("player", "water_consumption")
+
 	periods_without_water += int(ceil(consumption))
 	_update_thirst_stage()
 
@@ -1024,23 +1043,18 @@ func _get_thirst_stage_data(stage_name: String) -> Dictionary:
 
 
 func _apply_thirst_modifiers() -> void:
-	if not _player_stats:
-		return
+	# Use EffectManager for thirst effects
+	if _effect_manager:
+		# Map thirst stage to effect ID
+		var effect_id := ""
+		match thirst_stage:
+			"thirsty":
+				effect_id = "thirst_thirsty"
+			"parched", "dehydrated", "severe_dehydration":
+				effect_id = "thirst_dehydrated"
+			# "hydrated" has no negative effect
 
-	_player_stats.remove_modifiers_by_prefix(MODIFIER_PREFIX_THIRST)
-
-	var stage_data := _get_thirst_stage_data(thirst_stage)
-	var modifiers: Array = stage_data.get("modifiers", [])
-
-	for i in range(modifiers.size()):
-		var mod: Dictionary = modifiers[i]
-		var source := "%s%s_%d" % [MODIFIER_PREFIX_THIRST, thirst_stage, i]
-		_player_stats.add_modifier(
-			source,
-			mod.get("stat", "all"),
-			mod.get("type", "percentage"),
-			mod.get("value", 0)
-		)
+		_effect_manager.update_status_effect("player", "thirst", effect_id, "survival_manager")
 
 # =============================================================================
 # HEALTH MANAGEMENT
@@ -1261,12 +1275,18 @@ func from_dict(data: Dictionary) -> void:
 	days_without_food = data.get("days_without_food", 0)
 	periods_without_water = data.get("periods_without_water", 0)
 
-	# Update derived states
+	# Update derived states and apply effects via EffectManager
 	_update_fatigue_level()
 	_update_sleep_deprivation_stage()
 	_update_hunger_stage()
 	_update_thirst_stage()
 	_calculate_temperature()
+
+	# Re-apply all survival effects through EffectManager
+	_apply_fatigue_modifiers()
+	_apply_hunger_modifiers()
+	_apply_thirst_modifiers()
+	_apply_temperature_effects()
 
 	print("SurvivalManager: Loaded from save")
 

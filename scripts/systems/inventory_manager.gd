@@ -303,6 +303,11 @@ func get_money() -> int:
 func has_money(amount: int) -> bool:
 	return money >= amount
 
+
+## Alias for remove_money() - used by TalentManager for talent purchases.
+func spend_money(amount: int) -> bool:
+	return remove_money(amount)
+
 # =============================================================================
 # CONSUMABLES
 # =============================================================================

@@ -63,6 +63,9 @@ var _survival_manager: SurvivalManager = null
 ## Reference to player stats (for applying modifiers)
 var _player_stats: Node = null
 
+## Reference to effect manager (for applying disease effects)
+var _effect_manager: Node = null
+
 # =============================================================================
 # INITIALIZATION
 # =============================================================================
@@ -114,7 +117,8 @@ func _connect_signals() -> void:
 
 func _find_references() -> void:
 	_survival_manager = get_tree().get_first_node_in_group("survival_manager")
-	
+	_effect_manager = get_node_or_null("/root/EffectManager")
+
 	var player = get_tree().get_first_node_in_group("player")
 	if player and player.has_method("get_stats"):
 		_player_stats = player.get_stats()
@@ -493,41 +497,86 @@ func get_immunity_modifier() -> float:
 # =============================================================================
 
 func _apply_disease_modifiers(disease_id: String) -> void:
+	# Use EffectManager to apply disease effects
+	if _effect_manager:
+		var disease_state: Dictionary = active_diseases.get(disease_id, {})
+		var disease_def := _get_disease_definition(disease_id)
+		var stages: Array = disease_def.get("stages", [])
+
+		var stage_index: int = disease_state.get("stage_index", 0)
+		if stage_index >= stages.size():
+			return
+
+		var current_stage: Dictionary = stages[stage_index]
+		var stage_name: String = current_stage.get("name", "mild").to_lower()
+
+		# Try to find a matching effect in EffectManager
+		# Convention: disease_id + "_" + stage_name (e.g., "swamp_fever_mild")
+		var effect_id := "%s_%s" % [disease_id, stage_name]
+
+		# Check if effect exists, otherwise try alternative naming
+		if not _effect_manager.effect_definitions.has(effect_id):
+			# Try with disease_ prefix
+			effect_id = "disease_%s_%s" % [disease_id, stage_name]
+
+		if _effect_manager.effect_definitions.has(effect_id):
+			_effect_manager.apply_effect("player", effect_id, "disease_manager")
+		else:
+			# Fallback: create a dynamic effect from disease definition
+			_apply_disease_modifiers_legacy(disease_id)
+
+
+func _apply_disease_modifiers_legacy(disease_id: String) -> void:
+	# Legacy fallback for diseases not defined in EffectManager
 	if _player_stats == null or not _player_stats.has_method("add_modifier"):
 		return
-	
+
 	var disease_state: Dictionary = active_diseases.get(disease_id, {})
 	var disease_def := _get_disease_definition(disease_id)
 	var stages: Array = disease_def.get("stages", [])
-	
+
 	var stage_index: int = disease_state.get("stage_index", 0)
 	if stage_index >= stages.size():
 		return
-	
+
 	var current_stage: Dictionary = stages[stage_index]
 	var modifiers: Array = current_stage.get("modifiers", [])
-	
+
 	var source_id := MODIFIER_PREFIX + disease_id
-	
+
 	for mod in modifiers:
 		var stat: String = mod.get("stat", "")
 		var mod_type: String = mod.get("type", "flat")
 		var value: int = mod.get("value", 0)
-		
+
 		if stat == "all":
 			# Apply to all stats
-			for stat_name in ["grit", "reflex", "wit", "charm", "aim", "frontier", "shadow", "spirit"]:
-				_player_stats.add_modifier(stat_name, value, source_id)
+			for stat_name in ["grit", "reflex", "wit", "charm", "aim", "fortitude", "stealth", "spirit"]:
+				_player_stats.add_modifier(source_id, stat_name, mod_type, value)
 		else:
-			_player_stats.add_modifier(stat, value, source_id)
+			_player_stats.add_modifier(source_id, stat, mod_type, value)
 
 
 func _remove_disease_modifiers(disease_id: String) -> void:
-	if _player_stats == null or not _player_stats.has_method("remove_modifiers_by_source"):
-		return
-	
-	var source_id := MODIFIER_PREFIX + disease_id
-	_player_stats.remove_modifiers_by_source(source_id)
+	# Remove disease effects from EffectManager
+	if _effect_manager:
+		# Remove any effects that match the disease naming patterns
+		var disease_state: Dictionary = active_diseases.get(disease_id, {})
+		var disease_def := _get_disease_definition(disease_id)
+		var stages: Array = disease_def.get("stages", [])
+
+		# Try to remove effects for all possible stages
+		for stage in stages:
+			var stage_name: String = stage.get("name", "").to_lower()
+			var effect_id := "%s_%s" % [disease_id, stage_name]
+			_effect_manager.remove_effect("player", effect_id)
+			# Also try with disease_ prefix
+			_effect_manager.remove_effect("player", "disease_%s_%s" % [disease_id, stage_name])
+
+	# Also clean up legacy modifiers
+	if _player_stats and _player_stats.has_method("remove_modifiers_by_prefix"):
+		var source_id := MODIFIER_PREFIX + disease_id
+		_player_stats.remove_modifiers_by_prefix(source_id)
 
 
 func _emit_symptoms(disease_id: String) -> void:
@@ -610,43 +659,21 @@ func get_disease_stage(disease_id: String) -> String:
 
 
 ## Get the thirst multiplier from all active diseases.
+## Note: With EffectManager integration, multipliers are now managed centrally.
+## This method queries EffectManager for the water_consumption multiplier.
 func get_thirst_multiplier() -> float:
-	var multiplier := 1.0
-	
-	for disease_id in active_diseases.keys():
-		var disease_state: Dictionary = active_diseases[disease_id]
-		if disease_state.get("incubating", false):
-			continue
-		
-		var disease_def := _get_disease_definition(disease_id)
-		var stages: Array = disease_def.get("stages", [])
-		var stage_index: int = disease_state.get("stage_index", 0)
-		
-		if stage_index < stages.size():
-			var stage_mult: float = stages[stage_index].get("thirst_multiplier", 1.0)
-			multiplier = maxf(multiplier, stage_mult)
-	
-	return multiplier
+	if _effect_manager:
+		return _effect_manager.get_multiplier("player", "water_consumption")
+	return 1.0
 
 
 ## Get the fatigue multiplier from all active diseases.
+## Note: With EffectManager integration, multipliers are now managed centrally.
+## This method queries EffectManager for the fatigue_rate multiplier.
 func get_fatigue_multiplier() -> float:
-	var multiplier := 1.0
-	
-	for disease_id in active_diseases.keys():
-		var disease_state: Dictionary = active_diseases[disease_id]
-		if disease_state.get("incubating", false):
-			continue
-		
-		var disease_def := _get_disease_definition(disease_id)
-		var stages: Array = disease_def.get("stages", [])
-		var stage_index: int = disease_state.get("stage_index", 0)
-		
-		if stage_index < stages.size():
-			var stage_mult: float = stages[stage_index].get("fatigue_multiplier", 1.0)
-			multiplier = maxf(multiplier, stage_mult)
-	
-	return multiplier
+	if _effect_manager:
+		return _effect_manager.get_multiplier("player", "fatigue_rate")
+	return 1.0
 
 
 ## Get list of all disease IDs the player can potentially contract.

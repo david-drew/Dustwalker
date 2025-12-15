@@ -67,6 +67,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Continue"
 
+[node name="LoadGameButton" type="Button" parent="CenterContainer/MainVBox/ButtonContainer"]
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Load Game"
+
 [node name="SettingsButton" type="Button" parent="CenterContainer/MainVBox/ButtonContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2

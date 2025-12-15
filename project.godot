@@ -22,6 +22,7 @@ EventBus="*res://scripts/autoloads/event_bus.gd"
 DataLoader="*res://scripts/autoloads/data_loader.gd"
 TimeManager="*res://scripts/autoloads/time_manager.gd"
 EffectManager="*res://scripts/autoloads/effect_manager.gd"
+SaveManager="*res://scripts/autoloads/save_manager.gd"
 
 [display]
 

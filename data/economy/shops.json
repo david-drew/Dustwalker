@@ -1,0 +1,298 @@
+{
+  "shops": {
+	"general_store_town_dustwater": {
+	  "display_name": "Dustwater General Store",
+	  "location_id": "town",
+	  "description": "A sun-faded storefront with a bell that lies about how many people still come through. The shelves are honest: staples, bandages, and a little hope.",
+	  "buy_modifier": 1.0,
+	  "sell_modifier": 0.5,
+	  "inventory": {
+		"water": { "stock": 40, "max_stock": 60, "restock_per_week": 20 },
+		"rations": { "stock": 35, "max_stock": 50, "restock_per_week": 18 },
+		"hardtack": { "stock": 50, "max_stock": 80, "restock_per_week": 25 },
+		"coffee": { "stock": 20, "max_stock": 35, "restock_per_week": 10 },
+		"bandages": { "stock": 12, "max_stock": 20, "restock_per_week": 6 },
+		"tonic": { "stock": 6, "max_stock": 12, "restock_per_week": 3 },
+		"rope": { "stock": 10, "max_stock": 18, "restock_per_week": 5 },
+		"lantern_oil": { "stock": 18, "max_stock": 30, "restock_per_week": 10 },
+		"ammo_revolver": { "stock": 80, "max_stock": 140, "restock_per_week": 50 },
+		"ammo_rifle": { "stock": 30, "max_stock": 60, "restock_per_week": 20 },
+		"gun_oil": { "stock": 12, "max_stock": 20, "restock_per_week": 6 },
+		"whetstone": { "stock": 10, "max_stock": 15, "restock_per_week": 4 }
+	  },
+	  "buys": ["pelts", "scrap", "herbs", "silver_nugget", "trinket_brass"]
+	},
+
+	"general_store_town_redmesa": {
+	  "display_name": "Red Mesa Mercantile",
+	  "location_id": "town",
+	  "description": "Part dry goods, part gossip exchange. The clerk keeps a ledger in one hand and a cautious smile in the other.",
+	  "buy_modifier": 1.0,
+	  "sell_modifier": 0.5,
+	  "inventory": {
+		"water": { "stock": 35, "max_stock": 55, "restock_per_week": 18 },
+		"rations": { "stock": 30, "max_stock": 45, "restock_per_week": 16 },
+		"dried_meat": { "stock": 20, "max_stock": 35, "restock_per_week": 10 },
+		"bandages": { "stock": 10, "max_stock": 18, "restock_per_week": 5 },
+		"medicinal_salve": { "stock": 8, "max_stock": 14, "restock_per_week": 4 },
+		"rope": { "stock": 8, "max_stock": 16, "restock_per_week": 4 },
+		"lantern_oil": { "stock": 14, "max_stock": 26, "restock_per_week": 9 },
+		"ammo_revolver": { "stock": 70, "max_stock": 120, "restock_per_week": 45 },
+		"ammo_rifle": { "stock": 25, "max_stock": 55, "restock_per_week": 18 },
+		"lockpicks": { "stock": 4, "max_stock": 8, "restock_per_week": 2 },
+		"trinket_brass": { "stock": 10, "max_stock": 18, "restock_per_week": 6 }
+	  },
+	  "buys": ["pelts", "scrap", "herbs", "relic_fragment", "silver_nugget"]
+	},
+
+	"general_store_town_millers_crossing": {
+	  "display_name": "Miller's Crossing Supply",
+	  "location_id": "town",
+	  "description": "Built where trails braid together. If you can’t find it here, it probably shouldn’t be in your saddlebags.",
+	  "buy_modifier": 1.0,
+	  "sell_modifier": 0.5,
+	  "inventory": {
+		"water": { "stock": 45, "max_stock": 70, "restock_per_week": 22 },
+		"rations": { "stock": 40, "max_stock": 60, "restock_per_week": 20 },
+		"coffee": { "stock": 24, "max_stock": 40, "restock_per_week": 12 },
+		"bandages": { "stock": 14, "max_stock": 22, "restock_per_week": 7 },
+		"tonic": { "stock": 8, "max_stock": 14, "restock_per_week": 4 },
+		"repair_kit": { "stock": 6, "max_stock": 10, "restock_per_week": 3 },
+		"gun_oil": { "stock": 16, "max_stock": 26, "restock_per_week": 8 },
+		"whetstone": { "stock": 12, "max_stock": 18, "restock_per_week": 5 },
+		"ammo_revolver": { "stock": 90, "max_stock": 160, "restock_per_week": 55 },
+		"ammo_rifle": { "stock": 35, "max_stock": 70, "restock_per_week": 22 },
+		"ammo_shotgun": { "stock": 20, "max_stock": 45, "restock_per_week": 14 }
+	  },
+	  "buys": ["pelts", "scrap", "herbs", "silver_nugget", "trinket_brass"]
+	},
+
+	"general_store_town_silversprings": {
+	  "display_name": "Silver Springs Dry Goods",
+	  "location_id": "town",
+	  "description": "A clean counter, a sharper eye, and prices that don’t flinch. The owner claims the spring water keeps the rats polite.",
+	  "buy_modifier": 1.0,
+	  "sell_modifier": 0.5,
+	  "inventory": {
+		"water": { "stock": 50, "max_stock": 80, "restock_per_week": 25 },
+		"rations": { "stock": 38, "max_stock": 60, "restock_per_week": 19 },
+		"dried_meat": { "stock": 22, "max_stock": 40, "restock_per_week": 11 },
+		"bandages": { "stock": 12, "max_stock": 20, "restock_per_week": 6 },
+		"medicinal_salve": { "stock": 10, "max_stock": 18, "restock_per_week": 5 },
+		"incense": { "stock": 6, "max_stock": 12, "restock_per_week": 3 },
+		"trinket_brass": { "stock": 12, "max_stock": 20, "restock_per_week": 6 },
+		"charm_luck": { "stock": 3, "max_stock": 6, "restock_per_week": 1 },
+		"ammo_revolver": { "stock": 75, "max_stock": 140, "restock_per_week": 45 },
+		"ammo_rifle": { "stock": 28, "max_stock": 60, "restock_per_week": 18 }
+	  },
+	  "buys": ["pelts", "scrap", "herbs", "relic_fragment", "silver_nugget", "trinket_brass"]
+	},
+
+	"quartermaster_fort_sentinel": {
+	  "display_name": "Fort Sentinel Quartermaster",
+	  "location_id": "fort",
+	  "description": "Stamped crates, clipped words. The quartermaster sells what the fort can spare—and buys only what the fort can justify.",
+	  "buy_modifier": 0.9,
+	  "sell_modifier": 0.4,
+	  "inventory": {
+		"rations": { "stock": 50, "max_stock": 90, "restock_per_week": 30 },
+		"water": { "stock": 60, "max_stock": 100, "restock_per_week": 35 },
+		"bandages": { "stock": 20, "max_stock": 35, "restock_per_week": 10 },
+		"antivenom": { "stock": 6, "max_stock": 10, "restock_per_week": 3 },
+		"ammo_revolver": { "stock": 120, "max_stock": 220, "restock_per_week": 80 },
+		"ammo_rifle": { "stock": 70, "max_stock": 140, "restock_per_week": 45 },
+		"ammo_shotgun": { "stock": 40, "max_stock": 90, "restock_per_week": 25 },
+		"gun_oil": { "stock": 18, "max_stock": 35, "restock_per_week": 10 },
+		"repair_kit": { "stock": 10, "max_stock": 18, "restock_per_week": 5 }
+	  },
+	  "buys": ["pelts", "herbs", "silver_nugget"]
+	},
+
+	"quartermaster_fort_redoubt": {
+	  "display_name": "Outpost Redoubt Supply Office",
+	  "location_id": "fort",
+	  "description": "A slanted desk and a straight-backed sergeant. You can buy the basics, but don’t ask what happened to the missing crate seals.",
+	  "buy_modifier": 0.9,
+	  "sell_modifier": 0.4,
+	  "inventory": {
+		"rations": { "stock": 45, "max_stock": 80, "restock_per_week": 28 },
+		"water": { "stock": 55, "max_stock": 95, "restock_per_week": 32 },
+		"bandages": { "stock": 18, "max_stock": 30, "restock_per_week": 9 },
+		"tonic": { "stock": 10, "max_stock": 18, "restock_per_week": 5 },
+		"ammo_revolver": { "stock": 110, "max_stock": 200, "restock_per_week": 70 },
+		"ammo_rifle": { "stock": 60, "max_stock": 120, "restock_per_week": 40 },
+		"lantern_oil": { "stock": 30, "max_stock": 55, "restock_per_week": 18 },
+		"rope": { "stock": 14, "max_stock": 26, "restock_per_week": 8 }
+	  },
+	  "buys": ["herbs", "silver_nugget"]
+	},
+
+	"trader_post_crossroads_outfitter": {
+	  "display_name": "Crossroads Market Outfitter",
+	  "location_id": "trading_post",
+	  "description": "Half depot, half rumor mill. If you’ve got coin, they’ve got a pack to sell you—and a story to go with it.",
+	  "buy_modifier": 1.0,
+	  "sell_modifier": 0.5,
+	  "inventory": {
+		"water": { "stock": 55, "max_stock": 85, "restock_per_week": 28 },
+		"rations": { "stock": 50, "max_stock": 80, "restock_per_week": 25 },
+		"dried_meat": { "stock": 30, "max_stock": 55, "restock_per_week": 18 },
+		"rope": { "stock": 18, "max_stock": 30, "restock_per_week": 10 },
+		"lantern_oil": { "stock": 28, "max_stock": 50, "restock_per_week": 16 },
+		"shovel": { "stock": 4, "max_stock": 8, "restock_per_week": 2 },
+		"pickaxe": { "stock": 3, "max_stock": 6, "restock_per_week": 2 },
+		"repair_kit": { "stock": 8, "max_stock": 14, "restock_per_week": 4 },
+		"ammo_revolver": { "stock": 90, "max_stock": 170, "restock_per_week": 55 },
+		"ammo_rifle": { "stock": 40, "max_stock": 85, "restock_per_week": 26 },
+		"ammo_shotgun": { "stock": 25, "max_stock": 60, "restock_per_week": 18 },
+		"trinket_brass": { "stock": 14, "max_stock": 25, "restock_per_week": 8 }
+	  },
+	  "buys": ["pelts", "scrap", "herbs", "relic_fragment", "silver_nugget", "trinket_brass"]
+	},
+
+	"tribal_trader_redmesa_exchange": {
+	  "display_name": "Red Mesa Exchange",
+	  "location_id": "trading_post",
+	  "description": "A shaded awning, quiet eyes, and goods laid out with care. You’re welcome here—so long as you trade with respect.",
+	  "buy_modifier": 0.95,
+	  "sell_modifier": 0.55,
+	  "inventory": {
+		"water": { "stock": 40, "max_stock": 70, "restock_per_week": 20 },
+		"rations": { "stock": 30, "max_stock": 55, "restock_per_week": 16 },
+		"herbs": { "stock": 25, "max_stock": 45, "restock_per_week": 14 },
+		"medicinal_salve": { "stock": 12, "max_stock": 22, "restock_per_week": 6 },
+		"antivenom": { "stock": 6, "max_stock": 12, "restock_per_week": 3 },
+		"charm_luck": { "stock": 5, "max_stock": 10, "restock_per_week": 2 },
+		"trinket_brass": { "stock": 10, "max_stock": 18, "restock_per_week": 6 },
+		"throwing_knife": { "stock": 6, "max_stock": 12, "restock_per_week": 3 }
+	  },
+	  "buys": ["pelts", "herbs", "relic_fragment", "silver_nugget", "trinket_brass"]
+	},
+
+	"mission_abbey_supply": {
+	  "display_name": "Mission Supply & Alms",
+	  "location_id": "mission",
+	  "description": "A plain room that smells of wax and dried sage. The caretakers don’t call it commerce, but they do accept donations with remarkable precision.",
+	  "buy_modifier": 0.95,
+	  "sell_modifier": 0.45,
+	  "inventory": {
+		"water": { "stock": 30, "max_stock": 55, "restock_per_week": 15 },
+		"rations": { "stock": 28, "max_stock": 50, "restock_per_week": 14 },
+		"bandages": { "stock": 18, "max_stock": 30, "restock_per_week": 9 },
+		"medicinal_salve": { "stock": 14, "max_stock": 24, "restock_per_week": 7 },
+		"incense": { "stock": 18, "max_stock": 30, "restock_per_week": 10 },
+		"holy_water": { "stock": 6, "max_stock": 12, "restock_per_week": 3 },
+		"tarot_deck": { "stock": 2, "max_stock": 4, "restock_per_week": 1 }
+	  },
+	  "buys": ["herbs", "trinket_brass", "silver_nugget"]
+	},
+
+	"caravan_camp_wayfarer_goods": {
+	  "display_name": "Wayfarers' Circle Goods Wagon",
+	  "location_id": "caravan_camp",
+	  "description": "A wagon with mismatched wheels that shouldn’t roll—but does. The merchant smiles like they’ve already sold you something in a dream.",
+	  "buy_modifier": 1.2,
+	  "sell_modifier": 0.6,
+	  "inventory": {
+		"water": { "stock": 25, "max_stock": 45, "restock_per_week": 12 },
+		"rations": { "stock": 22, "max_stock": 40, "restock_per_week": 10 },
+		"coffee": { "stock": 12, "max_stock": 20, "restock_per_week": 6 },
+		"lantern_oil": { "stock": 12, "max_stock": 22, "restock_per_week": 6 },
+		"rope": { "stock": 8, "max_stock": 16, "restock_per_week": 4 },
+		"lockpicks": { "stock": 3, "max_stock": 6, "restock_per_week": 1 },
+		"trinket_brass": { "stock": 8, "max_stock": 14, "restock_per_week": 4 },
+		"charm_luck": { "stock": 2, "max_stock": 5, "restock_per_week": 1 },
+		"relic_fragment": { "stock": 2, "max_stock": 5, "restock_per_week": 1 }
+	  },
+	  "buys": ["pelts", "scrap", "herbs", "relic_fragment", "silver_nugget", "trinket_brass"]
+	},
+
+	"roadhouse_the_dusty_boot_bar": {
+	  "display_name": "The Dusty Boot Bar",
+	  "location_id": "roadhouse",
+	  "description": "Warm lamps, colder stares. The bartender sells drinks, bandages, and the kind of information that stains your hands.",
+	  "buy_modifier": 1.05,
+	  "sell_modifier": 0.55,
+	  "inventory": {
+		"whiskey": { "stock": 30, "max_stock": 50, "restock_per_week": 18 },
+		"coffee": { "stock": 16, "max_stock": 28, "restock_per_week": 8 },
+		"water": { "stock": 18, "max_stock": 32, "restock_per_week": 10 },
+		"bandages": { "stock": 10, "max_stock": 18, "restock_per_week": 5 },
+		"tonic": { "stock": 8, "max_stock": 14, "restock_per_week": 4 },
+		"ammo_revolver": { "stock": 40, "max_stock": 90, "restock_per_week": 25 },
+		"lockpicks": { "stock": 2, "max_stock": 5, "restock_per_week": 1 },
+		"trinket_brass": { "stock": 6, "max_stock": 12, "restock_per_week": 3 }
+	  },
+	  "buys": ["trinket_brass", "silver_nugget", "relic_fragment"]
+	},
+
+	"gunsmith_town_ironwood_armory": {
+	  "display_name": "Ironwood Armory & Gunsmith",
+	  "location_id": "town",
+	  "description": "A workshop that smells like oil, smoke, and stubborn pride. The gunsmith doesn’t sell bravado—just hardware that survives it.",
+	  "buy_modifier": 1.1,
+	  "sell_modifier": 0.5,
+	  "inventory": {
+		"gun_oil": { "stock": 30, "max_stock": 50, "restock_per_week": 18 },
+		"repair_kit": { "stock": 12, "max_stock": 20, "restock_per_week": 6 },
+		"whetstone": { "stock": 18, "max_stock": 30, "restock_per_week": 10 },
+		"ammo_revolver": { "stock": 120, "max_stock": 220, "restock_per_week": 80 },
+		"ammo_rifle": { "stock": 70, "max_stock": 140, "restock_per_week": 45 },
+		"ammo_shotgun": { "stock": 40, "max_stock": 90, "restock_per_week": 25 },
+		"knife_hunting": { "stock": 4, "max_stock": 8, "restock_per_week": 2 },
+		"revolver_basic": { "stock": 2, "max_stock": 4, "restock_per_week": 1 },
+		"rifle_lever": { "stock": 1, "max_stock": 3, "restock_per_week": 1 },
+		"shotgun_sawn": { "stock": 1, "max_stock": 2, "restock_per_week": 1 }
+	  },
+	  "buys": ["scrap", "silver_nugget", "relic_fragment", "trinket_brass"]
+	},
+
+	"doctor_fort_field_surgeon": {
+	  "display_name": "Field Surgeon’s Dispensary",
+	  "location_id": "fort",
+	  "description": "A canvas partition, a scrubbed table, and a medic who has stopped flinching. Supplies are limited—but so is patience.",
+	  "buy_modifier": 0.95,
+	  "sell_modifier": 0.4,
+	  "inventory": {
+		"bandages": { "stock": 35, "max_stock": 60, "restock_per_week": 20 },
+		"medicinal_salve": { "stock": 22, "max_stock": 40, "restock_per_week": 14 },
+		"tonic": { "stock": 18, "max_stock": 30, "restock_per_week": 10 },
+		"antivenom": { "stock": 10, "max_stock": 18, "restock_per_week": 6 },
+		"water": { "stock": 25, "max_stock": 45, "restock_per_week": 12 }
+	  },
+	  "buys": ["herbs", "silver_nugget"]
+	},
+
+	"fence_roadhouse_backroom": {
+	  "display_name": "Backroom Broker",
+	  "location_id": "roadhouse",
+	  "description": "You don’t see a sign because there isn’t one. A man behind a curtain buys the kind of objects that make other people nervous.",
+	  "buy_modifier": 1.35,
+	  "sell_modifier": 0.7,
+	  "inventory": {
+		"lockpicks": { "stock": 6, "max_stock": 10, "restock_per_week": 3 },
+		"trinket_brass": { "stock": 10, "max_stock": 16, "restock_per_week": 5 },
+		"relic_fragment": { "stock": 4, "max_stock": 8, "restock_per_week": 2 },
+		"tarot_deck": { "stock": 2, "max_stock": 4, "restock_per_week": 1 },
+		"charm_luck": { "stock": 2, "max_stock": 4, "restock_per_week": 1 }
+	  },
+	  "buys": ["relic_fragment", "silver_nugget", "trinket_brass", "scrap"]
+	},
+
+	"occult_cave_whisper_trade": {
+	  "display_name": "Whisper Trade (Unmarked)",
+	  "location_id": "cave",
+	  "description": "A niche in the rock with offerings arranged like a careful argument. Sometimes you hear coins clink when no one is there.",
+	  "buy_modifier": 1.5,
+	  "sell_modifier": 0.75,
+	  "inventory": {
+		"incense": { "stock": 10, "max_stock": 18, "restock_per_week": 5 },
+		"holy_water": { "stock": 4, "max_stock": 8, "restock_per_week": 2 },
+		"tarot_deck": { "stock": 3, "max_stock": 6, "restock_per_week": 1 },
+		"charm_luck": { "stock": 4, "max_stock": 8, "restock_per_week": 2 },
+		"relic_fragment": { "stock": 3, "max_stock": 7, "restock_per_week": 2 }
+	  },
+	  "buys": ["relic_fragment", "silver_nugget", "trinket_brass"]
+	}
+  }
+}

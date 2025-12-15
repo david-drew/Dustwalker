@@ -329,6 +329,7 @@ var _status_icons: Dictionary = {}  # status_id -> Control
 var _survival_manager: SurvivalManager = null
 var _weather_manager = null
 var _disease_manager = null
+var _effect_manager: Node = null
 var _active_statuses: Dictionary = {}  # status_id -> tooltip_text
 
 # =============================================================================
@@ -375,43 +376,30 @@ func _create_ui() -> void:
 func _connect_signals() -> void:
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
-		# Survival signals
-		if event_bus.has_signal("fatigue_level_changed"):
-			event_bus.fatigue_level_changed.connect(_on_fatigue_changed)
-		if event_bus.has_signal("hunger_stage_changed"):
-			event_bus.hunger_stage_changed.connect(_on_hunger_changed)
-		if event_bus.has_signal("thirst_stage_changed"):
-			event_bus.thirst_stage_changed.connect(_on_thirst_changed)
-		if event_bus.has_signal("temperature_changed"):
-			event_bus.temperature_changed.connect(_on_temperature_changed)
-		
-		# Weather signals
-		if event_bus.has_signal("weather_started"):
-			event_bus.weather_started.connect(_on_weather_started)
-		if event_bus.has_signal("weather_ended"):
-			event_bus.weather_ended.connect(_on_weather_ended)
-		
-		# Time signals
-		if event_bus.has_signal("time_period_changed"):
-			event_bus.time_period_changed.connect(_on_time_period_changed)
-		
-		# Disease signals
-		if event_bus.has_signal("disease_contracted"):
-			event_bus.disease_contracted.connect(_on_disease_contracted)
-		if event_bus.has_signal("disease_cured"):
-			event_bus.disease_cured.connect(_on_disease_cured)
-		if event_bus.has_signal("disease_stage_changed"):
-			event_bus.disease_stage_changed.connect(_on_disease_stage_changed)
-		
-		# Health signals
+		# Survival signals (kept for health display which isn't an effect)
 		if event_bus.has_signal("player_health_changed"):
 			event_bus.player_health_changed.connect(_on_health_changed)
+
+		# Time signals (time of day isn't an effect)
+		if event_bus.has_signal("time_period_changed"):
+			event_bus.time_period_changed.connect(_on_time_period_changed)
+
+	# Connect to EffectManager for all effect-based statuses
+	var effect_manager = get_node_or_null("/root/EffectManager")
+	if effect_manager:
+		if effect_manager.has_signal("effect_applied"):
+			effect_manager.effect_applied.connect(_on_effect_applied)
+		if effect_manager.has_signal("effect_removed"):
+			effect_manager.effect_removed.connect(_on_effect_removed)
+		if effect_manager.has_signal("modifiers_changed"):
+			effect_manager.modifiers_changed.connect(_on_modifiers_changed)
 
 
 func _find_references() -> void:
 	_survival_manager = get_tree().get_first_node_in_group("survival_manager")
 	_weather_manager = get_tree().get_first_node_in_group("weather_manager")
 	_disease_manager = get_tree().get_first_node_in_group("disease_manager")
+	_effect_manager = get_node_or_null("/root/EffectManager")
 
 # =============================================================================
 # STATUS MANAGEMENT
@@ -419,25 +407,28 @@ func _find_references() -> void:
 
 func _update_all_statuses() -> void:
 	_clear_all_icons()
-	
-	# Update from SurvivalManager
-	if _survival_manager:
-		_update_fatigue_status()
-		_update_hunger_status()
-		_update_thirst_status()
-		_update_temperature_status()
-		_update_health_status()
-	
-	# Update from WeatherManager
-	if _weather_manager:
-		_update_weather_status()
-	
-	# Update time of day
+
+	# Update time of day (not an effect)
 	_update_time_status()
-	
-	# Update diseases
-	if _disease_manager:
-		_update_disease_statuses()
+
+	# Update health status (from SurvivalManager, not an effect)
+	if _survival_manager:
+		_update_health_status()
+
+	# Update from EffectManager (all effect-based statuses)
+	if _effect_manager:
+		_update_from_effect_manager()
+	else:
+		# Fallback to old system if EffectManager not available
+		if _survival_manager:
+			_update_fatigue_status()
+			_update_hunger_status()
+			_update_thirst_status()
+			_update_temperature_status()
+		if _weather_manager:
+			_update_weather_status()
+		if _disease_manager:
+			_update_disease_statuses()
 
 
 func _update_fatigue_status() -> void:
@@ -565,23 +556,23 @@ func _update_time_status() -> void:
 func _update_disease_statuses() -> void:
 	if not _disease_manager:
 		return
-	
+
 	# Clear old disease statuses
 	_remove_status("disease_mild")
 	_remove_status("disease_moderate")
 	_remove_status("disease_severe")
-	
+
 	if not _disease_manager.has_method("get_active_diseases"):
 		return
-	
+
 	var diseases: Array = _disease_manager.get_active_diseases()
 	if diseases.is_empty():
 		return
-	
+
 	# Find worst disease stage
 	var worst_stage := "mild"
 	var disease_names: Array[String] = []
-	
+
 	for disease in diseases:
 		disease_names.append(disease.get("name", "Unknown"))
 		var stage: String = disease.get("stage", "mild")
@@ -589,10 +580,53 @@ func _update_disease_statuses() -> void:
 			worst_stage = "severe"
 		elif stage == "moderate" and worst_stage != "severe":
 			worst_stage = "moderate"
-	
+
 	var status_id := "disease_" + worst_stage
 	var tooltip := "Diseases: %s\nStage: %s" % [", ".join(disease_names), worst_stage.capitalize()]
 	_set_status(status_id, tooltip)
+
+
+func _update_from_effect_manager() -> void:
+	# Read all active effects from EffectManager and display them
+	if not _effect_manager:
+		return
+
+	var effects: Array = _effect_manager.get_all_effects_for_target("player")
+
+	for effect in effects:
+		var effect_id: String = effect.get("id", "")
+		var visuals: Dictionary = effect.get("visuals", {})
+
+		# Skip if no visual info
+		if visuals.is_empty():
+			continue
+
+		var icon: String = visuals.get("icon", "?")
+		var color_str: String = visuals.get("color", "#FFFFFF")
+		var color := Color.from_string(color_str, Color.WHITE)
+		var label: String = effect.get("name", effect_id)
+
+		# Build tooltip
+		var tooltip := "%s\n%s" % [label, effect.get("description", "")]
+		var turns_remaining: int = effect.get("turns_remaining", -1)
+		if turns_remaining > 0:
+			tooltip += "\nTurns remaining: %d" % turns_remaining
+
+		var stacks: int = effect.get("stacks", 1)
+		if stacks > 1:
+			tooltip += "\nStacks: %d" % stacks
+
+		# Add to definitions if not exists (for dynamic effects)
+		if not STATUS_DEFINITIONS.has(effect_id):
+			STATUS_DEFINITIONS[effect_id] = {
+				"icon": icon,
+				"label": label,
+				"color": color,
+				"category": effect.get("category", "effect"),
+				"priority": visuals.get("priority", 1)
+			}
+
+		_set_status(effect_id, tooltip)
 
 # =============================================================================
 # ICON MANAGEMENT
@@ -716,48 +750,73 @@ func _compare_status_priority(a: String, b: String) -> bool:
 # SIGNAL HANDLERS
 # =============================================================================
 
-func _on_fatigue_changed(_old_level: String, _new_level: String) -> void:
-	_update_fatigue_status()
+func _on_effect_applied(_target_id: String, _effect_id: String, _effect_data: Dictionary) -> void:
+	# Refresh all statuses when effects are applied
+	_update_all_statuses()
 
 
-func _on_hunger_changed(_old_stage: String, _new_stage: String) -> void:
-	_update_hunger_status()
+func _on_effect_removed(_target_id: String, _effect_id: String, _reason: String) -> void:
+	# Refresh all statuses when effects are removed
+	_update_all_statuses()
 
 
-func _on_thirst_changed(_old_stage: String, _new_stage: String) -> void:
-	_update_thirst_status()
-
-
-func _on_temperature_changed(_temperature: float, _zone: String) -> void:
-	_update_temperature_status()
-
-
-func _on_weather_started(_weather_type: String, _duration: int) -> void:
-	_update_weather_status()
-
-
-func _on_weather_ended(_weather_type: String) -> void:
-	_update_weather_status()
+func _on_modifiers_changed(_target_id: String) -> void:
+	# Refresh all statuses when modifiers change
+	_update_all_statuses()
 
 
 func _on_time_period_changed(_old_period: String, _new_period: String) -> void:
 	_update_time_status()
 
 
+func _on_health_changed(_old_hp: int, _new_hp: int, _max_hp: int) -> void:
+	_update_health_status()
+
+
+# Legacy handlers kept for backwards compatibility
+func _on_fatigue_changed(_old_level: String, _new_level: String) -> void:
+	if not _effect_manager:
+		_update_fatigue_status()
+
+
+func _on_hunger_changed(_old_stage: String, _new_stage: String) -> void:
+	if not _effect_manager:
+		_update_hunger_status()
+
+
+func _on_thirst_changed(_old_stage: String, _new_stage: String) -> void:
+	if not _effect_manager:
+		_update_thirst_status()
+
+
+func _on_temperature_changed(_temperature: float, _zone: String) -> void:
+	if not _effect_manager:
+		_update_temperature_status()
+
+
+func _on_weather_started(_weather_type: String, _duration: int) -> void:
+	if not _effect_manager:
+		_update_weather_status()
+
+
+func _on_weather_ended(_weather_type: String) -> void:
+	if not _effect_manager:
+		_update_weather_status()
+
+
 func _on_disease_contracted(_disease_id: String, _source: String) -> void:
-	_update_disease_statuses()
+	if not _effect_manager:
+		_update_disease_statuses()
 
 
 func _on_disease_cured(_disease_id: String) -> void:
-	_update_disease_statuses()
+	if not _effect_manager:
+		_update_disease_statuses()
 
 
 func _on_disease_stage_changed(_disease_id: String, _old_stage: String, _new_stage: String) -> void:
-	_update_disease_statuses()
-
-
-func _on_health_changed(_old_hp: int, _new_hp: int, _max_hp: int) -> void:
-	_update_health_status()
+	if not _effect_manager:
+		_update_disease_statuses()
 
 # =============================================================================
 # PUBLIC API

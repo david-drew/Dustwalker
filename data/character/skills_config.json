@@ -1,182 +1,182 @@
 {
   "skills": {
-    "pistol": {
-      "name": "Pistol",
-      "description": "Revolvers, handguns, derringers",
-      "category": "combat",
-      "linked_stat": "aim",
-      "xp_actions": ["successful_hit", "called_shot", "duel_win"]
-    },
-    "rifle": {
-      "name": "Rifle",
-      "description": "Long arms, carbines, muskets",
-      "category": "combat",
-      "linked_stat": "aim",
-      "xp_actions": ["successful_hit", "long_range_hit", "hunting_kill"]
-    },
-    "shotgun": {
-      "name": "Shotgun",
-      "description": "Scatterguns, coach guns",
-      "category": "combat",
-      "linked_stat": "aim",
-      "xp_actions": ["successful_hit", "multi_target_hit"]
-    },
-    "blades": {
-      "name": "Blades",
-      "description": "Knives, daggers, throwing knives",
-      "category": "combat",
-      "linked_stat": "reflex",
-      "xp_actions": ["melee_hit", "thrown_hit", "parry"]
-    },
-    "axes": {
-      "name": "Axes",
-      "description": "Tomahawks, hatchets, throwing axes",
-      "category": "combat",
-      "linked_stat": "grit",
-      "xp_actions": ["melee_hit", "thrown_hit"]
-    },
-    "brawling": {
-      "name": "Brawling",
-      "description": "Unarmed combat, grappling, dirty fighting",
-      "category": "combat",
-      "linked_stat": "grit",
-      "xp_actions": ["unarmed_hit", "grapple_success", "knockout"]
-    },
-    "tracking": {
-      "name": "Tracking",
-      "description": "Following trails, identifying signs, reading tracks",
-      "category": "survival",
-      "linked_stat": "wit",
-      "xp_actions": ["track_success", "identify_creature", "find_trail"]
-    },
-    "foraging": {
-      "name": "Foraging",
-      "description": "Finding edible plants, clean water, medicinal herbs",
-      "category": "survival",
-      "linked_stat": "wit",
-      "xp_actions": ["find_food", "find_water", "find_herbs"]
-    },
-    "hunting": {
-      "name": "Hunting",
-      "description": "Stalking game, setting traps, field dressing",
-      "category": "survival",
-      "linked_stat": "stealth",
-      "xp_actions": ["kill_game", "set_trap", "stalk_success"]
-    },
-    "medicine": {
-      "name": "Medicine",
-      "description": "Treating wounds, curing disease, surgery",
-      "category": "survival",
-      "linked_stat": "wit",
-      "xp_actions": ["heal_wound", "cure_disease", "stabilize"]
-    },
-    "horsemanship": {
-      "name": "Horsemanship",
-      "description": "Riding, horse care, mounted combat",
-      "category": "survival",
-      "linked_stat": "reflex",
-      "xp_actions": ["difficult_ride", "calm_horse", "mounted_combat"]
-    },
-    "persuasion": {
-      "name": "Persuasion",
-      "description": "Convincing, negotiating, inspiring",
-      "category": "social",
-      "linked_stat": "charm",
-      "xp_actions": ["convince_success", "negotiate_deal", "rally_ally"]
-    },
-    "intimidation": {
-      "name": "Intimidation",
-      "description": "Threatening, commanding, instilling fear",
-      "category": "social",
-      "linked_stat": "grit",
-      "xp_actions": ["threaten_success", "break_morale", "force_surrender"]
-    },
-    "deception": {
-      "name": "Deception",
-      "description": "Lying, disguise, misdirection",
-      "category": "social",
-      "linked_stat": "charm",
-      "xp_actions": ["lie_success", "disguise_success", "bluff_success"]
-    },
-    "gambling": {
-      "name": "Gambling",
-      "description": "Cards, dice, reading opponents",
-      "category": "social",
-      "linked_stat": "wit",
-      "xp_actions": ["win_hand", "read_opponent", "cheat_success"]
-    },
-    "lockpicking": {
-      "name": "Lockpicking",
-      "description": "Opening locks, safes, bypassing security",
-      "category": "utility",
-      "linked_stat": "reflex",
-      "xp_actions": ["pick_lock", "crack_safe", "disarm_trap"]
-    },
-    "crafting": {
-      "name": "Crafting",
-      "description": "Cooking, ammo making, repairs, construction",
-      "category": "utility",
-      "linked_stat": "wit",
-      "xp_actions": ["craft_item", "repair_item", "cook_meal"]
-    },
-    "appraisal": {
-      "name": "Appraisal",
-      "description": "Identifying value, quality assessment, spotting fakes",
-      "category": "utility",
-      "linked_stat": "wit",
-      "xp_actions": ["appraise_item", "spot_fake", "find_value"]
-    },
-    "lore": {
-      "name": "Lore",
-      "description": "History, supernatural knowledge, cultural understanding",
-      "category": "utility",
-      "linked_stat": "wit",
-      "xp_actions": ["recall_knowledge", "identify_supernatural", "cultural_insight"]
-    }
+	"pistol": {
+	  "name": "Pistol",
+	  "description": "Revolvers, handguns, derringers",
+	  "category": "combat",
+	  "linked_stat": "aim",
+	  "xp_actions": ["successful_hit", "called_shot", "duel_win"]
+	},
+	"rifle": {
+	  "name": "Rifle",
+	  "description": "Long arms, carbines, muskets",
+	  "category": "combat",
+	  "linked_stat": "aim",
+	  "xp_actions": ["successful_hit", "long_range_hit", "hunting_kill"]
+	},
+	"shotgun": {
+	  "name": "Shotgun",
+	  "description": "Scatterguns, coach guns",
+	  "category": "combat",
+	  "linked_stat": "aim",
+	  "xp_actions": ["successful_hit", "multi_target_hit"]
+	},
+	"blades": {
+	  "name": "Blades",
+	  "description": "Knives, daggers, throwing knives",
+	  "category": "combat",
+	  "linked_stat": "reflex",
+	  "xp_actions": ["melee_hit", "thrown_hit", "parry"]
+	},
+	"axes": {
+	  "name": "Axes",
+	  "description": "Tomahawks, hatchets, throwing axes",
+	  "category": "combat",
+	  "linked_stat": "grit",
+	  "xp_actions": ["melee_hit", "thrown_hit"]
+	},
+	"brawling": {
+	  "name": "Brawling",
+	  "description": "Unarmed combat, grappling, dirty fighting",
+	  "category": "combat",
+	  "linked_stat": "grit",
+	  "xp_actions": ["unarmed_hit", "grapple_success", "knockout"]
+	},
+	"tracking": {
+	  "name": "Tracking",
+	  "description": "Following trails, identifying signs, reading tracks",
+	  "category": "survival",
+	  "linked_stat": "wit",
+	  "xp_actions": ["track_success", "identify_creature", "find_trail"]
+	},
+	"foraging": {
+	  "name": "Foraging",
+	  "description": "Finding edible plants, clean water, medicinal herbs",
+	  "category": "survival",
+	  "linked_stat": "wit",
+	  "xp_actions": ["find_food", "find_water", "find_herbs"]
+	},
+	"hunting": {
+	  "name": "Hunting",
+	  "description": "Stalking game, setting traps, field dressing",
+	  "category": "survival",
+	  "linked_stat": "stealth",
+	  "xp_actions": ["kill_game", "set_trap", "stalk_success"]
+	},
+	"medicine": {
+	  "name": "Medicine",
+	  "description": "Treating wounds, curing disease, surgery",
+	  "category": "survival",
+	  "linked_stat": "wit",
+	  "xp_actions": ["heal_wound", "cure_disease", "stabilize"]
+	},
+	"horsemanship": {
+	  "name": "Horsemanship",
+	  "description": "Riding, horse care, mounted combat",
+	  "category": "survival",
+	  "linked_stat": "reflex",
+	  "xp_actions": ["difficult_ride", "calm_horse", "mounted_combat"]
+	},
+	"persuasion": {
+	  "name": "Persuasion",
+	  "description": "Convincing, negotiating, inspiring",
+	  "category": "social",
+	  "linked_stat": "charm",
+	  "xp_actions": ["convince_success", "negotiate_deal", "rally_ally"]
+	},
+	"intimidation": {
+	  "name": "Intimidation",
+	  "description": "Threatening, commanding, instilling fear",
+	  "category": "social",
+	  "linked_stat": "grit",
+	  "xp_actions": ["threaten_success", "break_morale", "force_surrender"]
+	},
+	"deception": {
+	  "name": "Deception",
+	  "description": "Lying, disguise, misdirection",
+	  "category": "social",
+	  "linked_stat": "charm",
+	  "xp_actions": ["lie_success", "disguise_success", "bluff_success"]
+	},
+	"gambling": {
+	  "name": "Gambling",
+	  "description": "Cards, dice, reading opponents",
+	  "category": "social",
+	  "linked_stat": "wit",
+	  "xp_actions": ["win_hand", "read_opponent", "cheat_success"]
+	},
+	"lockpicking": {
+	  "name": "Lockpicking",
+	  "description": "Opening locks, safes, bypassing security",
+	  "category": "utility",
+	  "linked_stat": "reflex",
+	  "xp_actions": ["pick_lock", "crack_safe", "disarm_trap"]
+	},
+	"crafting": {
+	  "name": "Crafting",
+	  "description": "Cooking, ammo making, repairs, construction",
+	  "category": "utility",
+	  "linked_stat": "wit",
+	  "xp_actions": ["craft_item", "repair_item", "cook_meal"]
+	},
+	"appraisal": {
+	  "name": "Appraisal",
+	  "description": "Identifying value, quality assessment, spotting fakes",
+	  "category": "utility",
+	  "linked_stat": "wit",
+	  "xp_actions": ["appraise_item", "spot_fake", "find_value"]
+	},
+	"lore": {
+	  "name": "Lore",
+	  "description": "History, supernatural knowledge, cultural understanding",
+	  "category": "utility",
+	  "linked_stat": "wit",
+	  "xp_actions": ["recall_knowledge", "identify_supernatural", "cultural_insight"]
+	}
   },
   "categories": {
-    "combat": {
-      "name": "Combat Skills",
-      "description": "Skills related to fighting and weapons"
-    },
-    "survival": {
-      "name": "Survival Skills", 
-      "description": "Skills for wilderness survival and self-sufficiency"
-    },
-    "social": {
-      "name": "Social Skills",
-      "description": "Skills for interacting with people"
-    },
-    "utility": {
-      "name": "Utility Skills",
-      "description": "Practical and knowledge-based skills"
-    }
+	"combat": {
+	  "name": "Combat Skills",
+	  "description": "Skills related to fighting and weapons"
+	},
+	"survival": {
+	  "name": "Survival Skills", 
+	  "description": "Skills for wilderness survival and self-sufficiency"
+	},
+	"social": {
+	  "name": "Social Skills",
+	  "description": "Skills for interacting with people"
+	},
+	"utility": {
+	  "name": "Utility Skills",
+	  "description": "Practical and knowledge-based skills"
+	}
   },
   "skill_rules": {
-    "min_level": 0,
-    "max_level": 5,
-    "xp_per_level": 100,
-    "trainer_required_above": 3,
-    "level_descriptions": {
-      "0": "Untrained - No formal knowledge",
-      "1": "Novice - Basic understanding",
-      "2": "Competent - Reliable in normal situations",
-      "3": "Skilled - Professional level",
-      "4": "Expert - Exceptional ability",
-      "5": "Master - Legendary proficiency"
-    }
+	"min_level": 0,
+	"max_level": 5,
+	"xp_per_level": 100,
+	"trainer_required_above": 3,
+	"level_descriptions": {
+	  "0": "Untrained - No formal knowledge",
+	  "1": "Novice - Basic understanding",
+	  "2": "Competent - Reliable in normal situations",
+	  "3": "Skilled - Professional level",
+	  "4": "Expert - Exceptional ability",
+	  "5": "Master - Legendary proficiency"
+	}
   },
   "xp_values": {
-    "trivial": 1,
-    "easy": 2,
-    "moderate": 3,
-    "difficult": 4,
-    "extreme": 5
+	"trivial": 1,
+	"easy": 2,
+	"moderate": 3,
+	"difficult": 4,
+	"extreme": 5
   },
   "diminishing_returns": {
-    "enabled": true,
-    "same_action_threshold": 3,
-    "same_action_penalty": 0.5,
-    "reset_after_turns": 6
+	"enabled": true,
+	"same_action_threshold": 3,
+	"same_action_penalty": 0.5,
+	"reset_after_turns": 6
   }
 }
